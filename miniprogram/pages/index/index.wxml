@@ -1,0 +1,64 @@
+<view class="container">
+  <view class="hero">
+    <view class="row between">
+      <text class="hero-title">我的备考倒计时</text>
+      <text class="hero-badge">工作台 · 广东</text>
+    </view>
+    <view class="hero-row">
+      <view class="hero-stat">
+        <text class="hero-num">{{total}}</text>
+        <text class="hero-label">个目标</text>
+      </view>
+      <view class="hero-stat" wx:if="{{nearest}}">
+        <text class="hero-num">{{nearest.daysText}}</text>
+        <text class="hero-label">天后最近节点</text>
+      </view>
+    </view>
+    <view class="hero-next" wx:if="{{nearest}}">{{nearest.itemName}}</view>
+    <view class="hero-next" wx:if="{{nearest}}">{{nearest.nodeKind}} · {{nearest.nodeDate}}</view>
+    <view class="hero-next" wx:if="{{!nearest}}">还没有目标，先去选一个证书或比赛</view>
+  </view>
+
+  <view class="section-title">记事本</view>
+  <view class="card todo-card">
+    <view class="todo-add">
+      <input class="todo-input" placeholder="记一件要做的事…" value="{{todoText}}" maxlength="60" confirm-type="done" bindinput="onTodoInput" bindconfirm="addTodo" />
+      <view class="todo-add-btn" bindtap="addTodo">添加</view>
+    </view>
+    <view wx:if="{{todos.length}}" class="todo-list">
+      <view wx:for="{{todos}}" wx:key="id" class="todo-item {{item.done ? 'todo-done' : ''}}" data-id="{{item.id}}" bindtap="completeTodo">
+        <view class="todo-check">{{item.done ? '✓' : ''}}</view>
+        <text class="todo-text">{{item.text}}</text>
+      </view>
+    </view>
+    <view wx:else class="todo-empty">还没有待办，记一条吧</view>
+    <view wx:if="{{todos.length}}" class="todo-foot">共 {{todos.length}} 条 · 点圆圈勾选完成，完成后自动消失</view>
+  </view>
+
+  <view class="section-title" wx:if="{{hasGoals}}">目标列表</view>
+  <view wx:for="{{goals}}" wx:key="id" class="goal-card" data-id="{{item.itemId}}" bindtap="goDetail">
+    <view class="row between">
+      <view class="goal-main">
+        <text class="goal-name">{{item.itemName}}</text>
+        <view class="goal-tags">
+          <text class="tag {{item.type === '比赛' ? 'tag-match' : 'tag-cert'}}">{{item.type}}</text>
+          <text class="tag tag-level">{{item.level}}</text>
+          <text class="goal-stars">{{item.stars}}</text>
+        </view>
+        <text class="goal-sub">{{item.sub}}</text>
+      </view>
+      <view class="countdown">
+        <text class="cd-num">{{item.daysText}}</text>
+        <text class="cd-label">天后</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!hasGoals}}">
+    <text>还没有添加目标</text>
+    <view class="btn empty-btn" bindtap="goCatalog">去选择证书 / 竞赛</view>
+  </view>
+
+  <view class="tip">{{bound ? '已自动绑定微信身份（openid）；当前目标和提醒保存在本机。' : '本地模式：目标和提醒只保存在本机；配置云环境后进入会自动绑定。'}}</view>
+  <view class="tip">倒计时按工作台的月份节点推算：报名按当月 1 日、考试/比赛按当月 15 日；具体日期以官方通知为准。</view>
+</view>

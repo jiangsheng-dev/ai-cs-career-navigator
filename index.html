@@ -1,0 +1,2717 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI赋能计算机学子成才领航系统</title>
+<style>
+:root{color-scheme:light dark}
+html,body{margin:0;padding:0;background:light-dark(#f2f4f8,#0f1115)}
+body{min-height:100vh}
+#cs-wb{width:100%}
+#cs-wb .db-shell{border-radius:0;box-shadow:none;min-height:100vh}
+@media (min-width:1600px){#cs-wb .db-body{grid-template-columns:264px minmax(0,1fr) 312px;gap:16px;padding:16px}}
+</style>
+</head>
+<body>
+<div id="widget">
+<div id="cs-wb">
+<div class="db-shell">
+<div class="db-top">
+<div class="db-brand"><span class="db-logo"><i data-lucide="route"></i></span><span class="db-brand-name">AI赋能计算机学子成才领航系统</span></div>
+<nav class="db-nav" aria-label="路线视图"><div class="db-tablist" role="tablist" aria-label="路线视图">
+<button type="button" class="db-tab ic-blue is-active" role="tab" id="db-tab-term" aria-controls="db-panel-term" aria-selected="true"><i data-lucide="layout-grid"></i><span>学期路线</span><span class="db-badge">50</span></button>
+<button type="button" class="db-tab ic-orange" role="tab" id="db-tab-job" aria-controls="db-panel-job" aria-selected="false"><i data-lucide="rocket"></i><span>就业冲刺</span><span class="db-badge">10</span></button>
+</div><button type="button" class="db-tab ic-green" id="db-open-agents"><i data-lucide="bot"></i><span>智能体广场</span><span class="db-badge">9</span></button>
+</nav>
+<div class="db-top-right">
+<label class="db-search"><i data-lucide="search"></i><input type="search" id="db-q" placeholder="搜索比赛、证书或时间节点"></label>
+
+<button type="button" class="db-icon-btn" id="db-hide" aria-pressed="false" data-tooltip="只显示未完成节点"><i data-lucide="eye-off"></i></button>
+<button type="button" class="db-avatar db-avatar-btn" id="db-avatar" aria-label="扫码进入小程序"><i data-lucide="user-round"></i></button>
+</div>
+</div>
+<div class="db-scope">
+<span class="db-scope-label">年级 / 学期</span>
+<div class="db-scope-items" id="db-terms" role="group" aria-label="按年级或学期筛选"></div>
+<label class="db-prov"><span>省份</span><select id="db-prov" class="db-select"></select></label>
+<span class="db-scope-info" id="db-scope-info"></span>
+</div>
+<div class="db-body">
+<aside class="db-rail">
+<button type="button" class="db-kpi k-blue db-kpi-btn" id="db-open-all">
+<span class="db-kpi-label">整体完成</span>
+<div class="db-kpi-row"><span class="db-kpi-value" id="db-kpi-done">0/50</span><span class="db-kpi-ring"><i data-lucide="circle-check-big"></i></span></div>
+<div class="db-kpi-bar"><span id="db-kpi-bar"></span></div>
+<span class="db-kpi-sub">已勾选的路线节点 · 点击查看已完成清单</span>
+</button>
+<button type="button" class="db-kpi k-yellow db-kpi-btn" id="db-open-hard">
+<span class="db-kpi-label">硬指标完成</span>
+<div class="db-kpi-row"><span class="db-kpi-value" id="db-kpi-hard">0/23</span><span class="db-kpi-ring"><i data-lucide="award"></i></span></div>
+<span class="db-kpi-sub">顶级 + 硬通货目标 · 点击查看已完成清单</span>
+</button>
+<div class="db-kpi k-green">
+<span class="db-kpi-label">全年节点</span>
+<div class="db-kpi-row"><span class="db-kpi-value" id="db-kpi-year">0</span><span class="db-kpi-ring"><i data-lucide="calendar-check"></i></span></div>
+<span class="db-kpi-sub">报名 · 备赛 · 比赛 · 考试</span>
+</div>
+<div class="db-kpi k-cyan">
+<span class="db-kpi-label">本月节点</span>
+<div class="db-kpi-row"><span class="db-kpi-value" id="db-kpi-month">0</span><span class="db-kpi-ring"><i data-lucide="clock"></i></span></div>
+<span class="db-kpi-sub" id="db-kpi-month-sub">本月待办</span>
+</div>
+</aside>
+<section class="db-panel db-focus">
+<div class="db-panel-head"><h3 class="db-panel-title">重点目标</h3><span class="db-panel-icon" aria-hidden="true"><i data-lucide="target"></i></span></div>
+<div class="db-tiles" id="db-tiles"></div>
+</section>
+<aside class="db-panel db-side">
+<div class="db-panel-head"><h3 class="db-panel-title">快捷入口</h3><span class="db-panel-icon" aria-hidden="true"><i data-lucide="app-window"></i></span></div>
+<div class="db-quick" id="db-quick"></div>
+</aside>
+<section class="db-panel db-chart-panel">
+<div class="db-panel-head"><h3 class="db-panel-title">赛证 · 路线时间图</h3><div class="db-legend" id="db-tl-legend"></div></div>
+<div id="db-timeline"></div>
+</section>
+<section class="db-panel db-list">
+<div class="db-panel-head db-list-head"><h3 class="db-panel-title">路线清单<span class="db-sep">·</span><span id="db-view-name">学期路线</span></h3>
+<div class="db-toolbar"><label class="db-field"><span class="db-field-label">方向</span><select id="db-dir" class="db-select"><option value="全部">全部方向</option><option value="算法">算法</option><option value="开发">开发</option><option value="运维网络">运维网络</option><option value="安全">安全</option><option value="数据">数据</option><option value="通用">通用</option></select></label><span class="db-toolbar-note" id="db-note">共 0 项</span></div>
+</div>
+<div id="db-panel-term" role="tabpanel" aria-labelledby="db-tab-term"><div class="db-lanes" id="db-lanes"></div></div>
+
+<div id="db-panel-job" role="tabpanel" aria-labelledby="db-tab-job" hidden><div id="db-job"></div></div>
+</section>
+</div>
+<section class="db-panel db-done-page" id="db-done-page" hidden>
+<div class="db-panel-head"><h3 class="db-panel-title">已完成清单<span class="db-sep">·</span><span id="db-done-scope">全部项目</span></h3><button type="button" class="db-back" id="db-done-back"><i data-lucide="arrow-left"></i>返回工作台</button></div>
+<div id="db-done-list"></div>
+</section>
+<section class="db-panel db-jobs-page" id="db-jobs-page" hidden>
+<div class="db-panel-head"><h3 class="db-panel-title">就业岗位地图</h3><button type="button" class="db-back" id="db-jobs-back"><i data-lucide="arrow-left"></i>返回工作台</button></div>
+<div class="db-job-chips" id="db-jobs-chips"></div>
+<div id="db-jobs-body"></div>
+</section>
+<section class="db-panel db-res-page" id="db-res-page" hidden>
+<div class="db-panel-head"><h3 class="db-panel-title">往届资源库</h3><button type="button" class="db-back" id="db-res-back"><i data-lucide="arrow-left"></i>返回工作台</button></div>
+<div class="db-res-chips" id="db-res-chips"></div>
+<div id="db-res-body"></div>
+</section>
+<section class="db-panel db-agents-page" id="db-agents-page" hidden>
+<div class="db-panel-head"><h3 class="db-panel-title">智能体广场</h3></div>
+<div id="db-agents"></div>
+</section>
+<div class="db-qr-mask" id="db-qr-mask" hidden>
+<div class="db-qr-card" role="dialog" aria-modal="true" aria-label="扫码进入小程序">
+<button type="button" class="db-qr-close" id="db-qr-close" aria-label="关闭">×</button>
+<img class="db-qr-img" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPwAAAD8CAYAAABTq8lnAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAERESURBVHhe7Z0PzLZVXccFTIP8xwLMNnSwkuSPjcmoufg3YUSN+LNJ5YbIzFUu/kzA5VuIaC9NsIE4q2njjxslboY4I4YO0MaK5ViSkOR0yaYRNUotsiLv9rnpPM/3fO/ffc65rvu6n+d9ec53+27v+1znnOuc3/X73td1nev8fud5s46Ojh2D5/kfOjo6nrvogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EHogu/o2EEYJfhvfOMbsz/5kz/ZFnLuZXj00UcXyg/ln/3Zn82+/e1vZ+3+9V//9UK5IfzqV7+atdeCv/mbv8nauP/++2fPPPPMxnH+zd+0DHUU//Iv/zL71Kc+tdAf+IlPfGL2rW99Kys/xn7YRoHtsKGXUz7wwANZna0AY2XM3hel26+EyP5bxVXsN0rwnPR5z3vetpBzL8Pv/u7vLpQfyp/4iZ+Y/d3f/V3W7q/92q8tlBvCP/iDP8jaa8Fv/uZvZm387M/+7Ow///M/N47zb/6mZaij+Mu//MvZj/zIjyz0B/7gD/7g7M///M+z8mPsh20U2A4bejnlL/3SL2V1tgKMlTF7X5RuvxIi+28VV7FfF7yxC36xbIld8IvtrJur2K8L3tgFv1i2xC74xXbWzVXsN4ng991339kP//APz51rStImbeu5VhX8y172soXzKH/6p396LpR//Md/3OCb3/zmhXaUOv6DDjpo9vznPz87Pkbwv/M7v5P165d/+Zdn3/ve9zaO82/+pmWoo/jiF784e+1rX5uVSU7/whe+cPbHf/zH2TivueaaBXvU+Bu/8RtZG9gOG2qZAw44ILPHWWedldVR/vM///Psf/7nf7JxMC+gZf71X/81O/6///u/8/kKLfPv//7vWZl777139qpXvWqjTy9/+cvnNtB++Vhok7YjRIL/oR/6oQX7TEG337YLHmf/oz/6o/nFnpK0Sdt6rlUF/773vW/hPMo777xz9gu/8Atzp03EObwdpY7/4x//+Nyx9PgYwTM5qf3izqnOx7/5m5bxCc3vfve7c9FrmVNPPXXeJ36kuBPrOH/rt35rwR41/t7v/V7WBrbDhlrmnHPOWbCX1lH+4i/+4uwf/uEfsnG8//3vz8r89m//dnYcYb71rW/NynzsYx/LyvAj8eCDD2706fOf//y8nPbrR3/0R7M2aJO2I0SCP//88xfsMwXdftsueH6F6NjUoE3a1nOtKvhSfdDySOrU8Uf1xwh+XcBZvP+JQx5pExibtrHqK1FLfXd47sYuXnyhhEiwTtqk7QhR/TH2a0Ft/EPQBW+IBFtjF/xmGy2CLbGlvjt8F3w7uuANkWBr7ILfbKNFsCW21HeH74Jvx9oEz6woBhhCnzUuCZ6JnZtuuimrf/LJJy9cNOcUgv/Jn/zJuUMlfuhDH5p985vfXFr/9NNPXxhrjffdd593LUM0frcf7/RM5GmZ17zmNfM+MbF44YUXZuOonTPCQw89lLWxe/fu2a5du7JzHnvssQs2VL74xS+evf3tb2+u7w7PBB3v7NqPq666KmsDW+lkIP++/fbbszou4FUFH9m/RuZEnnzyyaydvULwdF7LtNANVhJ8ZPAWTiH4ksFb6rcQBywhGn+L/RKjz3JTYMz4a09IzpL9E9z//LNmBGyudVYVfMn+yzjmCWcIuuANqzpcS/0WdsEvlkss2T/B/a8L/ll0wRtWdbiW+i3sgl8sl1iyf4L7Xxf8s9hxguccOHril7/85eyckcMdddRR83MlXnzxxVkbLOpIi0Fa6jMH4P1y1gT/X//1X/Pv5tou76kK+sLiHC2TeOaZZy4EvrSAABMdu5PFPMvOuYznnnvu7Oabb15a/9BDD81sc9JJJy2c18m3em3jV3/1V2ef+cxnFsopWaOhdd7ylrfMPvnJT2ZlUsBR5H8t/ltjF/zEgv+BH/iB+d0tkdVVikiwTMpxvsTbbrsta4OFNizqaK3PBJP3y1kTPED02q6vUGNxDivytIxy2SqyElhcomN3HnPMMbOHH3544VwlMrn1Mz/zM0vr/8qv/Epmm/3222/hvE7sp20g9pe+9KUL5ZT4n9b5i7/4i9krX/nKrAwRd4Dj7n8t/ltjF/zEgne2rAX3z2ql8Y+pH7FF8NuB0mc9GDlsDfpZLarvDt9Ctx93ZwTr5ZSr+l9L/Rpbxt8FvwK74IehC365/7XUr7Fl/F3w/0++Levj1wte8ILZPvvsk5XxR/pf//Vfzx7jeJzksVLLfPSjH836xWOdHtdH+q985Svzd3Q9/vu///vZOfyVIOJ1112XnZPHb20D+iM5j/ReZhXyyvD9738/O0dN8EccccT8Pd/bUv73f/931uYTTzwxO/HEE+fjxnbYUOEO74/0BMF4kNUUgueacm31XP2Rfg8S/HnnnZdNsFx//fWzAw88cOEcWubaa6/NJmqYMGLiSMs8/vjjWb+YuNHjOmnHIpAvfOEL2fErrrgiO4dP+kX82te+lp2TCTYm2lIb0aQbC0n0PKvy0ksvnT311FPZOWqCJ2LshBNOWGhL6WJknoFrzbixnUe6ucP7pB3Xy5+q/ByUGyp4rinXVs/VJ+32IMEPqZ/QsjR0VUxxwdxh+Td/U/hnpVUZfZaqCb6FQ8dfs1/L0lq3X0T3nxLG+l+Nkf/Vxj8EXfBd8EvZBb8cY/2vxsj/auMfgi74Lvil7IJfjrH+V2Pkf7XxD8HaBI+BMcAQugNHBisJnuAZLnQigQvvete7snO8973vzcqcffbZVYPffffdWR0SPCg0eOMjH/nIQtKEO+64I+vDlVdembUX0e352GOPzReTpDb4N39TUE/HQkIH1hm4nZfRg48iwfO+7PWGsjT+MfYjUw+LkLSMBwK5/S6//PLZ4Ycfno2Xv7ci8j+vv6OCZ6bAUME7I4et3aEiwdcMXvus5HD7RcSRh8IFH42/hFXrt6I0/jH2G+N/kf+4YEtYtf4Q1PxvCLrgjZHD1QzeBT8MpfGPsd8Y/4v8Z4hgV60/BDX/G4IueGPkcDWDd8EPQ2n8Y+w3xv8i/xki2FXrD0HN/4ZgEsFvRxLLyOCehJCEiPfcc0/WJgtttMxhhx2WtRE5XM3gNcF//etfz/rAQhztw+te97rZi170ouwcLnhPwsi/PXtri2D//u//fpL6iYxN8fTTT88X3mgZFtYo3H9YDHX00UfPzxclwazVjwRfSwIa+Y8LNkoCmuYXovo7JonldqSpjgzuaYYRO5Fq2uYtt9ySlSEjqrYRCXZVwb/zne/M+nDBBRdkffjSl740F72ewwXvaZb5N39TtAiWqLEp6icyNgXbahEIo2VuvfXWrIz7zyGHHDLfnopz4eCcd0h9ylBPUUvzHfmPCz5K883WXcvq75g01VvJkuD9guEEGCyqn9DyWW5VwQ+pn+iC989KLZ/lIsGmV5pV6ycyNgVjxwZaphZLwDVKgl21fgK+oGXwFXwmYVX/iepvFd1/hqALvgt+A0PqJ3bBbx7bKrr/DEEXfBf8BobUT+yC3zy2VXT/GYJRgt8TtouODO4XLNou2XdnaRG8bxf9gQ98YG70RN7JmYjjGJF1JGzQ4z/2Yz+WnYOkCnqcrZd8cnJdgmerYfoZbRfdUt8Fz9h0LIwdG6i9fLts9x/mVZhMXVaf66rnuOyyy5bWT0zZeRNf8YpXzN74xjduHH/Tm940++AHP5i149tFl/xnR20XvSegRfAtaBG8A6NrndodagzXJfgSWuq74J0t9nOs4wmpxsh+OwGjBM+vG4JLZPZz3bHZiZwb8G9CRLlwiQjey9fInVnbiFIsOT1FlQo+iocnflvLt8Rzk19Nz+kpmtgUk68QChfs8ccfP9+nzfu/jJyzVp87o/bdGcWzE//u51LWUlxx99Zz8PlLofH0y0huBB0bf6sJPkoRlvwPeIqxKcj5PAfBlBgleB5luLsm8snDf5VJqKhlpiLnBlwMHrW5aImehLCFxKprG1ESRacnoVTBR/HwP/dzP5eVb4nnfvWrX52d05MwInZ2WlW44PlROOWUUxb6v4ycs1afx2DtuzOKZ7/xxhsXzqWsJbEkZ4Gewx+9NZ5+GflMp6JvETw+7X1J/hclEZ2CvNJ4/oUpMUrwpUfaBJ80mYqcexnc4VvYMulUYzR+xRSPpDgDd4ASxox/KEv2XwYfv7P2SuSTdmOAuBF5arNF8NsxaRe90kyJLvgu+EEs2X8ZfPzOLvhNdsEbSw43xuG74IexZP9l8PE7u+A3uUcKnncoBJ1IzDnvSDhcosdWO0k4SQ46baeF6f0t2gzwPe95T1aWyR2WO+p5WautZYi1VkQOV6M6LJ9yiOnWfr373e/Ozsl7quI73/nO7MMf/nBWxn8AeL9mjiK1SZJLz3u3FYLnnVbH5myJZ3eq/7zjHe+YHXzwwdk5a4KPNpN0snEmPpfajDbTdNbyKWh8PXSfH5qPAEbx8LV8DEMwSvCOljuUs+UXtoToFxaDKUq/0MuwquCj+jWHjcBY/DzKyH44g5fbao65Q9X8p2a/Wv2xLH2WbLF/VH8M/AnJnxCHoAveEAm2xi74TXbBl+uPQRd8F3xoP3e47WAXfLn+GGy74HlHw8ETCW0kntkNViLfRMkbr+20ML0f8h2UvOkYNZHvolr24x//+Oy0007Lynz2s5/14WSIBFvjniJ43mN1rBHTEl4W+tBPP74qyUHAYh2F5wNwsqaAetRnjcP++++fjZUQXK+zrH4i789uM2XL+N/61rcuzEfw3s4xFgqxdkD7wTu/28LzMXh7LSCEW9ulD2MxSvCsL8bJE4lnJomBG7VEdoRhkwhtp4UpHpnVSGySwC9oIskMtSxiZ3dYLVOb6Y4EWyPn4mIuq79VgmfySscakXX71Gd1H5OHfnxVshjIN7X0fABOchYgDOqzgaPHHrzkJS9ZqLOsfiKTZW4zZcv4EaevICVpCMdYHciCIe0HE3xaP8rHkPx3CL797W9n7XrikiEYJXj/LLeVLD2ST/FIFQm2Ri7kniD4FpQeSdcFfyR11uxXo9ZPWJf9Etb1SrludMEbVnW4qH4XfBd8Ysl/twJd8IZVHS6q3wXfBZ9Y8t+twLYJnnd+DERbiSzq0DI//uM/PvvDP/zDrAyx0Dgti2o8iGKM4JnEo73EKB771FNPzdp9/etfnx0fGs/dQhZ4eBs6T0LEHUE4Xq9GYvlpL4qHd5CwkqAdrV+Lxf7mN785Xzyjdfyd3DlU8CX7J3o8vLNF8NH4E4mtJ8Ze23TBR/H0yX8TSdSqiOxXm2gegm0TfGTwFsFigFXqO1ri4f0ORR8UnINztdZvIWNRMFbG7OWGkmvXijF3qBbBOocKvmT/Vkb+44jGX6ILPkLy38SWpd1jnhCXoQu+C34pIoev1Y8ctsYu+E1E4++CX6G+owt+OSKHr9WPHLbGLvhNROPfdsGTeIKOJr75zW+evfzlL18wQImRwQkS0HZ5l/nQhz40H3AiRuUY31n5xq5wwbPJBIsWtL7nV/v85z+fnfOSSy6Z3XDDDVkdsqlou8cdd1x2nD7S19b6LXTBM1bGnPrJXMGhhx6a1Tn22GOzsbCBgec0ZzEJfWKewRMtPPTQQ1m/CeTQc0KuveKRRx7J6jB2bKB1jjzyyKwPvNPrcc7BuahPAJSLDPtpeX/v5Ts111nLOElCopmHIv9zRIJnPsfbTiRISm0RMflvIovF9Hg0frIMaZlV3ulHCd6xlb+wpTuMCz5iqT6IfmFrHHqHaqEL3jF2ljgxsr/bbzuekCJyjlXhT0jR+B2R/Ur+4/aL6PXdfi10+w1BF7xhjGC74DfrdMEv9r9U3+3XQrffEHTBG8YItgt+s04X/GL/S/Xdfi10+w3BJIJn/TSBAlzsVhIkQcJDBd8tcZZEAv1xBK3HuyfHyIzqyRJbDM67op7DHZqkEmecccZCf0skkCKtCYgEj9N4nRp3796d9dPJ+U444YTsPC2CJ6iE9iP7u/0ow9p2PS/vywoClLTfb3jDG2af+9znsjq802sZ5jsUNf9hXkDb41v1ULjgWUuffCnRE09gY66t9oVAsWUg+Yf33ennZGx6/PDDD1/IsOvcdsETLEGElA6kxkiwbjCy0+C0Wo/JKo61OGzE5PCJV111VdYGUXiI3vtbIhOB7JoK+D/t6jmZiPE6Ne7atWvBWZRHHHHEQjafFsGnH7zI/m4/otaYYNPzusMTyKH9RuyIXuvUBFvzn9oPRgtc8ARvMemp7WIbBdeUa6t98R88hd+wIib/TWRsevyuu+6ai16vg3PbBT8V3OGiR8ohn+VayOPmlOCicSH1HGMeSWtLQyO2CN4fKRUt9ivVB1ONX1F7JWiBCz6i228dGPNZzjlm/Ald8F3wG2ixX6k+mGr8ii74nGPGn9AF3wW/gRb7leqDqcav6ILPOWb8CVsmeF840rJwhsU8LOpJdSBlcKCWhSMRWTRTMvgY6MKPaOENiyt0DC0LR1hEo/0kkYIuQuLf/E3LuMOyBdOtt96a9SUtPGL7J3aE0XOOWThy2223ZefknZ6JvNL4nSTIICsO4AeeeRU9TiYZbQ8f8DZqZIchthXz8SivvvrqhXpD6BmQGRNj0zLJfxNZ+KWI7Ofc9oU3LfBf2LF36NodpobaL+wYDF1a67/Qtc9S0PPSt3yWK2Fs/TH28/E7a581cXIFPuBt1Oj2i9DifyW6/YY+YW0FuuAbHLaGLvgyfPzOLvitQxd8g8PW0AVfho/f2QW/dZhE8BiS9woGs4wYQxM4RIJnoQ0OVWIpgcOjjz6anZM++UVm91Ntj35pHb4zl761RuC9i0yitBclwKgl0CDJB8k+tAzrDLSfF1988fx9OdXh3/xNy1x55ZVZuxFJvgh4h8fBtb7viNOSwMHtF9HH/8pXvjJr44ILLpi/X1MW22FDPU4/tT18QI9H9AQY2JOsvt43JUlHvB0nfae9KAGJ258xMTYtk/w30YOR8D18UMt4wNcqmETwLXcoZyT4FmC0ZfX9Fzqa5Xdw99A60R16CKI71BgyFsV2PCG13KHcfi3kGipWfUKKwA+Rn7dGv0NHWNX/Uv1Ef0KK/MefcFZBF3wX/FJ0wS9iVf/rgh+IVQ3ucIeNHG4Iogs2hl3wm+iC38ME/0//9E/zBAM4Ryt5F/rkJz85N8gQ8k60rD7fe9VQr3vd62Zf+tKXsjL+Ts93au0XwRL+zlTbCIDNCnjf5Rgi4UJrm56EAmfR49FGHi74e++9d/aqV72qaD8fP23Stp6LhI9ap0TeJamvbdYEz66sBx10UHZOJ4khFeo/2A4baj9Yi6HnaBE83+71nGx6wvp5bcfJ2hC3gTP5H9eCa6JgbYSeM9oIJdVP9HNGG3GwRkPLuP8NwSSCZwLob//2b+cXqpUM7C1vecv8Ag8hEyHL6qcJlcQXvehFc9FrGV+0wOIU7RcRUikQJqG21Q9iJ5MMxwj4YfJR2yTzjPaLSSw9Hm3V5YLnIj/44INF+/n4aZO29Vxkd9U6JVLff4hqgkcILBzRczrJBqtQ/8F22FD74dmUWgTP5KSek23NalFoBFa5DZzJ/7gWLjyCgvSc0VZnqX4iATt6PNpqi8xNWsb9bwgmEfwYRJ+FWpgcbtX6Q1B7pORXlwvBsTGPpFo/0QXvaBk/bdK2wh8ph9Lt54KPxj8E0SOt0+3XAn8lGksffwkImrt4qb7br4Vjxp+wNsETW8zFW8YontsZhWemeOKHH354nsdej7WwFt5JaCwhsoohgiW0kRBHbZNY71L9KB6cUGEFoayEtA6xXxTPzqOzlxtCzydA6K8ep+/8XYF9tI6Hxyo4ThvaJqJR23h4bC28FvLJ8ZhjjtloIwovZqNN9xen+08JkeDdfh4PH/FlL3tZ1ob7zxCsTfAMzDuujAzujBw2xRNz8biIfmFr9G/snsCB5BeIXjFE8Dw2IvohFyxyWN9llNh/7DHEftEPJhszerkh9HwC7tD8jf4rWBuvdVywCupSRtv0fAL+gxH9YDq5OXCTSG1EP5hve9vbFvzF6f5TQiR4t5/Hw0es3TCGYG2CHzNL6iw9kkazpGPgj1SRww4RfAu9fgumeiRdN8fYT0FdF3xtlrrF/r7SLnolapmlH4JI8E6fpY8wxH41dMF3wU/KMfZTdMEvYoj9auiC74KflGPsp+iCX8QQ+9UwieCjeG5ii7lQiRdddFH2iYd/8zctc/bZZ2cDi+Lh0zfKFsFH8ci+dnkrNlJwtlwwYqv1HC3x3NtBNknQsUWCJ+Zb6/inUUUUD16Lp1f7J55++ulZv8hfx/xPqsPnyWuvvTars2o8vDPaCMSJb3k9p+cDKNmvhkkEH/3C+mclv0NFgvWVSiVG9R3RL6x/FnFEd5gaOQfnaq3fInh/QvI71J4CHFD7GQl+VeD0bkOl2j/B7eeM/GeI/20lsfFU6II3tAjW2QW/2c8u+OnZBb+kvqMLfv3ogl8/9zjBazx4IrHFiCuROHTe99Lx888/f2PzhgQ3OAshzjrrrKzdRNqiTT2Ht8cSTtZta70HHnggK8O6eW2Dd0G+lbrRS+Q7+/ve9755/Sie29dG8zdFlE+A2GptA9uwBDXhmWeemd1///1ZHWeUD6AEzyfQQpYU69iwHTbUMh6bwLJXPU7Mva87UNQEr/ZPdPs5I//hW7237SSXgbc1hL78Gd/wMs5V3tkdkwg+gv/CttyhXPDRLH3CVLOsfodaldEdzh2Wi6hoeUJyRON3luwXwe0/Ff0Ohbj0eHSHVrj9WjiF/SLS91XAtdf2GNtWogu+C34Dbv+p2AW/iS54gTtcyWGjC9YFn7Nkvwhu/6nYBb+JvVLwGAtHSiSeWd8vgQv+lFNOma8XT3UIS/3e976X1XGHi+LZE3kPPPfcc+fOkviud71roVyNHsNMLDcx3doP1p9rGafGs48RfJRP4Jprrsn6+dRTT82+//3vb9SJHJa19doGbdK2gvkWt0Ei5/SxOX3xD9+ZvYwTG+t5yOGnbWA/glK8P4l8Z9f2PDZh3333nc/3aJma/fA93tm9r0rapG09V0nwBDh53521eHjiAoitUNTyMQzBKMEzicDdIxHHIp5Z4YLnIh1//PEbdU488cSFX3UXfBTPnkiiiptvvnneRiILFLxcjQRyaBss+iCmW/vB4h0t49R49jGCj/IJsNhE+3nppZdmUXyR4JkI1TZo03+ImVx1GyRyTh+b0xNSsrjEyzixsZ7HE3byY4n9vD+JTAJqe0zQaX2EyeYeWqZmP5KWcJ28r0rapG09V0nwJMn0vjtr8fAEynBjVNTyMQzBKMG3PJK54J2rfhZZtX6iP1JFn9X8kdTBry4XgrJjBB/B7eevRJHgW15p/JFy1fpuvwg+/qF0+4/xP7dfC2iTtrWdkuBb/M/r+yvlVP6zDF3wXfAr1Xf7RfDxD6Xbf4z/uf1a0AX//xhjcOeqgl21fqI7bBd8GV7f7RfBxz+Ubv8x/uf2a0EX/P+jxeD33Xff3ACJF154YTYZ1iJYFinwLqbtJF533XULiSrog5dzkkRCz8GmjThHIkkQ/L2NQAwt42SykPkD2t+9e/ds165d2XHfGLLlgrn9br/99mwyJxI8PzreNycLotwmiZxTwcQo49L6vsGD2y8iQSl+LiXX2BeklOxPzjs9zmQl8xdaJv0AJ7rgseVNN9200Fcl/WLyT/vK4qRlcP97+9vfPnvxi1+c9cMFzwaoWodMR74Iaa8QvGPM0louGnfPKeF3qCmo44+eEJyrXLCESPAtdIcrIbrDjaHfoR36hLQuuuBb7Leq/0X2G2L/hC74FdAF3+5wkcOOYRf8ZptD7J/QBb8CuuDbHS5y2DHsgt9sc4j9E7Zd8ARtYKxEFjD4RIPDBU+yR94P+Xsi31e1XfKus9mCllmVbMCo5xhDnweoCf6oo47K6vPDpmARCPW1nz4/4WhxWNY+sOBJz03AiNsk8bHHHsvOwVi4tj7+ofRMr2wCquflGnOtvd4qJJGo2uK4446bffrTn94452c+85l5YJXWefWrX53V4TqSKNXttIxuv0jwzA1oHTaqqOHGG2/M+un+MwSjBE+kFg6XiMOykKEEBuertBA9f0vEGNouGWuZzNEyq5JdV/UcY8gCCx1HTfCsNNP6vhiGVYcsRNJ+MilZAu1w8fU8ThY6sYhDz02UmNsk0Rd0cE25tj7+ocRfFOz8q+flGnOtvd4qvPzyyzNbsGJOz/nSl750Lnqt4wt6qPPCF75wwU7L6PaLBM8iI63DSrsa8Bftp/vPEIwS/BhEgncieEVksFU55pHKUXqliQQ/5pG29ivOha8JPnokLb3SuP3XhZL9pgJj8fEp8UV8UuGvlEPp9mvx35bPmlOiC34ESg7bBV9HyX5ToQs+xiSCJyiBdcr62OEBAPfcc8/8nVIfZzwwgccwbSN6pN9vv/02yvsrgQe9RORxvPR4xFj8Mbb2SMrae/YaA5Hg/ZHeyfduYgO0TZxPy/huOPztzDPPLI4/Ejzfq7WO0h9Jo0d6t4Ujsp/TX4lIVkqiSy+3jH7NIrQInnd6bdcf6SP6I3nJfvgEvqFl1H/hXil4IpEITtCJBRaKKIgCQvRpsgJjM5Gig2eiRduIJu1OOumkedlo0o/FPX6BnEy46TmYEFE8/vjj84w1WqY26cQuoimCKRK8T9o5ifojEEjbxHm0DItAPPiDDLyl8UeCJyuQ1lH6pFM0aceEbQmR/Zw+6cl7Mn31cstYe/oBNcFzs8H/tF2ftIvok24l++ET+IaWSf6buFcKfjseSfm1xICKMY9kbvBIsLVHckVUv8bokdYdFlthsxJ8/JH9hiB6JK29Eo0Z/1C2fJZy+03F2vhr8Fcq9791owu+C34puuAXWRt/DV3wgVETI4ftgl8OH39kvyHogl9kbfw17JWCJ4AA50okwIB3TIycyA4sWsbJBEntnSkKnknvf0xQ8c6qx/wHhAyqfOfUfnnwx0/91E9lbUTBL7XgDybl0o6mbJNNUgOt78Ez9EGPa/BNIjuuahkCPXQilH8zT1Iaf2S/IaRP9E374ZmBPfgjsl9t/MooeMnpgifTDBOB2g+333nnnbcwqTmGzGm4nYbQ5y/c/yJi46kwSvAtn1Uwshtrqxnd4fwX1sndibuUwpc2OqPxK7y+O+y6npBWZWQ/x9ThnS1PCF6/xX48DfJU6G3tDRzyhFlDF7yxxWGd0fgVXn+Mwzq64DfRYr8u+GfRBW9scVhnNH6F1x/jsI4u+E202K8L/llMIvgoiSALPLzjNfLOzYVrIevEPXup12dXFE8mUEriCKMkgu6wjFfrnHbaafPkl4ybd9ynn346q+9JCNm5VG3F+gTOq2V4f9YyThYlsU5B63gSiVIS0Ihen8SSrEHwcys9CSPJKe68886sDIkutV0XrCbxjJKIOr3+VgqeBJxut2XEfrpjckQWHXk9pyfxZEelsZhE8FGaYLKQ+OBq9JS9JSJKIsFK9RG7B/WU0jTDKE2wC57tr7QOEU+InnGzYs63VvI0w7fccktmKxbmIHotw2SZlnEiThYlaR0m6LSfpTTfEb0+zkoKaT+30m2OQ+KkWsa3THbBapruKE240+tzXs6pZdYleFJsu92WkR9L7OdtKNkO3es5PU03UX5jMYngpyKvAa2IHmmH1B8CF3zJ4aJHWofbj4uIUBS1V6KWz5L0ib61wuu30D8rTfVIXmJL/XUJfshnOa4p19bbULr9ItT8bwi64BtQM3gX/Ca64DfRBV/hEMF2wXfBl+p3wceYRPDRdr01slDCFyG4YEvbPUeCZ0GHlmWCrrYtD7voaJ2IQ7Z7jraLdl522WWZLXinZyJPy/h2204i9gjiUbhgI8GT8Yb2W7brZoKKd1Y/t5I62m/exdmaS9th8lTrfOADH8jqsP0SO7JwLNquu1afORVfrOOCx1bYzPuvbNkumnKAiUYfO9lxFJHgybik5yQAqgbKaB3f8nwIJhF8dIeqIRKsCz4yWDJ4VN8ZObzDPyu1kIu7DFPd4dxhW+CCjcbPuTk21RNCi/38s1LJfyL71epHnMJ+EUv+N8R/twuTCD6KZ/aZbkeLwaJ4Yn6ll9V3Rg7r6YK4s2j7LSRNlLahfPjhh2fHHHPMQh0ld1dFJHiemLxtp3+BcIeNxp/i4Xkq48uAoqX+GPtRRut4PLwK/itf+cr8yW9I/YhuP88nADyHA+PX8xKCvc8++2TtquA9H4HHw0eCnyIfwyqYRPBRPLPHwzsYiAvWBR/FE6fH2Ki+M3JYLqr284orrsjabyGPxdqGksfCWuJDf5SOBE+cgbetxNn8cbBFsCkeHrHzCVLRUn+M/SijdfxVTgXPuvgvfOELg+pHdPt5PgH+zd+0DILV815//fWzAw88MGs3CT7KR+Dx8JHgp8jHsAomEXzE2iNVJFgXfAlRfWfksOmRNrFl0sRRGn/LpJ0jEnyN3FFwMkWLYEtoqT/Gfj7p5Ky9EtbqtxBfwWcSIv9x/4sEO+SRPKrvdPu1vNKsgi74Bod1lMbfBb+ImmC74DfRBb8EUX3nVA7rKI2/C34RNcF2wW9ijxQ874EYp0SPh2/ZDPHkk0/O6pS4ajz9MoO3wMfP0sf0KSkS/N133531gbXmiu985zuzD3/4wws2rBEbaLtuz2j8JbbUv/LKK7M+vPvd715ox0kZ77syygegJGZc+1WKp19GzyfQ4n/RZpBD4uGj+k6Ph3/HO94xO/jgg7MyZ599dlbG/WcIRgm+BRhZO93yC7sdHCN4h96hI8H7Hco/y43BdtnP73BjPss5hj7h7M32m4KrjL8Lvgt+ELvgt5+rjL8Lvgt+ELvgt5+rjH8SwWs8cyLvflzERGK3ieFOx1moU7vIUTy3L6FUejx8C4lVVxDLzju6jsXp8ciE4bL8k/aieHDey/ScvkAjsl/KkZfAmgQWIg2x31C22I9FMNpPj4dnjmT//ffP2q0JXu0XkYVd2t4Yh2+xX8v4S/R8AhFr8fSR/Zxjxp8wieA1njmRxJb8cicSu41B0nEuIgt2fDDKKJ6bddNeLtFjs1tIrLqCWHZi2nUsTo9HZhEGTkt7OBMXTsuT5FLP6ev7I/tRR8ECJFYdDrHfULbYj3Xv2k+vw4+6xx7UBK/2i0jMuLY3xuFb7OdjGUrPJxCxFk8f2c85ZvwJkwiejuLk2ilmExV8QuJTkne+RNqkbYV/FlLyGrEqos8izpLBo/o1h1+X/YayxX5uf38lGjP+GqZ4JWqxX8v4S+CaeZtOfyVyRPZzjhl/Qhe8YVWDR/VrDr8u+w1li/3c/l3wm+iCF7QY3NkFv4kx9hvKFvu5/bvgN7FjBM+MZ4oHT2SzCsWYeGQm6HhnZ4CJaWKEfGtcIK1PDLmWjeLhUzz4MhK4QEy7903p8cicg3NRP4oHrzl8i+Bb7Lcq3X4RiUXXOvRTj0fjZ9NGb0fJnEiaCGWykklOPe7vtPiAt1Ejcei33XbbwpiHjt+vvQKf1/ZYGOWJVl//+tdn7ZH8VcGcEsEy3jdlqQ81TCL4qdDyC5k4dmkpRva2lNFntRoiwSqnEPxWwO0XEYdTtHyWq5FJNCY7Qcsdbgz9s3CEMeMvgTExNm9D6U9I60YXvLELfrH/Snf4Lvjl6IKvoMXgiV3w08PtF9Edvgt+OZ6zgv+P//iP2Z/+6Z/OL37imA3wCDLBACWm97kWwR922GHzhTXaL977tb0TTzwxq8MFIvBH6zzyyCPZefhWr8f5Zs57p/c1kcAQLc98h2KM4MmCwruetvtXf/VXWZknnnhiduutt2ZlUs78qD6bZnrfnfRL65D9x53YiY29HSXfv1nAQ3s33HDD7JJLLsmOH3nkkVl7+IAe5zu9L85xuuCj8ROkonVok7ZL41e6/ccInvkgNuPQdt3/VsEkgh/jsGOR7tAtgo/ov9AY1Ms4KaOgDT2ud6gIXFQtzxgUY+wXLQ31WebI4dL4W+pHqD0hRXT7OXT80RPWGPs5XfDR+J1DnxDdfpH9nS746AmnZr8h6ILvgl9aP0LJ4ZfR7efogt9EF7yhC/5ZRA7b4nBd8M8iGr+zC34JSIbIZoh0NHH37t3zzieSnI+MnCWwnlrrROQ7Oe0TZECyQ8VHPvKRrA8RPSGgC55MpYcffnhWh/dK7QPvm1pHBU9yxK997WtZeWyj5VsctiZ4MpsmWyTu2rUrOy9BPLQbjT9yeHdYAol459c2+c6udfjO7DZ2uv08MEj95w1veMPsc5/73CD7Rf7nZI0HGYVTmwRInXDCCVm7rPvQOrTpiT5Lgn/b295Wtb+vUeAcWoexYwOtU7PfEEwieDKJsLmjdgrn007jnDhpCS2CZVEM7ZPOmAynipYfDA+WccEj9rvuuiurwySS9sE3SlDBI/YzzjgjK++LL9xhxwieH09+RLWf/MjqeYnco1/R+FsEjygIJNI2aw4b0e3HBKdC/Sdy+Jr9Iv9zkkmY9OGpzSOOOGJhw1MXLG16uvWS4P0HI7J/7Qcz+sGr2W8IJhF8BJxHB+aPVBHGPJKvChc8BsXICn+kdA79rOQOO0bwEdx+0SNpQovgxzySRnD7+fgVY+zXgqmW1pYE74zsX6vf4n9jxp/QBd8Fv0F3+C74RdQEq4zsX6vf4n9jxp/QBd8Fv0F3+C74RdQEq4zsX6vf4n9jxp8wSvDsuEEnEt/5znfOvv71r2dlWISAmBKvvfba+YaJWs/p2UmjhTNp4QhZYti1w9tQUtff2R0satD2WfTgATdkR9EyZGfRfq5D8NjCx1Mj2WG1n0wusqhFy6TdaiLBH3vssVlZ3hVZVKRtEgijdVgUo3WuuuqqBSd3+/nCI64R14r6zAn4O7vT7af1E1nEpRgjeHwa39Z2PZCnxJaFO75wibFjA63jC498/EMwSvBDP0uBFoM7o1/IhMhhnaX6q6A0/qkEP4busNEduvRZzhnZb8wdqoah42+xnz8htfhfi/1WpT+hInovU6OPfwi64EegNP4u+C74ErvgC4wcLmGsw06B0vi74LvgS9wrBU8APidN1AQGCXzDZXCJJJ7gfUXrOX1XGDJ8kvRP2/nGN74xb7/FYaP6Tt+BNQJltA5JIJaNP0rg4MQWCk2gsQrZFUb7SYZZkk5qmZQ8Yaz9SODg5ZSR4N1+Ts7BubytZaQPtfo1we+3336zk046KbMN3+oVJcFH9Z2nnnrqwo8M/VUwn+H1anT/GYJRgm/BumfpWxy2hUyK1EAZrYPR90S4/aI7dMJU9nNGgnf7bQVrgo+WZjtKgh9b3wW/1eiC74KflF3wm4jqd8EL3GEjdsEvh9uvC34TXfDPYhLBRxsJsCMog00keKG2lp5vvlon4qc+9al5WdqiTT3mO3WS6PKQQw7Jyvg71dSCZ+01ARdqCxKEKBCbHmcjCtYVlMB4SWiR6vBvt6fb77TTTpt9+ctfzs6VyFzIueeeu2BfJWvD991332zsfCf2ckp+ZHB0PRdrAbRM6Tv785///NlBBx200G5r/UQ2hdA++EYo/Ju/uV2UBBrhP942ZBML3vm1PLsAK6YSPOsM9Dy+TmQIJhF8tFUQWV4YcCK/+vwwlMCEl9aJyLkAbdGmHmN7XjXu0UcfPb9oWoaJFC0zteAJuGDhhNqCbEAKJmr0OAEVbDVVAn0nc0yqw7/5m8LtxyIiRK/nSiQo5uabb16wr5KMqr61F5lYvZySCDGCRvRcLADSMrShbSrZHYZ+e7ut9RMRtPbBtzrj3/zN7aLEf7hpeNuQH0KeZrQ8W34rOM8UgmdRkZ7HtyobgkkEz68OHdGB+SPVVqDlkRaxapmpBR99luPTi4KLrsdxCpyjhL3lkXTM+JXRK4GjVH8Z/ZVyHa80LZ/1avaLMMT/ahgleB4xuCiJ/Fr6JzU+TWkZ51ThrYoWwdMvnCqRpaA1DDF4FB7LHUvhDssjLGV0nOlJJoHYf2yc2ozyATii8NZEQkV5JNVzPvnkk1n9yGG5W/s1UUbhrR7P7fkEeIznzk7ZKDzUH2F5atP2We7qGzAefPDBWRkPz47yCTjpE33TdgmN5lhLeG0UD5/Cu4dw28NjxxjcGTlsSzy8J7BQtAiex141ph+PMETwUQIMd1gXvDp8IrZQ8OPIj2RqM/rBdEQJLBJJBsEciJ4TISoiwSeHX8ZIsO6wnk9Af/CiHwz/wRxzw/EELFE+ASfnpW/abvrBa0mgEcXD135kIvoP5pYnwHCHHcPokdIFG7H0SOT1I8GPwRDBt6DFfut+JYoeaVseSWvEQXFKhdvPqa801KUNPe6vBI51vVJG4x/ylSjyP3+lbGFt/EPQBd8Ad9gu+OXsgt9k5H9d8AIXbMQu+GkQOWwXfI5o/DtS8L4RA58NiF3XTpLUX8s4Wed9xRVXzJ0h0eO5I+KUlOXbLt+YFS2C51OTntMZxXO7w/pGCJoPgLq04e0q/dMgeeJoQ8eJLbzeUEb5ANL4yU1AjgI9p2+kEG1k4fHwfB7U4+vIJ+AbWfgGjJHgx+QTuOOOO7J2I8Fz7SjLu/ihhx6aHXO2xMO3kDUF2oaPfwhGCd4RGbz2Cxv9QvodJkL6hWx5QogEX/uFXccdqkatn+ArFcewNP7Ifi1w+2GbofAnnKH28yesyP/G0P0vEvyqLD2hLoP7n49/CLrgjV3wZbj9uuCHsQte6rjBI5Qctgs+Z2n8kf1a4Pbrgh/G54Tgo3huFh0ovvWtb80+8YlPzAcMP/axjy18O+W7ZTq+jJdddtm8/fPPP3/+LVThgm+J5+Z9XPvN91v/zsk7k5bxNmoOy3uv1ndG+QRYFKNliL0mBju12RKPzTXx92liqTkW2e/RRx/NbMUSYA94SvUTEYnWYZ2Ezxt4PPyq+QTwAW3vlltumc9JaJnXvOY12TV4xSteMXvjG9+4cZx/8zct44KnT/TNz7+M7s8RL7744qzvLaRfep49Mh7e4UtDxxIDLIMLvoVbcYdi4mVVuP3G3qFLcPtFTwgOxqZ1Wp6QcNpVULJ/gj8htSytdcEPhdtvKk7hPwld8F3wG3D7dcEPg9tvKk7hPwld8F3wG3D7dcEPg9tvKk7hPwmjBI+xcIQSfZ33vffeO18vzsWBfKMkplgHRjBCOr6MKR6etdBPPfVUdk6+V7qxnB7Pzfd8bYNYdt9PzOOReWfUNo466qjZPffcMz+G4yEUPc637BKifAJO3unVXi3x2MTYE2uvZZLTR/a75pprsn6X4ukTPQafsWMDLcO3aL0GqwoeH1hm/0TPx0DsPzkA0nHCmE855ZSsX+4LQ+n+15KP4YADDsiOs3bfA3ZYT6Hn8XmZIRgleI/njsiknIJOPvjgg3NngCzG8JlVJpLS8WVMUWQEqVx66aXZOYmB1vYiejw3wRDaBrHsOIPC45GZINI2cLYUA8/EIxOWepwFLCVE+QSc3Dk1GUVLPDYx9sTaa5m0CURkPxxW+12Kp09kgk3rRPHw/LjrNVhV8Nhrmf0TPR8Dsf9EDqbjxx9//EIiDYJ6fHxD6P7Xko/hnHPOWbA5N0Ytw6I2Pc+Wx8P7I1XEdX2WS4jqt9BfCaZ4JOVXlwuxrH4NWn8Vuv1wIO4aWiaNP7JfS32nvxJFrzROt9+qiOzn/uevRFtB+kTfFIxdy2y1/brgu+AH1XdutcNGiOzn/tcF/yy64LvgB9V3brXDRojs5/7XBf8sJhE8ySPJJ4eRE3GWEpgYu/3227M673nPe+ZOV2JaLBI57Mknn5y1F5HFJYqHHnooO07iCc82M0TwJEEg84n3W+kbHjDByZyH91V54YUXZpM5/Ju/aRm3H+/kTMRF44/sf99992X9ahE8G1DqOXft2jXbvXv3Qv+VviiLyUbmH9xOy+j2m0rwLf4zhFxTn7xm7Frm6quvrtrPN1l1/xuCSQSPU9QE3gIG5xfBOeQONRWGCL6FXr8F7rDRZzm3X3SHGYIWwTu34gnH7RfVxxYKt1/EdflPCVM8YQ5BF3wDagaPHK5Er98Cd9gu+HL9LvgYXfANqBk8crgSvX4L3GG74Mv1u+BjbJngWdDC91IMv4x8I0fEJd5///3z9loEz7d/Fvz4eUoksaa/d914441ZHwiA0DpsaECOc+9roidKIOjFz1sjQUA///M/v9Em/+ZvWsbtR5/om7fVSr5ds2BF2/SAE2fksDWwAIg1AbRPYkjPBsvCGu2Di7lF8ATwnHnmmRttsL7AE1Sed955CzZwEgQGWCxFm358KElComMjsShzFFqGtRTaz71C8IidhQ78yi4jgkXIJT7zzDPz9loEz0IfFjH4eUok4omMsApWrGkfbrvttqwOCy7InOp9TSQ7ivaTSDc/b40I/N/+7d822uTf/E3LuP3oE33ztlrJQhVWp2mbRJnpWJxjBM+qPxYC0T6TsqSA1jZZzad98F16WgSPQLUNbgaIXuswEeo2cBLxCWiDHxA/PpQs4tJ+kU2YFOJaRqMk4V4heH6p6LzWc7pgS8A4NcGv65F06Pj9kWwMGStjTljX+JXRKwHO5uWULfYrIfosVVtL3iJ4R2S/FpZeKcdwr/wsV3N40AW/eK4h7IJfji74dkwieNZKszZeH008AKVF8JdffnnWRonRI9kUDt/isD7+VQW/zz77zF7wghcsPO4peXxk3An82x8pfY11NH4COrztRA/aYL05cQVq9ze96U1ZHd97rcV+vJZpm+wCk/Yd5HWK1yo9BwlPtbw/0hOrQKJLrXPddddlZfyRPnolauHUj/QE7Cii8TuJORmLSQRP5Ba/sDr5wKIORYvgDz/88KyNEqNJl71V8AceeODs+uuvX5jQUTJBpJtxRpNGjz32WHbeaPzYyNtOZCGPlmXOhYgytTvZVrTORRddlNVpsR8Tr9omE1WpDhOmTJzqOchurOX97s0PBmPVOuz+o/BJu2jSs4VTT9p55uVo/E7PVDQEkwg+ol8UOloT/KrcWwVfqz8W0fjTI2kE/6wX0eu3fFZyrGq/MY+07n/8m7/tNHTBG7fCYZ21+mMRjd8Fq+iCf+6jC964FQ7rrNUfi2j8LlhFF/xzH6MEzzsE4kpk4sF3BE3vWoksCtE6Y5mykTLBxEIJPeYXkG/IJEKI6i8ju96S1EH77nzve9+btck5OBcg8IYAHC3vwQ/0QeuTnYU2tE5JAKAl+CUaP32nLJNa/p5LfS0b0d8f2a1Gj0fBH86h9mMXHi1/5ZVXZsf5Tu+ZhhmLlon8j79535QtwS9Ktz99om9axoO3HNH4CfCaCqME74g+izj5AdBZ5rFIn4XG/kLXPiu1sHSHGfNZJbIfF7oEbIlNtQ5OXMOq9qthzPgVUX3/LNfyhIAttIz7X2Q/59DPkm7/oU9YoGX8q6ALfgSHOqzT60f264LfLO8O3wU/Hl3wIzjUYZ1eP7JfF/xmeXf4LvjxmETwLUkYCeRgbTdGgKxzr2Xf/O53vzv74he/uFEHsvaY9lho4ReZdyYtG9GTCLJoyPvqrCVhZCEICSNpP0pC6PT6kf08CagjctiWJKBp/Cz04du/H1cyJl/kwm4sWibtmpvAQh1PKOn2ow9+rsQoCSaJRrUMC3H0OGsysLuWIfmHlnH/49/8Tcs4GQcxINqu+0/J/uxYREIULeOCZ9GQ1on8Z48TfEuaZaK2COTgFw8yKCLZSkDsr33tazfqQFJE0x6GYsGFwlMmR/QvBaRQ9r46a2mWSQVNRBPtR2mGnV4/sp9PFjkiwbek+U7jZ3UfC378uJIxMTYFWy9pGba5VjCZSGRkyX70wc+ViNBwfK3PpLCWueCCC7LjLF5B9FqGTD9axv2Pf/M3LeNE7ETqabvuPyX7I3bNNAxd8KQw1zqR/+xxgm/BmM8iXHiMUDKYgsdgvwg1+lrmCLXPQjgHjuptL6PXH4NI8FOTMTE2hT/SjrFfidFnPa/v9ovs769EU/nfqnT/9c+aEbvgl6ALflp2wS/636p0/+2CF0QGd4MpuuCnZRf8ov+tSvff56zgfbto/p0CEZaB91q2FUp1YFqgwWQSF5WLn8iCDC3LwgrfXcS36yUAQhFtV8yW0toG7396/KyzzlqYnFEyIafn9O2Sx5CoNQJZtF2CUPS80XbZJXp9xsTY9Ly+u0rLdtu+XXSJ0XbT6xB8y3bbTND5O7v7T4mR/7HVuJ6DmX2v56SM1tkrtoueGtEdbl2fRVal/0LTBy8zlNEdyp9wojt0CV5/DKM79KpYh+DHsuY/isj/nGOekHz8QzBK8B7PvJXUFFcej4zgtSwx+v5JiM9dWsY/O61D8J6iiT7o8Sge3mdqme3V49w5mEVWuGAjwWu6Lg23BV4/YimeHrakCCuRLy+kvFK4w5NmS+vw1Ec6Lu2Hx8NHgq/ZPKIKPqXlSvQcEJHg3X4eDx+BMlpny+PhPZ55K5mSWEbxyJ7EEYf3HWpxSC1DgkrFOgTvSRjpgx6P4uGJE9Ayxx133OzTn/70xnHEzucvhQs2Ejxl6AM/lv464/Uj8qOq/XS2JAEtkfx/jz/+eFbfBU8iTa1Dok0Sbmo/PE6Av6ngETtr+LWO5wOImASP2PnWr/246aabsnNGgnf7eTx8BMpoHY9nGIJRgp/ikXQsS49ULQ7r9EeqdQi+RpwC51DUVopF8PFHgudxkGM4P86j8PoRS/ZfBhdsidErQa1+ZD+HC37V8XMtuCZ6bIpXynWjC74LfgNeP2LJ/stQE6yyC3696ILvgt+A149Ysv8y1ASr7IJfLyYRPEsKmUhgwFOSNn1TgmSwKB7cN1OM6juJVdc2+KxETLyXU3o8u5KNJP0T3emnn56VYa24Ho8247zqqquyOrwf6qRQNH53wEjwbHJAeyS89Bx47vDkOGDCSPvh748tm3HecccdxfGr/7Bu/sknn8zqu+Dd/lE+AWfLZpxuv4jqf1wT7Yf/gESC59OnnvPuu+/O6qwbkwi+5Rd2DCKDrfoLOwVLn0WiJ4Qxn+VwhhKi8TsjwZfAOYfW94Uj0R3a4eOv+Y8L3u0ffZZbF4fcoVv8z58w140u+BF0h1N0wXfBJ7T4Xxe8IDJYF/yziMbvbBGsogu+zi74JReMxRD8bQjTstmEyGBDBE88NyGeOMMyHnbYYVkb+++///w7uZbxxTuleO4onpkQUi3DegE9zmKMo48+Ojsn76RaBxHpQplo/E7aZKmq93EZmUfQ+pHgPR6ed27tNzHkxMQriJnXOj5+5jyIHff+JJ5zzjlZebc/axI8Bt/JD5GHqo4hfff+LWMUD+9kbFqHOZKnn346s9+UWJvgcVj+PoTUUdDmKoJnhRfx3DjtMr7//e/P2mBtOMkRtMyQeO4onvklL3lJVsbXVx9yyCFzYeo5mYjSOkz2aPx/NH4nPyS07X1cRiYPtX4keI+HZ1JP+81iIF9xxg+e1vHxI0SE4f1JPOCAA7Lybn8WNiF6v7ZKJit9EdYY0nfv3zJG8fBOxqZ1WDH41a9+NbPflFib4BGfD65GF+yqgm9ByyOpP1JOzRb7+We5aPxTMxJ8+qyX2PJIuh32c/hnuT2Vkf9NiS74Lvil7ILfekb+NyW64Lvgl7ILfusZ+d+UeE4Lngkm3jlTHHFE6tBmYhSPPSSeO2Ip8SGM7MfkjbZB0FCKFAT8m7/5uZRRPHYpntvj4VsEP3U8fES3HzHlepw8hyQ39WurJPadGHi3vZIFQdpuZL9E5kfcd9x+Q/MRwMj/psRzWvBRfWfLHWpV1O5wkf2mQDT+ZL8ILZ/lXPDOddyh3H70QUEf6av3ZSiH+E/L0tzIftuNLvgu+A20OGwX/LPsgu+CXwp3WGdkvykQjb8LfjmH+E8X/B4geIJUmIRL5Psv38C1DO+DOFAiSQy0Dgtnahtk8J1U69Tq33bbbdk5nfTTN3RwkBTiox/96ML5lGzsqIjsR349ytKWJ5pwh2VREusU9BxcI++/kqAfd3IyD3lfh5BNR7RfJAPR42QUYu7A+zKUbFqp7bKoiHUGWiblN+Qd/qKLLsrKn3322VX71b6x4zv4kNtA+dnPftarNeM5JfgW+h0OA+rxljuUj39o/TFomWVusV9iyx0qotuvBQjF25mSkf+NgY8/ukPXnnBqrNkvWprt9CecIeiC74LfgDt8RLdfC7rgN1mzXxd8F/wcXfDLGfnfGPj4u+D/H+7wkcF5/6HjQ0gdReSwyWCsKyfhodb3xBUEwvDOpWX4zqlwwR9++OGzu+66a274RH8npw3ve+IZZ5yxkEBxCpAckqCedJ4jjjhiIblHi+BJakH9Y445Zr6+XMe5e/fubCwEAXlcQM1hSe7I+LXdSy65ZMFOq5AxaJ8i/yOJhvaB+QrNhsu/+Vtp/ATkeKJQ5gq8P4nufxHxcT2n/6DwN9ry8el56MNYrE3wbvAWeqaTyGGTw0UXDENoWQRCIIyW8UUNLniymSJ6NTCTKAra8L4n4uw4/dQgEyzpn9N5WJhzwgknZH1vEXxyuIcffni+UETHuWvXrmwsjJtgoMj+y8D4+dHTdm+44YYFO61CxqB9ivzPbzjcHDT4KLph+PiJ+vNAIBYVeX8S3f8iph/cRCY5FbTD37UOmZz0PL6waQjWJvgpEDlsyeFaHskcLviIlNnTEL3StAi+9Eo0pP4yRA47tf1a/M9fKVuWJvv4h8L9r4W87ijWbb8u+C74UfWXYd0OC1r8rws+Rhd8F/yo+suwbocFLf7XBR9jEsETxE/mDl/IsCpp05MfJIcjuQU7mmh5MtBqWTLVkLzC21X6oo6IbnCCQbSNloUzU4PgGSYP6Vvi1Vdf3Wy/lvq8k7KoRcv4whEW1WgdJuh4Z9c6LG5yuy+zHz/QvNfqcc6h8IVPt9566+yJJ57IyrAIScswVg0+igR/7LHHZudl0YzP+ZDFxvuf6P4XLbxh0ZCWOfLII7M2Ivs98sgjWR9WwSSC30qW7lDrIkYvjT+6w2wHWu4wpTu01x/zhMTdibuUAkf2fijVfuu+wyW0+E80/iGf5cbUj+w3JbrgG+gO5+Pvgt+sEzlsF3x7/ch+U6ILvoHucD7+LvjNOpHDdsG314/sNyVGCf6BBx6Yd3w7yLkB7/A4qB9fBz1YwcdPkg2SbWw37rzzzoW+O5P9Inh9dqfxRUcObKN1ogQYvPd6P5RqP+rShh53+0+BFv+Jxv/BD35wodwyjqkf2W9KjBJ8R0fH3oku+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYQu+I6OHYT/A79T4Kf4ujVeAAAAAElFTkSuQmCC" alt="小程序体验版二维码">
+<p class="db-qr-text">用手机微信扫一扫，进入小程序</p>
+<p class="db-qr-sub">体验版 · 二维码 11 月 29 日前有效</p>
+<a class="db-qr-link" href="wechat-miniprogram-preview.html" target="_blank" rel="noopener">快速浏览小程序网页版 ↗</a>
+</div>
+</div>
+</div>
+</div>
+<style>
+#cs-wb{background:transparent}
+#cs-wb .db-shell{--s-bg:light-dark(#f2f4f8,#0f1115);--s-surface:light-dark(#ffffff,#191c21);--s-surface-2:light-dark(#f7f9fc,#20242b);--s-text:light-dark(#1f2733,#e9edf3);--s-muted:light-dark(#7c8899,#98a2b0);--s-line:light-dark(#e9edf2,#292e36);--s-line-strong:light-dark(#c9d2dd,#3b424c);--s-primary:light-dark(#3b82f6,#5b9bff);--s-primary-soft:light-dark(#eaf2ff,#1b2740);--s-yellow:light-dark(#e79a1f,#f5bb5c);--s-yellow-soft:light-dark(#fff6e6,#33291a);--s-green:light-dark(#1eb864,#41d486);--s-green-soft:light-dark(#e8f9f0,#15301f);--s-cyan:light-dark(#1fb2cd,#4cc9e0);--s-cyan-soft:light-dark(#e7f7fb,#12303a);--s-purple:light-dark(#8b5cf6,#a98bf7);--s-purple-soft:light-dark(#f1ecfe,#261f3d);--s-pink:light-dark(#ec5a9e,#f27cb4);--s-pink-soft:light-dark(#fdecf4,#3a1c2b);--s-orange:light-dark(#f2733f,#ff9060);--s-orange-soft:light-dark(#ffeee6,#3a2419);--s-on:#ffffff;--s-shadow:0 1px 2px light-dark(rgba(16,24,40,.06),rgba(0,0,0,.45)),0 10px 28px light-dark(rgba(16,24,40,.05),rgba(0,0,0,.28));background:var(--s-bg);color:var(--s-text);border-radius:14px;overflow:hidden;box-shadow:var(--s-shadow);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:13px;line-height:1.5;display:flex;flex-direction:column}
+#cs-wb .db-top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:10px 18px;background:var(--s-surface);border-bottom:1px solid var(--s-line)}
+#cs-wb .db-brand{display:flex;align-items:center;gap:8px;white-space:nowrap}
+#cs-wb .db-logo{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;color:var(--s-on);background:linear-gradient(135deg,#4f8cf7,#7c5cf6)}
+#cs-wb .db-logo svg{width:16px;height:16px}
+#cs-wb .db-brand-name{font-size:15px;font-weight:600;letter-spacing:.2px}
+#cs-wb .db-nav{display:flex;align-items:center;gap:2px;flex-wrap:wrap;min-width:0}
+#cs-wb .db-tablist{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+#cs-wb .db-tab{display:inline-flex;align-items:center;gap:6px;padding:8px 10px 10px;border:0;background:transparent;border-bottom:2px solid transparent;color:var(--s-muted);font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+#cs-wb .db-tab svg{width:15px;height:15px}
+#cs-wb .db-tab.ic-blue{--tab-ic:#3b82f6}
+#cs-wb .db-tab.ic-green{--tab-ic:#22b573}
+#cs-wb .db-tab.ic-orange{--tab-ic:#f2733f}
+#cs-wb .db-tab.ic-blue svg{color:var(--tab-ic)}#cs-wb .db-tab.ic-green svg{color:var(--tab-ic)}#cs-wb .db-tab.ic-orange svg{color:var(--tab-ic)}
+#cs-wb .db-tab.is-active{color:var(--s-primary);border-bottom-color:var(--s-primary);font-weight:600}
+#cs-wb .db-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--s-pink);color:#fff;font-size:11px;font-weight:500;line-height:1}
+#cs-wb .db-top-right{display:flex;align-items:center;gap:10px;margin-left:auto;flex:1 1 260px;justify-content:flex-end}
+#cs-wb .db-search{display:flex;align-items:center;gap:6px;flex:1 1 200px;max-width:300px;padding:6px 10px;border:1px solid var(--s-line);border-radius:8px;background:var(--s-surface-2);color:var(--s-muted)}
+#cs-wb .db-search svg{width:14px;height:14px;flex:0 0 auto}
+#cs-wb .db-search input{flex:1 1 auto;min-width:0;border:0;background:transparent;color:var(--s-text);font:inherit;font-size:12px;outline:none}
+#cs-wb .db-search input::placeholder{color:var(--s-muted)}
+#cs-wb .db-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--s-muted);cursor:pointer}
+#cs-wb .db-icon-btn svg{width:16px;height:16px}
+#cs-wb .db-icon-btn[aria-pressed="true"]{background:var(--s-primary-soft);color:var(--s-primary)}
+#cs-wb .db-avatar{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c5cf6,#f2733f);color:#fff;flex:0 0 auto}
+#cs-wb .db-avatar svg{width:15px;height:15px}
+#cs-wb .db-avatar-btn{border:0;padding:0;cursor:pointer;font:inherit}
+#cs-wb .db-avatar-btn:hover{filter:brightness(1.08)}
+#cs-wb .db-qr-mask{position:fixed;inset:0;z-index:80;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+#cs-wb .db-qr-mask[hidden]{display:none!important}
+#cs-wb .db-qr-card{position:relative;background:var(--s-surface);border-radius:18px;padding:22px 22px 18px;width:min(320px,86vw);display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 24px 60px rgba(15,23,42,.3)}
+#cs-wb .db-qr-img{width:min(236px,64vw);height:auto;display:block;border-radius:8px;background:#fff}
+#cs-wb .db-qr-text{margin:2px 0 0;font-size:12px;color:var(--s-text);text-align:center}
+#cs-wb .db-qr-sub{margin:0;font-size:10px;color:var(--s-muted);text-align:center}
+#cs-wb .db-qr-close{position:absolute;top:8px;right:10px;width:28px;height:28px;border:0;border-radius:50%;background:transparent;color:var(--s-muted);font-size:20px;line-height:1;cursor:pointer}
+#cs-wb .db-qr-close:hover{background:var(--s-surface-2);color:var(--s-text)}
+#cs-wb .db-qr-link{display:inline-flex;align-items:center;justify-content:center;margin-top:2px;padding:8px 16px;border-radius:8px;background:var(--s-primary-soft);color:var(--s-primary);font-size:12px;font-weight:600;text-decoration:none}
+#cs-wb .db-qr-link:hover{filter:brightness(.97)}
+#cs-wb .db-scope{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 18px;background:var(--s-surface);border-bottom:1px solid var(--s-line)}
+#cs-wb .db-scope-label{font-size:12px;color:var(--s-muted);flex:0 0 auto}
+#cs-wb .db-scope-items{display:flex;flex-wrap:wrap;gap:6px}
+#cs-wb .db-scope-info{font-size:12px;color:var(--s-muted);margin-left:auto;font-variant-numeric:tabular-nums}
+#cs-wb .db-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--s-line);border-radius:999px;background:var(--s-bg);color:var(--s-text);font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}
+#cs-wb .db-chip.is-active{background:var(--s-primary);border-color:var(--s-primary);color:var(--s-on);font-weight:600}
+#cs-wb .db-chip-n{font-size:11px;color:var(--s-muted);font-variant-numeric:tabular-nums}
+#cs-wb .db-chip.is-active .db-chip-n{color:var(--s-on);opacity:.85}
+#cs-wb .db-lane{max-width:460px}
+#cs-wb .db-prov{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--s-muted)}
+#cs-wb .db-prov-note{margin:0;font-size:11px;color:var(--s-orange)}
+#cs-wb .db-unlock{margin:0;font-size:11px;color:var(--s-green);font-weight:600}
+#cs-wb .db-kpi-btn{width:100%;border:0;font:inherit;text-align:left;cursor:pointer;align-items:stretch}
+#cs-wb .db-done-page,#cs-wb .db-jobs-page,#cs-wb .db-agents-page{margin:0 14px 14px}
+#cs-wb .db-job-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+#cs-wb .db-job-sec{margin:0 0 18px}
+#cs-wb .db-job-sechd{display:flex;align-items:baseline;gap:8px;margin:0 0 10px}
+#cs-wb .db-job-secname{margin:0;font-size:14px;font-weight:600}
+#cs-wb .db-job-secsub{font-size:11px;color:var(--s-muted)}
+#cs-wb .db-job-secdesc{margin:-4px 0 10px;font-size:12px;color:var(--s-muted)}
+#cs-wb .db-job-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(292px,1fr))}
+#cs-wb .db-job-card{display:flex;flex-direction:column;gap:7px;padding:12px;border-radius:10px;background:var(--s-surface-2);min-width:0}
+#cs-wb .db-job-hd{display:flex;align-items:center;gap:9px}
+#cs-wb .db-job-ic{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;color:#fff;flex:0 0 auto}
+#cs-wb .db-job-ic svg{width:17px;height:17px}
+#cs-wb .db-job-ic.c0{background:linear-gradient(135deg,#4f8cf7,#7c5cf6)}
+#cs-wb .db-job-ic.c1{background:linear-gradient(135deg,#3ecf8e,#20b26b)}
+#cs-wb .db-job-ic.c2{background:linear-gradient(135deg,#f7c948,#f2a03d)}
+#cs-wb .db-job-ic.c3{background:linear-gradient(135deg,#ff8a5b,#ff5f6d)}
+#cs-wb .db-job-ic.c4{background:linear-gradient(135deg,#38bdf8,#0ea5e9)}
+#cs-wb .db-job-ic.c5{background:linear-gradient(135deg,#a78bfa,#8b5cf6)}
+#cs-wb .db-job-name{margin:0;font-size:13px;font-weight:600}
+#cs-wb .db-job-sub{margin:0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-job-intro{margin:0;font-size:12px;line-height:1.6}
+#cs-wb .db-job-block{display:flex;flex-direction:column;gap:4px}
+#cs-wb .db-job-k{font-size:11px;color:var(--s-muted)}
+#cs-wb .db-tags{display:flex;flex-wrap:wrap;gap:4px}
+#cs-wb .db-tag{padding:2px 7px;border-radius:6px;background:var(--s-surface);color:var(--s-text);font-size:11px}
+#cs-wb .db-job-line{margin:0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-res-page{margin:0 14px 14px}
+#cs-wb .db-res-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+#cs-wb .db-res-sec{margin:0 0 18px}
+#cs-wb .db-res-sechd{display:flex;align-items:baseline;gap:8px;margin:0 0 10px}
+#cs-wb .db-res-secname{margin:0;font-size:14px;font-weight:600}
+#cs-wb .db-res-secsub{font-size:11px;color:var(--s-muted)}
+#cs-wb .db-res-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));align-items:start}
+#cs-wb .db-res-card{display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:10px;background:var(--s-surface-2);min-width:0}
+#cs-wb .db-res-hd{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+#cs-wb .db-res-type{padding:1px 7px;border-radius:5px;font-size:10px;font-weight:600;background:var(--s-primary-soft);color:var(--s-primary)}
+#cs-wb .db-res-type.t-exam{background:var(--s-green-soft);color:var(--s-green)}
+#cs-wb .db-res-type.t-award{background:var(--s-orange-soft);color:var(--s-orange)}
+#cs-wb .db-res-type.t-proj{background:var(--s-purple-soft);color:var(--s-purple)}
+#cs-wb .db-res-title{margin:0;font-size:13px;font-weight:600}
+#cs-wb .db-res-desc{margin:0;font-size:12px;color:var(--s-text);line-height:1.55}
+#cs-wb .db-res-list{margin:0;padding-left:1.05em;display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-res-src{margin:2px 0 0;font-size:10px;color:var(--s-muted)}
+#cs-wb .db-res-src a{color:var(--s-primary);text-decoration:none}
+#cs-wb .db-res-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+#cs-wb .db-res-toggle .db-res-hd{flex:1 1 auto}
+#cs-wb .db-res-toggle svg{width:14px;height:14px;flex:0 0 auto;color:var(--s-muted);transition:transform .15s ease}
+#cs-wb .db-res-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}#cs-wb .db-res-comp{display:flex;align-items:baseline;gap:8px;margin:8px 0}
+#cs-wb .db-res-compname{font-size:13px;font-weight:600;color:var(--s-text);padding-left:8px;border-left:3px solid var(--s-primary)}
+#cs-wb .db-res-refresh{display:inline-flex;align-items:center;gap:5px;margin-left:auto;padding:4px 9px;border:1px solid var(--s-line);border-radius:7px;background:var(--s-surface-2);color:var(--s-text);font:inherit;font-size:11px;cursor:pointer;flex:0 0 auto}
+#cs-wb .db-res-refresh svg{width:13px;height:13px;color:var(--s-muted)}
+#cs-wb .db-res-refresh:hover{border-color:var(--s-primary);color:var(--s-primary)}
+#cs-wb .db-res-refresh:hover svg{color:var(--s-primary)}
+#cs-wb .db-res-info{margin:0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-res-q{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+#cs-wb .db-res-q li{display:flex;flex-direction:column;gap:2px;padding:7px 9px;border-radius:7px;background:var(--s-surface)}
+#cs-wb .db-res-q-text{font-size:12px;line-height:1.5}
+#cs-wb .db-res-q-ans{font-size:11px;color:var(--s-muted);line-height:1.5}
+#cs-wb .db-agent-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+#cs-wb .db-agent-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));align-items:start}
+#cs-wb .db-agent-card{display:flex;flex-direction:column;gap:7px;padding:12px;border-radius:10px;background:var(--s-surface-2);min-width:0}
+#cs-wb .db-agent-toggle{display:flex;align-items:center;gap:9px;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+#cs-wb .db-agent-avatar{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;color:#fff;flex:0 0 auto}
+#cs-wb .db-agent-avatar svg{width:18px;height:18px}
+#cs-wb .db-agent-avatar.c0{background:linear-gradient(135deg,#4f8cf7,#7c5cf6)}
+#cs-wb .db-agent-avatar.c1{background:linear-gradient(135deg,#3ecf8e,#20b26b)}
+#cs-wb .db-agent-avatar.c2{background:linear-gradient(135deg,#f7c948,#f2a03d)}
+#cs-wb .db-agent-avatar.c3{background:linear-gradient(135deg,#ff8a5b,#ff5f6d)}
+#cs-wb .db-agent-avatar.c4{background:linear-gradient(135deg,#38bdf8,#0ea5e9)}
+#cs-wb .db-agent-avatar.c5{background:linear-gradient(135deg,#a78bfa,#8b5cf6)}
+#cs-wb .db-agent-main{display:flex;flex-direction:column;min-width:0;flex:1 1 auto}
+#cs-wb .db-agent-name{font-size:13px;font-weight:600}
+#cs-wb .db-agent-major{font-size:11px;color:var(--s-muted)}
+#cs-wb .db-agent-toggle>svg{width:14px;height:14px;color:var(--s-muted);flex:0 0 auto;transition:transform .15s ease}
+#cs-wb .db-agent-toggle[aria-expanded="true"]>svg{transform:rotate(180deg)}
+#cs-wb .db-agent-intro{margin:0;font-size:12px;line-height:1.55}
+#cs-wb .db-agent-prompt{display:flex;flex-direction:column;gap:6px;padding:9px 10px;border-radius:8px;background:var(--s-surface)}
+#cs-wb .db-agent-k{margin:0;font-size:10px;color:var(--s-muted);font-weight:600}
+#cs-wb .db-agent-text{margin:0;font-size:11px;line-height:1.65}
+#cs-wb .db-agent-asks{margin:0;padding-left:1.05em;font-size:11px;color:var(--s-muted);display:flex;flex-direction:column;gap:2px}
+#cs-wb .db-agent-copy{margin-left:0;align-self:flex-start;margin-top:3px}
+#cs-wb .db-done-grp{margin:14px 0 4px;font-size:13px;font-weight:600}
+#cs-wb .db-done-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--s-line)}
+#cs-wb .db-done-main{min-width:0}
+#cs-wb .db-done-name{margin:0;font-size:13px;font-weight:500}
+#cs-wb .db-back{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--s-line);border-radius:8px;background:var(--s-surface-2);color:var(--s-text);font:inherit;font-size:12px;cursor:pointer}
+#cs-wb .db-back svg{width:14px;height:14px}
+#cs-wb .db-back.small{padding:4px 8px;font-size:11px;flex:0 0 auto}
+#cs-wb .db-hint{margin:0;font-size:11px;color:var(--s-primary)}
+#cs-wb .db-tl-tag.t-ok{background:var(--s-green-soft);color:var(--s-green)}
+#cs-wb .db-tl-tag{flex:0 0 auto;padding:0 5px;border-radius:4px;background:var(--s-orange-soft);color:var(--s-orange);font-size:10px;line-height:16px}
+#cs-wb .db-note{margin:10px 0 0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-tiles .db-note,#cs-wb .db-tiles .db-empty{grid-column:1/-1}
+#cs-wb .db-body{display:grid;gap:14px;padding:14px;grid-template-columns:236px minmax(0,1fr) 288px;grid-template-areas:"rail focus side" "rail chart chart" "list list list"}
+#cs-wb .db-rail{grid-area:rail;display:flex;flex-direction:column;gap:12px;align-self:stretch}
+#cs-wb .db-focus{grid-area:focus}
+#cs-wb .db-side{grid-area:side}
+#cs-wb .db-chart-panel{grid-area:chart}
+#cs-wb .db-list{grid-area:list}
+#cs-wb .db-panel{background:var(--s-surface);border-radius:12px;padding:14px;box-shadow:var(--s-shadow);min-width:0}
+#cs-wb .db-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#cs-wb .db-panel-title{margin:0;font-size:15px;font-weight:600}
+#cs-wb .db-sep{margin:0 6px;color:var(--s-muted);font-weight:400}
+#cs-wb #db-view-name{color:var(--s-primary);font-weight:500}
+#cs-wb .db-panel-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--s-primary-soft);color:var(--s-primary)}
+#cs-wb .db-panel-icon svg{width:12px;height:12px}
+#cs-wb .db-kpi{display:flex;flex-direction:column;gap:4px;justify-content:center;padding:14px 16px;border-radius:12px;box-shadow:var(--s-shadow);min-width:0;flex:1 1 auto}
+#cs-wb .db-kpi.k-blue{background:var(--s-primary-soft);color:var(--s-primary)}
+#cs-wb .db-kpi.k-yellow{background:var(--s-yellow-soft);color:var(--s-yellow)}
+#cs-wb .db-kpi.k-green{background:var(--s-green-soft);color:var(--s-green)}
+#cs-wb .db-kpi.k-cyan{background:var(--s-cyan-soft);color:var(--s-cyan)}
+#cs-wb .db-kpi-label{font-size:13px;font-weight:500}
+#cs-wb .db-kpi-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#cs-wb .db-kpi-value{font-size:26px;font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+#cs-wb .db-kpi-ring{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:color-mix(in srgb,var(--s-surface) 72%,transparent);flex:0 0 auto}
+#cs-wb .db-kpi-ring svg{width:22px;height:22px}
+#cs-wb .db-kpi-bar{height:6px;border-radius:3px;background:color-mix(in srgb,var(--s-surface) 70%,transparent);overflow:hidden;margin-top:4px}
+#cs-wb .db-kpi-bar span{display:block;height:100%;width:0%;border-radius:3px;background:var(--s-primary);transition:width .25s ease}
+#cs-wb .db-kpi-sub{font-size:12px;color:var(--s-muted)}
+#cs-wb .db-tiles{display:grid;gap:14px 10px;grid-template-columns:repeat(auto-fit,minmax(92px,132px));justify-content:start}
+#cs-wb .db-tile{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 4px;border:0;background:transparent;font:inherit;cursor:pointer;border-radius:10px;text-align:center}
+#cs-wb .db-tile-icon{position:relative;display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:14px;color:#fff}
+#cs-wb .db-tile-icon svg{width:24px;height:24px}
+#cs-wb .db-tile-c0 .db-tile-icon{background:linear-gradient(135deg,#ff8a5b,#ff5f6d)}
+#cs-wb .db-tile-c1 .db-tile-icon{background:linear-gradient(135deg,#4f8cf7,#7c5cf6)}
+#cs-wb .db-tile-c2 .db-tile-icon{background:linear-gradient(135deg,#3ecf8e,#20b26b)}
+#cs-wb .db-tile-c3 .db-tile-icon{background:linear-gradient(135deg,#f7c948,#f2a03d)}
+#cs-wb .db-tile-c4 .db-tile-icon{background:linear-gradient(135deg,#a78bfa,#8b5cf6)}
+#cs-wb .db-tile-c5 .db-tile-icon{background:linear-gradient(135deg,#38bdf8,#0ea5e9)}
+#cs-wb .db-tile-label{font-size:12px;color:var(--s-text);line-height:1.35;min-height:32px;display:flex;align-items:flex-start;justify-content:center}
+#cs-wb .db-tile.is-done .db-tile-icon::after{content:"";position:absolute;right:-3px;bottom:-3px;width:18px;height:18px;border-radius:50%;background:var(--s-green);border:2px solid var(--s-surface)}
+#cs-wb .db-tile.is-done .db-tile-label{color:var(--s-muted)}
+#cs-wb .db-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px 8px}
+#cs-wb .db-quick-item{display:flex;align-items:center;gap:7px;padding:5px 4px;border:0;border-radius:8px;background:transparent;color:var(--s-text);font:inherit;font-size:12px;cursor:pointer;text-align:left}
+#cs-wb .db-quick-item.is-active{background:var(--s-primary-soft);color:var(--s-primary);font-weight:600}
+#cs-wb .db-quick-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex:0 0 auto}
+#cs-wb .db-quick-icon svg{width:15px;height:15px}
+#cs-wb .qi-blue{color:var(--s-primary)}#cs-wb .qi-orange{color:var(--s-orange)}#cs-wb .qi-green{color:var(--s-green)}#cs-wb .qi-purple{color:var(--s-purple)}#cs-wb .qi-cyan{color:var(--s-cyan)}#cs-wb .qi-yellow{color:var(--s-yellow)}
+#cs-wb .db-quick-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cs-wb .db-legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--s-muted)}
+#cs-wb .db-legend-item{display:inline-flex;align-items:center;gap:6px}
+#cs-wb .db-legend-bar{width:16px;height:11px;border-radius:3px;background:var(--s-primary);opacity:.55}
+
+#cs-wb .db-tl{display:flex;flex-direction:column;min-width:620px}
+#cs-wb .db-tl-head{display:grid;grid-template-columns:186px minmax(0,1fr);gap:12px;align-items:end;padding-bottom:4px}
+#cs-wb .db-tl-cap{font-size:12px;color:var(--s-muted);padding-bottom:3px}
+#cs-wb .db-tl-months{display:grid;grid-template-columns:repeat(12,1fr);border-bottom:1px solid var(--s-line)}
+#cs-wb .db-tl-months span{text-align:center;font-size:11px;color:var(--s-muted);padding-bottom:3px;border-left:1px solid var(--s-line)}
+#cs-wb .db-tl-months span:first-child{border-left:0}
+#cs-wb .db-tl-group{display:flex;align-items:baseline;gap:7px;margin:12px 0 2px;font-size:12px;font-weight:600}
+#cs-wb .db-tl-group .db-tl-count{font-weight:400;color:var(--s-muted);font-variant-numeric:tabular-nums}
+#cs-wb .db-tl-row{display:grid;grid-template-columns:186px minmax(0,1fr);gap:12px;align-items:center;padding:4px 0;border-bottom:1px solid var(--s-line)}
+#cs-wb .db-tl-name{display:flex;align-items:center;gap:6px;font-size:12px;min-width:0}
+#cs-wb .db-tl-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cs-wb .db-tl-mark{width:8px;height:8px;border-radius:2px;flex:0 0 auto;background:var(--s-primary)}
+#cs-wb .db-tl-mark.g-c{background:var(--s-orange)}
+#cs-wb .db-tl-mark.g-z{background:var(--s-green)}
+#cs-wb .db-tl-mark.g-s{background:var(--s-purple)}
+#cs-wb .db-tl-mark.g-y{background:var(--s-cyan)}
+#cs-wb .db-tl-mark.g-b{background:var(--s-primary)}
+#cs-wb .db-tl-mark.g-r{background:var(--s-pink)}
+#cs-wb .db-tl-cells{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;min-height:20px;align-items:center}
+#cs-wb .db-tl-cell{display:flex;flex-direction:column;gap:2px;justify-content:center;min-width:0}
+#cs-wb .db-seg,#cs-wb .db-legend-swatch{display:block;height:9px;border-radius:3px;background:var(--s-primary);opacity:.5}
+#cs-wb .db-legend-swatch{width:14px;flex:0 0 auto}
+#cs-wb .db-seg.k-prep,#cs-wb .db-legend-swatch.k-prep{background:var(--s-purple);opacity:.45}
+#cs-wb .db-seg.k-contest,#cs-wb .db-legend-swatch.k-contest{background:var(--s-orange);opacity:1}
+#cs-wb .db-seg.k-exam,#cs-wb .db-legend-swatch.k-exam{background:var(--s-green);opacity:1}
+#cs-wb .db-seg.k-apply,#cs-wb .db-legend-swatch.k-apply{background:var(--s-pink);opacity:.85}
+#cs-wb .db-seg.k-result,#cs-wb .db-legend-swatch.k-result{background:var(--s-cyan);opacity:.85}
+#cs-wb .db-seg.k-intern,#cs-wb .db-legend-swatch.k-intern{background:var(--s-purple);opacity:.85}
+#cs-wb .db-tl-note{margin:10px 0 0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#cs-wb .db-field{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--s-muted)}
+#cs-wb .db-select{font:inherit;font-size:12px;color:var(--s-text);background:var(--s-surface-2);border:1px solid var(--s-line);border-radius:8px;padding:5px 8px;cursor:pointer}
+#cs-wb .db-toolbar-note{font-size:12px;color:var(--s-muted);font-variant-numeric:tabular-nums}
+#cs-wb .db-lanes{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(224px,1fr));align-items:start;max-width:1680px}
+#cs-wb .db-lane{display:flex;flex-direction:column;min-width:0}
+#cs-wb .db-lane-hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+#cs-wb .db-lane-title{margin:0;font-size:14px;font-weight:600}
+#cs-wb .db-lane-count{font-size:12px;color:var(--s-muted);font-variant-numeric:tabular-nums}
+#cs-wb .db-lane-sub{margin:0 0 6px;font-size:12px;color:var(--s-muted)}
+#cs-wb .db-item{display:flex;flex-direction:column;gap:3px;min-width:0;padding-block:2px}
+#cs-wb .db-item-hd{display:flex;align-items:flex-start;gap:7px;min-width:0}
+#cs-wb .db-item-btn{display:flex;align-items:center;justify-content:space-between;gap:6px;flex:1 1 auto;min-width:0;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+#cs-wb .db-item-btn:hover .db-item-name{color:var(--s-primary)}
+#cs-wb .db-item-btn svg{width:14px;height:14px;flex:0 0 auto;color:var(--s-muted);transition:transform .15s ease}
+#cs-wb .db-item-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+#cs-wb .db-detail{margin-top:5px;padding:10px 12px;border-radius:9px;background:var(--s-surface-2);display:flex;flex-direction:column;gap:8px}
+#cs-wb .db-detail-grid{display:grid;gap:8px 16px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+#cs-wb .db-detail-i{display:flex;flex-direction:column;gap:1px;min-width:0}
+#cs-wb .db-detail-k{font-size:10px;color:var(--s-muted)}
+#cs-wb .db-detail-v{font-size:12px;line-height:1.5}
+#cs-wb .db-stars{color:var(--s-yellow);letter-spacing:1px}
+#cs-wb .db-detail-note{margin:0;font-size:10px;color:var(--s-muted)}
+#cs-wb .db-check{display:flex;align-items:flex-start;gap:7px;cursor:pointer}
+#cs-wb .db-check input{appearance:none;-webkit-appearance:none;width:15px;height:15px;margin:2px 0 0;border:1.5px solid var(--s-line-strong);border-radius:4px;background:var(--s-surface);cursor:pointer;position:relative;flex:0 0 auto}
+#cs-wb .db-check input:checked{background:var(--s-primary);border-color:var(--s-primary)}
+#cs-wb .db-check input:checked::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:2px solid #fff;border-top:0;border-left:0;transform:rotate(45deg)}
+#cs-wb .db-item-name{font-size:13px;font-weight:500;min-width:0;overflow-wrap:anywhere}
+#cs-wb .db-meta{margin:0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-times{margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:12px}
+#cs-wb .db-t{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+#cs-wb .db-arrow{color:var(--s-muted);font-size:11px}
+#cs-wb .db-why{margin:0;font-size:11px;color:var(--s-muted)}
+#cs-wb .db-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--s-primary);flex:0 0 auto;margin-top:.42em;align-self:flex-start}
+#cs-wb .db-dot.k-prep{background:var(--s-purple)}#cs-wb .db-dot.k-contest{background:var(--s-orange)}#cs-wb .db-dot.k-exam{background:var(--s-green)}#cs-wb .db-dot.k-apply{background:var(--s-pink)}#cs-wb .db-dot.k-result{background:var(--s-cyan)}#cs-wb .db-dot.k-intern{background:var(--s-purple)}
+#cs-wb .db-months{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(166px,1fr));align-items:start;max-width:1680px}
+#cs-wb .db-month{display:flex;flex-direction:column;gap:5px;min-width:0}
+#cs-wb .db-month-n{font-size:12px;color:var(--s-muted);font-weight:500}
+#cs-wb .db-entry{display:flex;gap:6px;align-items:flex-start;min-width:0;font-size:12px}
+#cs-wb .db-entry-t{min-width:0}
+#cs-wb .db-steps{list-style:none;margin:0;padding:0;display:grid;gap:14px 20px;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));max-width:1680px}
+#cs-wb .db-step-hd{display:flex;gap:6px;align-items:flex-start;font-size:13px}
+#cs-wb .db-step-hd .db-dot{margin-top:.5em}
+#cs-wb .db-step-b{margin:0 0 0 13px;font-size:12px;color:var(--s-muted)}
+#cs-wb .db-habits{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px;font-size:12px}
+#cs-wb .db-sub-h{margin:14px 0 8px;font-size:14px;font-weight:600}
+#cs-wb hr{border:0;border-top:1px solid var(--s-line);margin:10px 0}
+#cs-wb .db-empty{margin:0;font-size:12px;color:var(--s-muted)}
+@media (max-width:1023px){#cs-wb .db-body{grid-template-columns:minmax(0,1fr);grid-template-areas:"rail" "focus" "side" "chart" "list"}#cs-wb .db-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}#cs-wb .db-kpi-value{font-size:22px}}
+@media (max-width:560px){#cs-wb .db-top{padding:10px 12px;gap:10px}#cs-wb .db-top-right{flex-basis:100%;max-width:none}#cs-wb .db-search{max-width:none}#cs-wb .db-body{padding:10px;gap:10px}#cs-wb .db-tiles{grid-template-columns:repeat(3,1fr);gap:10px 6px}#cs-wb .db-tl{min-width:0}#cs-wb .db-tl-head{grid-template-columns:minmax(0,1fr)}#cs-wb .db-tl-head .db-tl-cap{display:none}#cs-wb .db-tl-row{grid-template-columns:minmax(0,1fr);gap:4px;padding:6px 0}}@media (min-width:1400px){
+#cs-wb .db-tiles{grid-template-columns:repeat(auto-fit,minmax(140px,196px));gap:18px 14px;justify-content:start}
+#cs-wb .db-tile-icon{width:64px;height:64px;border-radius:18px}
+#cs-wb .db-tile-icon svg{width:30px;height:30px}
+#cs-wb .db-tile-label{font-size:13px;min-height:36px}
+#cs-wb .db-tile-c0 .db-tile-icon::after{width:22px;height:22px}
+#cs-wb .db-kpi-value{font-size:30px}
+#cs-wb .db-kpi-ring{width:52px;height:52px}
+#cs-wb .db-kpi-ring svg{width:26px;height:26px}
+#cs-wb .db-kpi-label{font-size:14px}
+#cs-wb .db-panel-title{font-size:16px}
+#cs-wb .db-quick-item{font-size:13px;padding:7px 6px}
+#cs-wb .db-quick-icon svg{width:17px;height:17px}
+#cs-wb .db-lanes{gap:22px}
+#cs-wb .db-item-name{font-size:14px}
+#cs-wb .db-why,#cs-wb .db-meta{font-size:12px}
+#cs-wb .db-times{font-size:13px}
+#cs-wb .db-entry{font-size:13px}
+#cs-wb .db-step-b,#cs-wb .db-habits{font-size:13px}
+}
+</style>
+<script>var CS_DATA=[
+{n:'英语应用能力考试 A/B 级（PRETCO）',c:'证',d:'通用',lv:'硬通货',tm:['大一上','大一下'],ef:'1-2 个月',mo:[[3,'报名'],[6,'考试'],[9,'报名'],[12,'考试']],w:'高职专属英语等级考试，部分学校拿毕业证的门槛；B 级过了再冲 A 级，之后才谈四级。'},
+{n:'计算机等级考试 一级（MS Office / Python）',c:'证',d:'通用',lv:'加分',tm:['大一上'],ef:'1 个月',mo:[[12,'报名'],[3,'考试'],[6,'报名'],[9,'考试']],w:'门槛最低的一张证，大一上报名、次年 3 月就能拿，先建立「我能考证」的反馈。'},
+{n:'蓝桥杯大赛（高职高专组）',c:'赛',d:'算法',lv:'加分',tm:['大一上','大二上','大三上'],ef:'3-6 个月',mo:[[10,'报名'],[11,'报名'],[12,'报名'],[4,'比赛','省赛'],[6,'比赛','国赛']],w:'设有高职高专组，和本科同赛道比拼；学校一般有选拔和集训，越早进队越好。'},
+{n:'团队程序设计天梯赛（沧海竞舟组）',c:'赛',d:'算法',lv:'加分',tm:['大一上','大一下','大二下','大三下'],ef:'2-4 个月',mo:[[2,'报名'],[3,'比赛','校内选拔'],[4,'比赛','正赛']],w:'高职高专单独分组，只能通过学校报名，团体赛很适合作为第一次正式比赛。'},
+{n:'全国职业院校技能大赛（校赛→省赛→国赛）',c:'赛',d:'通用',lv:'顶级',tm:['大一上','大一下','大二下','大三下'],ef:'6-12 个月',mo:[[9,'备赛'],[10,'备赛'],[11,'备赛'],[12,'备赛'],[3,'比赛','省赛'],[4,'比赛','省赛'],[5,'比赛','国赛'],[6,'比赛','国赛'],[7,'结果']],w:'大专生含金量最高的比赛，省一等奖或国赛获奖在就业、升本中都是硬筹码，务必尽早进集训队。'},
+{n:'1+X 职业技能等级证书（初级）',c:'证',d:'开发',lv:'加分',tm:['大一上','大一下'],ef:'1-2 个月',mo:[[6,'考试'],[12,'考试']],w:'学校统一组织，跟着专业课走；初级基本白拿，中级要真复习。'},
+{n:'编程基本功：LeetCode / 牛客刷题 + GitHub 提交',c:'业',d:'开发',lv:'硬通货',tm:['大一上','大一下','大二上','大二下','大三上'],ef:'长期',all:1,w:'每天 1 题、每周 1 次提交；到大三，简历上这就是「持续输出」的证据。'},
+{n:'英语四级 CET-4',c:'证',d:'通用',lv:'硬通货',tm:['大一上','大一下','大二上','大二下'],ef:'2-3 个月',mo:[[3,'报名'],[6,'考试'],[9,'报名'],[12,'考试']],w:'多数高职大二才允许报名；能过四级，简历筛选和专升本都用得上。'},
+{n:'计算机等级考试 二级（C 语言 / Python / Office）',c:'证',d:'通用',lv:'加分',tm:['大一下','大二上'],ef:'1-2 个月',mo:[[12,'报名'],[3,'考试'],[6,'报名'],[9,'考试']],w:'比一级更像专业技能，建议直接考编程类科目。'},
+{n:'中国大学生计算机设计大赛（4C）',c:'赛',d:'开发',lv:'加分',tm:['大一下','大二下'],ef:'2-3 个月',mo:[[3,'报名'],[4,'报名'],[5,'结果','校赛'],[7,'比赛','国赛'],[8,'比赛','国赛']],w:'作品赛，可以用课程作业投稿，大一就能参与，正好练「把作品讲清楚」。'},
+{n:'大学生创新创业训练计划（大创）立项',c:'业',d:'通用',lv:'加分',tm:['大一下','大二上'],ef:'2-4 个月',mo:[[3,'报名'],[4,'报名'],[5,'结果','立项']],w:'立项门槛不高，简历上能写「校级项目负责人」，也是互联网+的素材。'},
+{n:'中国国际大学生创新大赛（原互联网+）/ 挑战杯',c:'赛',d:'通用',lv:'加分',tm:['大一下','大二上','大三上'],ef:'3-6 个月',mo:[[4,'报名'],[5,'比赛','校赛'],[6,'比赛','校赛'],[10,'比赛','省赛'],[11,'结果']],w:'团队赛，找会做 PPT 和写商业计划书的队友，比自己死磕代码更划算。'},
+{n:'暑期集训：职业技能大赛 / 数学建模',c:'赛',d:'通用',lv:'加分',tm:['大一下'],ef:'1-2 个月',mo:[[7,'备赛'],[8,'备赛']],w:'暑假是唯一能连片投入的时间，集训队名额通常按大一下的表现给。'},
+{n:'软考 中级（软件设计师 / 网络工程师 / 系统集成项目管理工程师）',c:'证',d:'通用',lv:'顶级',tm:['大二上','大二下','大三上','大三下'],ef:'3-6 个月',mo:[[3,'报名'],[5,'考试'],[8,'报名'],[9,'报名'],[11,'考试']],w:'不限学历、可直接报中级，大专性价比最高的证书；偏管理的系统集成项目管理工程师报考人数最多，部分资格一年只考一次。'},
+{n:'华为认证 HCIA-Datacom / HCIA-Cloud',c:'证',d:'运维网络',lv:'加分',tm:['大二上','大二下'],ef:'1-2 个月',all:1,w:'网络、云计算方向的入门证，机考随报随考，按官方定价，学生常能拿到折扣。'},
+{n:'红帽 RHCSA 认证',c:'证',d:'运维网络',lv:'硬通货',tm:['大二下','大三上'],ef:'2-3 个月',all:1,w:'Linux 运维岗位认可度高，考试费较贵且有学生优惠，建议有实战基础后再考。'},
+{n:'计算机等级考试 三级（网络技术 / 数据库技术）',c:'证',d:'通用',lv:'加分',tm:['大二上'],ef:'1-2 个月',mo:[[12,'报名'],[3,'考试'],[6,'报名'],[9,'考试']],w:'对就业帮助有限，但专升本、评奖学金和部分国企招聘会看。'},
+{n:'全国大学生数学建模竞赛（专科组）',c:'赛',d:'数据',lv:'硬通货',tm:['大二上','大二下'],ef:'3-4 个月',mo:[[6,'报名'],[7,'报名'],[8,'报名'],[9,'比赛','国赛']],w:'设有专科组，9 月开学后比赛；数学+编程+写作三角配置，获奖面比程序设计赛宽。'},
+{n:'华为 ICT 大赛',c:'赛',d:'运维网络',lv:'硬通货',tm:['大二上','大二下','大三上'],ef:'2-4 个月',mo:[[9,'报名'],[10,'报名'],[11,'报名'],[12,'比赛','省赛'],[3,'比赛','省赛'],[4,'比赛','国赛'],[5,'比赛','全球赛']],w:'高职可参加，实践赛分网络、云、计算赛道，有企业背书，华为生态企业招聘认可。'},
+{n:'NISP 一级 / 二级（国家信息安全水平考试）',c:'证',d:'安全',lv:'加分',tm:['大二上','大二下'],ef:'2-3 个月',all:1,w:'信息安全方向入门证，比 CISP 好考，渗透测试、安全运维岗位可以写进简历。'},
+{n:'暑期实习投递（第一段实习）',c:'业',d:'开发',lv:'硬通货',tm:['大二下'],ef:'2-3 个月',mo:[[3,'投递'],[4,'投递'],[5,'投递'],[6,'实习'],[7,'实习'],[8,'实习']],w:'大二暑期实习是秋招最大的加分项，互联网与软件公司 3-5 月网申，别等大三才开始。'},
+{n:'阿里云 ACA / ACP 认证',c:'证',d:'运维网络',lv:'加分',tm:['大二下','大三上'],ef:'1-2 个月',all:1,w:'云计算方向的补充证书，国内云生态企业认可，考试随时可约。'},
+{n:'天池 / Kaggle 数据竞赛（入门赛）',c:'赛',d:'数据',lv:'加分',tm:['大二下','大三上','大三下'],ef:'1-3 个月',all:1,w:'有排名可查的作品集，数据、AI 岗位面试最直接的谈资。'},
+{n:'项目打磨 + 简历初稿',c:'业',d:'通用',lv:'硬通货',tm:['大二下'],ef:'1 个月',mo:[[7,'备赛'],[8,'备赛']],w:'把 2-3 个课程作业重做成能讲清「我做了什么、解决了什么」的项目，8 月前定稿。'},
+{n:'秋招提前批 + 正式批',c:'业',d:'通用',lv:'顶级',tm:['大三上'],ef:'3 个月',mo:[[7,'投递','提前批'],[8,'投递'],[9,'投递'],[10,'投递'],[11,'结果','offer'],[12,'结果','offer']],w:'大专秋招岗位集中在实施、运维、测试、技术支持、外包与地方国企；提前批 7 月就开，简历必须 6 月前定稿。'},
+{n:'专升本 备考 + 报名',c:'升',d:'通用',lv:'硬通货',tm:['大三上','大三下'],ef:'6-12 个月',w:'是否升本，大三上就得定；下面的备考与报名月份会随所选省份自动变化，具体以本省教育考试院通知为准。'},
+{n:'秋招补录',c:'业',d:'通用',lv:'加分',tm:['大三上'],ef:'2 个月',mo:[[11,'投递'],[12,'投递']],w:'秋招没收尾的岗位会在这个窗口补录，竞争更小，别放弃。'},
+{n:'1+X 高级 / 信创方向认证（达梦 DCA、麒麟、统信等）',c:'证',d:'运维网络',lv:'加分',tm:['大三上','大三下'],ef:'2-3 个月',all:1,w:'国产化替代方向，政府、国企、信创项目方的认可度高于很多通用认证。'},
+{n:'毕业设计 / 顶岗实习 选题对接',c:'业',d:'通用',lv:'加分',tm:['大三上','大三下'],ef:'2 个月',mo:[[12,'备赛'],[3,'实习'],[4,'实习'],[5,'实习'],[6,'实习']],w:'尽早在实习单位解决毕设题目，一鱼两吃，避免大三下两头忙。'},
+{n:'春招',c:'业',d:'通用',lv:'顶级',tm:['大三下','大四下'],ef:'3 个月',mo:[[2,'投递'],[3,'投递'],[4,'投递'],[4,'结果','offer'],[5,'结果','offer']],w:'专科春招与本科大四春招的主要窗口，2 月就要开始投，很多岗位先到先得。'},
+{n:'专升本 考试',c:'升',d:'通用',lv:'硬通货',tm:['大三下'],ef:'3 个月',w:'多为公共课 + 专业课；考试与录取月份随所选省份变化，以本省教育考试院当年通知为准。'},
+{n:'毕业设计答辩 + 毕业',c:'业',d:'通用',lv:'加分',tm:['大三下','大四下'],ef:'2 个月',mo:[[5,'备赛','答辩'],[6,'结果','毕业']],w:'答辩前准备好能现场演示的作品，别只有文档。'},
+{n:'国企 / 事业单位 / 银行 招聘（部分岗位接受大专）',c:'业',d:'通用',lv:'加分',tm:['大三上','大三下'],ef:'2-4 个月',mo:[[3,'报名'],[4,'报名'],[5,'考试'],[9,'报名'],[10,'报名'],[11,'考试']],w:'与秋招春招同步进行，逐个核对简章的学历要求，很多基层岗和外包岗接受大专。'},
+{n:'蓝桥杯 / 天梯赛 最后一次在校参赛',c:'赛',d:'算法',lv:'加分',tm:['大三下'],ef:'2-3 个月',mo:[[3,'报名'],[4,'比赛','省赛'],[6,'比赛','国赛']],w:'大三是最后一次以在校生身份参赛，履历上补一项获奖。'},
+{n:'暑期实习 / 大厂实习',c:'业',d:'开发',lv:'硬通货',tm:['大三下'],ef:'3 个月',mo:[[3,'投递'],[4,'投递'],[6,'实习'],[7,'实习'],[8,'实习']],w:'这段实习直接决定秋招的起点；本科阶段能投的岗位明显变多，3-4 月就要开始投。'},
+{n:'秋招（提前批 + 正式批）',c:'业',d:'通用',lv:'顶级',tm:['大四上'],ef:'4 个月',mo:[[7,'投递','提前批'],[8,'投递'],[9,'投递'],[10,'投递'],[11,'结果','offer'],[12,'结果','offer']],w:'本科批次秋招岗位更宽；7-8 月提前批、9-10 月正式批，别等考研结束再投。'},
+{n:'考研报名 + 初试',c:'研',d:'通用',lv:'顶级',tm:['大四上'],ef:'6-12 个月',mo:[[9,'备赛','预报名'],[10,'报名'],[12,'考试','初试']],w:'9 月预报名、10 月正式报名、12 月底初试；提前对照目标院校招生简章。'},
+{n:'考研复试 / 调剂',c:'研',d:'通用',lv:'顶级',tm:['大四下'],ef:'2-3 个月',mo:[[2,'结果','初试成绩'],[3,'比赛','复试'],[4,'结果','调剂']],w:'初试过线后准备复试（专业课、英语口语、项目介绍）；3-4 月关注调剂系统。'},
+{n:'软考 高级（系统架构设计师 / 信息系统项目管理师）',c:'证',d:'通用',lv:'顶级',tm:['大四上','大四下'],ef:'4-6 个月',mo:[[3,'报名'],[5,'考试'],[8,'报名'],[11,'考试']],w:'在校或工作后都可考，高级证书在国企、事业单位职称体系里很值钱。'},
+{n:'英语六级 CET-6',c:'证',d:'通用',lv:'硬通货',tm:['大三上','大三下','大四上','大四下'],ef:'3-6 个月',mo:[[3,'报名'],[6,'考试'],[9,'报名'],[12,'考试']],w:'需先通过英语四级（425 分以上），且学校开设六级考点；能过就过，是简历筛选的常见门槛。'},
+{n:'挑战杯 / 中国国际大学生创新大赛 省赛国赛',c:'赛',d:'通用',lv:'硬通货',tm:['大三下','大四上'],ef:'4-6 个月',mo:[[4,'报名'],[5,'比赛','校赛'],[10,'比赛','省赛'],[11,'比赛','国赛']],w:'本科阶段平台更高，团队里负责技术实现就是一笔硬履历。'},{n:'国家公务员考试（国考）',c:'公',d:'通用',lv:'硬通货',tm:['大四上'],ef:'3-4 个月',mo:[[10,'报名'],[11,'考试','笔试'],[1,'结果','成绩'],[2,'结果','面试']],w:'计算机专业可报税务、海关、公安等信息化岗位；10 月报名、11 月底笔试，和秋招并行准备。'},
+{n:'毕业设计开题 / 毕业实习',c:'业',d:'通用',lv:'加分',tm:['大四上'],ef:'2-3 个月',mo:[[10,'备赛','开题'],[11,'备赛'],[12,'备赛']],w:'尽早定题，把实习项目或竞赛作品延展成毕设，答辩时更有东西可讲。'},
+{n:'省考 / 事业单位联考',c:'公',d:'通用',lv:'硬通货',tm:['大四下'],ef:'2-3 个月',mo:[[3,'报名'],[4,'考试','笔试'],[5,'结果','面试']],w:'多省联考 3 月报名、4 月笔试；计算机岗位常考行测+申论，部分加专业科目。'},
+{n:'毕业手续：档案 / 三方 / 报到证',c:'业',d:'通用',lv:'加分',tm:['大四下'],ef:'1 个月',mo:[[5,'备赛'],[6,'结果','毕业']],w:'确认档案去向、三方协议、报到证与户口迁移；入职前把这些手续一次办完。'},
+{n:'思科 CCNA / 新华三 H3CSE',c:'证',d:'运维网络',lv:'加分',tm:['大二上','大二下'],ef:'2-3 个月',all:1,w:'传统网络方向的经典认证，机房、系统集成商、运营商岗位常用。'},
+{n:'强网杯 / 网鼎杯等 CTF 赛事',c:'赛',d:'安全',lv:'加分',tm:['大二下','大三上'],ef:'2-4 个月',all:1,w:'安全方向靠比赛成绩说话，从校赛、省赛 CTF 打起，别一上来就打国赛。'},
+{n:'Codeforces / 洛谷 / 牛客 周赛',c:'赛',d:'算法',lv:'加分',tm:['大一上','大一下','大二上'],ef:'长期',all:1,w:'每周固定打一场，比闷头刷题更有反馈；蓝桥杯、天梯赛的底子就靠这个。'},
+{n:'数据库认证：MySQL / Oracle OCP、达梦 DCA/DCP',c:'证',d:'数据',lv:'加分',tm:['大二下','大三上'],ef:'2-4 个月',all:1,w:'按目标行业选：互联网认 MySQL，政企与信创项目认达梦、人大金仓。'},
+{n:'1+X 证书（中级 / 高级，按专业方向）',c:'证',d:'通用',lv:'加分',tm:['大二上','大二下','大三上'],ef:'1-2 个月',all:1,w:'学校统一组织，几门专业课加实训就能换证；信创、云计算、大数据方向都有对应等级。'}
+];
+var CS_JOB=[
+{t:'大二下 · 3-5 月',h:'投递第一段暑期实习',b:'网申、笔试、面试密集期；这是秋招前最重要的一个动作，有实习和没实习是两种简历。'},
+{t:'大二下 · 6-8 月',h:'实习 + 项目收尾',b:'在实习里沉淀 1-2 个能讲清的问题和解决方案，同时把课程作业整理成作品集。'},
+{t:'大三上 · 7-8 月',h:'秋招提前批',b:'简历定稿，投递 50 个以上岗位；提前批竞争小、反馈快，适合冲。'},
+{t:'大三上 · 9-10 月',h:'秋招正式批',b:'笔试面试最密集的两个月，同时完成软考中级报名（8-9 月）。'},
+{t:'大三上 · 11-12 月',h:'秋招补录 + 定方向',b:'没收尾的岗位补录；同时确认是就业还是专升本，两条路的时间不能都占满。'},
+{t:'大三上末 - 大三下初',h:'专升本冲刺（如走升学）',b:'各省报名多在前一年 11 月至当年 2 月，考试多在大三下 3-5 月。'},
+{t:'大三下 · 2-4 月',h:'春招主战场',b:'大专生拿 offer 的主要窗口，2 月就要开始投，很多岗位先到先得。'},
+{t:'大三下 · 3-6 月',h:'顶岗实习 + 毕业设计答辩',b:'尽量在实习单位完成毕设题目；5 月前后还有一次软考中级考试机会。'},
+{t:'本科大三',h:'第二次实习与竞赛',b:'本科身份能投的岗位更多，同时可以再打一次数学建模、挑战杯、蓝桥杯。'},
+{t:'本科大四',h:'本科批次秋招 / 考研',b:'最后一次以应届生身份参加秋招；也可以考软考高级，进国企或事业单位职称体系。'}
+];
+var CS_HABITS=['简历：1 页，3 个能讲清的项目（做了什么、难点、结果）','代码：力扣 200-300 题；冲算法岗要到 500 题以上','证书：软考中级 / 1+X 高级 / HCIA 至少拿到 1 张','比赛：全国职业院校技能大赛省赛以上 1 项，或蓝桥杯省级奖','实习：至少 1 段，最佳时间是大二暑期','英语：A 级或 B 级通过，四级能过更好','GitHub：持续提交，README 写清楚项目说明'];
+</script>
+<script>
+(function(){
+var ROOT=document.getElementById('cs-wb');
+if(!ROOT){return;}
+var TYPE_LABEL={'赛':'比赛','证':'证书','升':'专升本','研':'考研','公':'考公','业':'就业'};
+var KIND_SLUG={'报名':'signup','备赛':'prep','比赛':'contest','考试':'exam','投递':'apply','结果':'result','实习':'intern'};
+var TERMS=[['大一上','打基础 + 第一张证'],['大一下','第一次正式参赛'],['大二上','核心证书窗口'],['大二下','证书与实习双线'],['大三上','秋招启动 / 证书冲刺'],['大三下','春招 / 实习 / 毕业准备'],['大四上','本科秋招 / 考研 / 实习'],['大四下','本科春招 / 毕业 / 入职']];
+var JOBS=[
+{m:'软件技术',full:'软件技术 / 计算机应用技术',roles:[
+{n:'Java 后端开发（初级）',tag:'开发',ic:'code',c:0,intro:'写业务接口、改需求、修 bug，岗位量最大；大专生多从中小企业、外包、传统企业信息化起步。',sk:['Java 基础','Spring Boot','MySQL','Redis','Git','Linux 常用命令'],bonus:'蓝桥杯、2-3 个 GitHub 项目、软考中级（软件设计师）',to:'软件公司、外包、政企信息化部门'},
+{n:'Web 前端开发',tag:'开发',ic:'layout-template',c:1,intro:'把设计稿变成页面并接接口，上手快、作品看得见，适合审美好、沟通顺的同学。',sk:['HTML/CSS/JS','Vue 或 React','响应式布局','接口联调','Git'],bonus:'小程序/官网作品、1+X Web 前端、蓝桥杯',to:'互联网公司、建站/广告公司、企业数字化团队'},
+{n:'软件测试工程师',tag:'测试',ic:'bug',c:2,intro:'写用例、做功能与接口测试、跟进缺陷，门槛比开发低，是进大厂或外包的常见跳板。',sk:['测试用例设计','Postman','SQL','Linux 基础','抓包工具','缺陷管理'],bonus:'ISTQB、Selenium/Pytest 自动化、软考中级',to:'互联网、金融科技、软件外包'},
+{n:'实施 / 交付工程师',tag:'实施',ic:'briefcase',c:3,intro:'驻客户现场部署系统、培训、答疑，技术与沟通五五开，出差多但成长快。',sk:['Linux','数据库安装与备份','SQL','网络基础','文档与沟通'],bonus:'HCIA、软考中级（系统集成项目管理工程师）',to:'医疗/教育/政务信息化厂商、ERP 服务商'}
+]},
+{m:'计算机网络',full:'计算机网络技术',roles:[
+{n:'网络运维工程师',tag:'运维',ic:'network',c:4,intro:'维护交换机、路由器、防火墙，排查断网和慢网，是政企、运营商、IDC 的刚需岗。',sk:['TCP/IP','VLAN / 路由 / ACL','华为或 H3C 设备配置','抓包分析','Linux'],bonus:'HCIA / HCIP、CCNA、职业院校技能大赛（网络赛道）',to:'运营商、IDC、系统集成商、政企信息中心'},
+{n:'系统运维 / 驻场运维',tag:'运维',ic:'server',c:5,intro:'管服务器、账号、备份和监控告警，从桌面运维起步是最常见的入口。',sk:['Linux 基础','Shell 脚本','Nginx / Tomcat 部署','Zabbix 监控','备份恢复'],bonus:'RHCSA、软考中级（网络工程师）、阿里云 ACP',to:'银行/医院/学校驻场、云服务商、企业 IT 部'},
+{n:'系统集成 / 售前技术支持',tag:'售前',ic:'wrench',c:0,intro:'配合销售做方案、选型、投标和交付，技术不用最深但面要广。',sk:['网络与服务器选型','方案文档','PPT 汇报','招投标流程','客户沟通'],bonus:'软考中级（系统集成项目管理工程师）、HCIA、项目实习',to:'系统集成商、设备厂商、政企项目组'}
+]},
+{m:'大数据',full:'大数据技术',roles:[
+{n:'数据采集 / ETL 工程师（初级）',tag:'数据',ic:'database',c:1,intro:'写采集脚本、清洗数据、跑批，是数据团队里最适合新人的入口。',sk:['SQL','Python','Linux','Hive / Spark 基础','调度工具','Excel'],bonus:'阿里云 ACP 大数据、天池/Kaggle、1+X 大数据',to:'互联网、零售、物流、政务大数据平台'},
+{n:'数据分析助理',tag:'分析',ic:'bar-chart',c:2,intro:'做报表、盯指标、写分析结论，业务理解往往比算法更重要。',sk:['Excel / SQL','Power BI 或 Tableau','统计学基础','指标拆解','汇报表达'],bonus:'数学建模竞赛、数据分析作品集、CET-4',to:'电商、金融、快消、运营中台'},
+{n:'AI 训练师 / 数据标注质检',tag:'AI 数据',ic:'brain',c:3,intro:'给模型做数据、写提示词、做评测，AI 落地项目里需求增长很快。',sk:['标注规范','Prompt 编写','基础 Python','质量抽检','行业知识'],bonus:'大模型应用项目、Kaggle 入门赛、1+X 人工智能',to:'AI 服务商、数据标注基地、行业 AI 团队'}
+]},
+{m:'信息安全',full:'信息安全技术',roles:[
+{n:'安全运维工程师',tag:'安全',ic:'shield',c:4,intro:'看告警、做基线加固、配合等保整改，是政企安全岗最常见的起点。',sk:['Linux / Windows 加固','防火墙与 WAF','日志分析','漏洞扫描','等保 2.0 基础'],bonus:'NISP 二级、CTF 经历、CISP-PTE（工作后）',to:'政企信息中心、安全厂商、等保服务商'},
+{n:'渗透测试助理',tag:'安全',ic:'bug',c:5,intro:'在授权范围内做漏洞验证、写报告，门槛高但天花板也高。',sk:['Web 漏洞原理','Burp Suite','Nmap','Python 脚本','报告写作'],bonus:'CTF 比赛、漏洞平台提交记录、NISP',to:'安全服务公司、红队、金融安全团队'},
+{n:'等保测评 / 安全服务助理',tag:'合规',ic:'file-check',c:0,intro:'按标准做测评、出整改建议，需要细心和文档能力。',sk:['等保 2.0 标准','风险评估','访谈与取证','报告编写','沟通协调'],bonus:'NISP、软考中级（信息安全工程师）、实习经历',to:'测评机构、安全咨询公司、政企合规部门'}
+]},
+{m:'数字媒体',full:'数字媒体技术',roles:[
+{n:'UI 设计助理',tag:'设计',ic:'pen-tool',c:1,intro:'做界面、图标和设计规范，并和前端一起把方案落地。',sk:['Figma / Sketch','配色与排版','组件库','切图标注','需求理解'],bonus:'作品集、1+X 界面设计、设计类比赛',to:'互联网公司、软件公司、品牌设计团队'},
+{n:'短视频 / 新媒体运营',tag:'内容',ic:'clapperboard',c:2,intro:'拍剪、写脚本、看数据，会技术的运营在中小公司很吃香。',sk:['剪映 / PR','脚本与分镜','封面设计','数据复盘','平台规则'],bonus:'账号作品、数据分析能力、CET-4',to:'MCN、品牌市场部、电商团队'},
+{n:'前端切图 / 低代码开发',tag:'开发',ic:'layout-template',c:3,intro:'把设计稿变成页面，或用低代码平台搭系统，是设计转技术的桥。',sk:['HTML/CSS','响应式','Vue 基础','低代码平台','组件复用'],bonus:'1+X Web 前端、上线作品集',to:'建站公司、企业数字化部门、SaaS 服务商'}
+]},
+{m:'人工智能',full:'人工智能技术应用',roles:[
+{n:'AI 应用开发助理',tag:'AI',ic:'sparkles',c:4,intro:'调用大模型接口做客服、知识库和自动化工具，是目前最缺人的方向。',sk:['Python','HTTP / API','Prompt 工程','向量数据库基础','Flask / FastAPI','Git'],bonus:'大模型项目、天池/Kaggle、软考中级',to:'AI 创业公司、行业解决方案商、企业 AI 组'},
+{n:'智能设备实施 / 售后',tag:'实施',ic:'cpu',c:5,intro:'装调视觉、语音设备，跑现场、做客户培训，制造和安防需求大。',sk:['硬件基础','网络配置','Linux','现场调试','故障排查','沟通'],bonus:'华为 ICT 大赛、HCIA、电工证（部分岗位）',to:'安防厂商、智能制造、系统集成商'},
+{n:'算法数据助理',tag:'AI 数据',ic:'database',c:0,intro:'做数据集、跑评测、整理 badcase，是进入 AI 团队的敲门砖。',sk:['Python','Pandas 数据处理','标注规范','评测指标','文档整理'],bonus:'数学建模、Kaggle、GitHub 项目',to:'AI 公司、研究院所外包、数据服务商'}
+]},
+{m:'工业互联网',full:'工业互联网技术 / 工业互联网应用',desc:'把设备、产线和系统连起来：数据采集、平台对接、MES 实施与工控安全，制造业数字化转型的岗位都在这里。',roles:[
+{n:'工业互联网实施 / 集成工程师（初级）',tag:'实施',ic:'factory',c:4,intro:'把工厂的设备、网关和平台接起来：现场部署、联调、上线，跑车间多但技术面广，是入行首选。',sk:['工业以太网 / Profinet','Modbus / OPC UA','PLC 基础（西门子/三菱）','边缘网关配置','Linux 基础','MQTT'],bonus:'职业院校技能大赛（工业互联网/智能制造）、HCIA、工业互联网 1+X',to:'智能制造集成商、自动化公司、工厂信息部'},
+{n:'工业数据采集 / IoT 运维',tag:'数据',ic:'database',c:5,intro:'负责设备联网、采集数据、做看板和告警，让车间数据真正能被看见、被使用。',sk:['OPC UA / Modbus / MQTT','Python 或 C#','时序数据库','边缘计算网关','网络排障','SQL'],bonus:'华为 ICT 大赛、阿里云 ACP、数据采集项目',to:'工业互联网平台公司、能源与制造企业、设备厂商'},
+{n:'MES / 工业软件实施顾问（初级）',tag:'实施',ic:'clipboard-list',c:0,intro:'跟产线流程，做 MES/WMS/SCADA 上线、培训和答疑，业务理解比写代码更重要。',sk:['MES 业务流程','SQL','接口对接','需求文档','现场沟通','Excel'],bonus:'软考中级（系统集成项目管理工程师）、制造业实习',to:'MES 厂商、ERP 服务商、制造业 IT 部'},
+{n:'工控安全运维',tag:'安全',ic:'shield',c:1,intro:'做工业网络分区隔离、等保整改和工控防火墙策略，是制造业安全里最缺人的一块。',sk:['工控协议基础','网络分区 / 隔离','等保 2.0','日志审计','漏洞加固','Linux'],bonus:'NISP 二级、CTF 经历、CISP（工作后）',to:'安全厂商工控团队、测评机构、大型制造企业'},
+{n:'智能装备调试 / 售后',tag:'调试',ic:'cpu',c:2,intro:'视觉、机器人、AGV 的现场调试与售后，动手能力强的大专生很吃香。',sk:['PLC','电气基础','伺服 / 传感器','现场总线','故障排查','客户沟通'],bonus:'电工证、工业机器人 1+X、技能大赛',to:'机器人/视觉厂商、系统集成商、汽车与 3C 制造'}
+]},{m:'通用岗位',full:'通用岗位（所有专业都能投）',roles:[
+{n:'技术支持 / 售后工程师',tag:'支持',ic:'life-buoy',c:1,intro:'远程或上门解决客户使用问题，最看重产品理解和沟通，是技术岗里最好入门的。',sk:['产品理解','远程排障','沟通表达','工单与文档','基础网络/SQL'],bonus:'厂商认证（HCIA 等）、软考中级、实习经历',to:'软件厂商、设备厂商、行业服务商'},
+{n:'IT 桌面运维',tag:'运维',ic:'monitor',c:2,intro:'管电脑、账号、打印机和办公网络，是很多大专生进入 IT 行业的第一站。',sk:['Windows / 域控','办公软件','网络排查','资产登记','服务意识'],bonus:'计算机等级证书、HCIA、软考初级/中级',to:'企业 IT 部、学校/医院信息科、外包服务商'},
+{n:'产品 / 项目助理',tag:'产品',ic:'clipboard-list',c:3,intro:'写需求文档、画原型、跟进度，技术背景出身的产品助理很受团队欢迎。',sk:['需求文档','原型工具','Excel / SQL','项目排期','跨部门沟通'],bonus:'大创/挑战杯项目、软考中级（系统集成）、实习',to:'软件公司、政企项目组、创业团队'}
+]}
+];var RES=[
+{m:'模板',slug:'tmpl',items:[
+{t:'大创申报书模板',d:'学校 / 国家级大创立项的标准结构，照着填能过初筛。',list:['项目名称 + 一句话简介（20 字内）','立项依据：真实痛点 + 调研数据','研究内容、目标与创新点','技术路线 + 按月进度表','预期成果：软著 / 论文 / 作品 / 专利','经费预算与团队分工'],src:'来源：学校教务处 / 国家级大学生创新创业训练计划平台',url:'http://gjcxcy.bjtu.edu.cn'},
+{t:'互联网+ / 挑战杯 商业计划书模板',d:'校赛→省赛→国赛通用，重点是逻辑闭环和数据支撑。',list:['项目摘要：做什么、给谁、凭什么','痛点与解决方案','市场分析：TAM / SAM / SOM','产品与技术壁垒','商业模式与收入结构','竞品对比与运营数据','3 年财务预测','团队、股权与融资计划'],src:'来源：全国大学生创业服务网',url:'https://cy.ncss.cn'},
+{t:'计算机设计大赛 作品说明书模板',d:'评委先看演示视频和截图，文档按这 8 节写最稳。',list:['作品简介与选题背景','需求分析（用户 + 场景）','总体设计与架构图','关键技术与实现','创新点（不超过 3 条）','测试数据与效果','部署 / 使用说明','团队分工与原创声明'],src:'来源：中国大学生计算机设计大赛官网',url:'http://jsjds.blcu.edu.cn'},
+{t:'GitHub 项目 README / 作品集模板',d:'把课程作业变成能投简历的项目，README 至少占一半印象分。',list:['一句话定位 + 在线演示 / GIF','功能截图（3-5 张）','技术栈与架构图','核心难点与解决过程','本地运行步骤','目录结构说明','后续计划'],src:'用途：简历项目、GitHub、实习投递'}
+]},
+{m:'真题',slug:'exam',items:[
+{t:'蓝桥杯 历年真题',d:'高职高专组以基础算法 + 语言应用为主，填空题与编程题各占一半。',info:'省赛 4 小时 · 填空 5 题 + 编程 5-8 题 · 以下为按真题题型整理的样题',qs:[{q:'填空题：1 到 2024 中，数字 2 一共出现了多少次？',a:'逐位统计个/十/百/千位上 2 的出现次数：300 + 300 + 33 = 633。'},{q:'编程题：统计字符串中出现次数最多的字母（忽略大小写）。',a:'数组或哈希表计数，遍历一次取最大值，先统一转小写。'},{q:'编程题：求 1! + 2! + … + n! 的末 6 位（n ≤ 100）。',a:'每步乘完立即对 1000000 取模，避免大数。'}],src:'官方题库 / 历年真题：dasai.lanqiao.cn',url:'https://dasai.lanqiao.cn'},
+{t:'全国大学生数学建模竞赛 历年赛题',d:'专科组同为 9 月比赛、3 天 72 小时，提交论文。',info:'1 道赛题 · 72 小时 · A/B/C 题选一 · 以下为按真题类型整理的样题',qs:[{q:'样题：某城市共享单车早晚高峰供需失衡，请给出投放量与调度方案。',a:'需求预测 → 选址/调度优化 → 灵敏度分析；论文按摘要/假设/模型/求解/检验写。'},{q:'常见真题类型：评价类（多指标排序）、预测类（时间序列）、优化类（线性/整数规划）。',a:'先定模型类型再选算法，最后做合理性检验与误差分析。'}],src:'历年赛题与优秀论文：mcm.edu.cn',url:'https://www.mcm.edu.cn'},
+{t:'全国职业院校技能大赛 赛项规程 / 样题',d:'每个赛项都会发布规程、样题和设备清单，按省赛报名。',info:'按赛项任务书评分 · 省赛 3-5 月 / 国赛 5-6 月 · 以下为常见任务样题',qs:[{q:'样题：给定拓扑完成 VLAN 划分、OSPF 配置、ACL 限制与 FTP 服务验证。',a:'按任务书顺序配置，逐项用 show 命令验证，最后保存配置。'},{q:'样题：数据库建表 + 多表查询 + 备份恢复。',a:'先满足约束再优化；备份用 mysqldump，恢复后校验行数与结构。'}],src:'赛项规程与样题：chinaskills-jsw.org',url:'http://www.chinaskills-jsw.org'},
+{t:'软考 中级历年真题',d:'综合知识 + 案例分析两科，真题重复率不低。',info:'综合知识 75 道单选 + 案例分析 3 题 · 各 75 分、45 分及格 · 以下为按题型整理的样题',qs:[{q:'单选：赶工与快速跟进的区别是什么？',a:'赶工 = 加资源/加班，增加成本；快速跟进 = 并行施工，增加返工风险。'},{q:'案例：给出活动网络图，求关键路径、总工期与最低成本压缩方案。',a:'关键路径是最长路径；压缩时优先选关键活动且单位成本最低的。'},{q:'软件设计师：给出一段业务场景，判断应使用哪种设计模式。',a:'先找变化点与耦合关系：一对多通知选观察者，复杂对象创建选工厂。'}],src:'考试大纲与报名入口：ruankao.org.cn',url:'https://www.ruankao.org.cn'},
+{t:'NCRE 历年真题 / 考试大纲',d:'按科目刷题，二级操作题占分最高。',info:'选择题 40 分 + 操作题 60 分（基本操作 / 简单应用 / 综合应用）· 以下为样题',qs:[{q:'选择题：以下哪个不是合法的 Python 变量名？',a:'不能以数字开头、不能使用关键字；逐项排除即可。'},{q:'操作题：读取文本文件，统计词频并输出前 10。',a:'读文件 → split/正则分词 → 字典计数 → 按次数倒序取前 10。'},{q:'C 语言：求一维数组的最大值与平均值。',a:'一次遍历同时求 max 与 sum；平均值注意浮点除法。'}],src:'考试大纲与报名：ncre.neea.edu.cn',url:'https://ncre.neea.edu.cn'}
+]},{m:'获奖作品',slug:'award',items:[
+{t:'「厂链通」工业设备数据看板',comp:'全国职业院校技能大赛',d:'参考赛道：职业院校技能大赛 · 工业互联网 / 智能制造',list:['痛点：车间靠人工抄表，异常发现滞后','功能：设备接入、实时曲线、超限告警、班次报表','技术栈：Modbus 模拟器 → MQTT → InfluxDB → ECharts','创新点：断线重连 + 边缘缓存，弱网也能补数据','演示：3 分钟视频，先跑通一台设备再触发告警','可复用：把「采集 → 存储 → 展示」链路讲清楚'],src:'官方赛项与获奖展示：chinaskills-jsw.org',url:'http://www.chinaskills-jsw.org'},
+{t:'「书桥」校园二手教材交易小程序',comp:'中国大学生计算机设计大赛',d:'参考赛道：中国大学生计算机设计大赛 · 软件应用与开发',list:['痛点：毕业季教材浪费、校内交易信息分散','功能：发布、按 ISBN / 课程搜索、聊天、订单、信用','技术栈：微信小程序 + 云开发 + 云数据库','创新点：按课程教材匹配，同校自提降低履约成本','演示：学生端 + 管理端双端演示，带真实调研数据','可复用：校园真实场景 + 用户调研最容易被记住'],src:'大赛作品展示：jsjds.blcu.edu.cn',url:'http://jsjds.blcu.edu.cn'},
+{t:'「银发守护」独居老人跌倒检测与告警',comp:'互联网+ / 挑战杯',d:'参考赛道：互联网+ / 挑战杯 · 智慧养老',list:['痛点：独居老人跌倒后无人知晓','功能：跌倒识别、微信/短信告警、家属端查看','技术栈：摄像头或毫米波 + 姿态估计 + 边缘推理','创新点：边缘推理不上传原视频，隐私优先','演示：模拟跌倒 → 3 秒内触发告警','可复用：社会价值 + 技术落地，适合路演'],src:'金奖项目展示：全国大学生创业服务网',url:'https://cy.ncss.cn'},
+{t:'「码上通」实验室预约与门禁联动',comp:'中国大学生计算机设计大赛',d:'参考赛道：计算机设计大赛 / 蓝桥杯 · 软件开发',list:['痛点：实验室排期靠微信群，冲突多、责任不清','功能：排期、审批、签到、门禁联动、使用统计','技术栈：Vue3 + Spring Boot + MySQL + 模拟门禁','创新点：冲突检测 + 角色权限模型','演示：预约冲突拦截 + 刷卡签到','可复用：经典业务系统，胜在细节完整'],src:'大赛作品展示：jsjds.blcu.edu.cn',url:'http://jsjds.blcu.edu.cn'},
+{t:'「网安哨兵」校园网资产与漏洞巡检',comp:'全国职业院校技能大赛',d:'参考赛道：职业院校技能大赛 · 网络安全 / 信息安全管理',list:['痛点：校园网设备台账不清，弱口令长期存在','功能：资产采集、端口扫描、弱口令检查、整改工单','技术栈：Python + Nmap + SNMP 模拟 + 报告导出','创新点：等保 2.0 条款映射，直接产出整改清单','演示：扫描靶机 → 出报告 → 派工单','可复用：把「发现 → 整改 → 复测」闭环做出来'],src:'大赛官网：chinaskills-jsw.org',url:'http://www.chinaskills-jsw.org'},
+{t:'「稻香智灌」农田墒情监测与自动灌溉',comp:'互联网+ / 挑战杯',d:'参考赛道：互联网+ / 职业技能大赛 · 物联网',list:['痛点：大水漫灌费水，人工巡田成本高','功能：土壤湿度采集、阈值灌溉、远程控制、用水统计','技术栈：ESP32 + LoRa + 云平台 + 小程序','创新点：低功耗 + 断网离线自治','演示：真机浇水 + 用水量对比数据','可复用：硬件 + 软件 + 数据三件套，答辩有料'],src:'创业项目展示：cy.ncss.cn',url:'https://cy.ncss.cn'},
+{t:'「智课问答」课程知识库大模型助手',comp:'中国大学生计算机设计大赛',d:'参考赛道：人工智能赛项 / 计算机设计大赛',list:['痛点：课件和实验文档太多，学生找不到答案','功能：文档上传、切片、检索、带出处回答、评测','技术栈：FastAPI + 向量库 + 大模型 API + 前端','创新点：引用溯源 + badcase 评测集','演示：问 3 个课程问题，答案带原文出处','可复用：AI 应用类作品最看重有没有评测'],src:'大赛作品展示：jsjds.blcu.edu.cn',url:'http://jsjds.blcu.edu.cn'},
+{t:'「城市脉动」交通流量预测与信号优化',comp:'全国大学生数学建模竞赛',d:'参考赛道：数学建模竞赛 / 大数据赛项',list:['痛点：路口信号配时固定，高峰拥堵','功能：流量预测、拥堵识别、配时建议','技术栈：Python + Pandas + LSTM / Prophet + 可视化','创新点：多模型对比 + 可解释性分析','演示：预测曲线 + 配时前后对比','可复用：数学建模论文的「摘要 + 模型 + 结果」写法'],src:'赛题与优秀论文：mcm.edu.cn',url:'https://www.mcm.edu.cn'}
+]},{m:'项目',slug:'proj',items:[
+{t:'校园二手交易小程序',d:'微信小程序 + 云开发，2-3 周能做出可演示版本。',list:['技术栈：小程序 + 云函数 + 云数据库','功能：发布、搜索、聊天、订单','产出：源码 + 演示视频 + 作品说明书','可投：计算机设计大赛、互联网+'],src:'难度：★★☆☆☆'},
+{t:'实验室 / 机房预约系统',d:'前后端分离的经典课设，适合当简历主项目。',list:['技术栈：Vue3 + Spring Boot + MySQL','功能：排期、审批、签到、统计','亮点：冲突检测 + 权限模型','可投：蓝桥杯、软考案例、校招项目'],src:'难度：★★★☆☆'},
+{t:'工业设备数据看板',d:'对应工业互联网方向，用模拟设备也能跑通全链路。',list:['技术栈：Modbus 模拟器 + MQTT + InfluxDB + ECharts','功能：实时曲线、告警、历史查询','亮点：边缘采集 + 断线重连','可投：职业院校技能大赛工业互联网赛项'],src:'难度：★★★★☆'},
+{t:'校园网资产与故障工单系统',d:'网络方向的项目，比纯背命令更能体现运维思维。',list:['技术栈：Python + SQLite + SNMP 模拟','功能：资产台账、拓扑、工单流转','亮点：自动巡检 + 告警','可投：华为 ICT 大赛、网络运维岗'],src:'难度：★★★☆☆'},
+{t:'大模型课程知识库问答',d:'用现成 API + 向量库，两周能做出可演示的 AI 应用。',list:['技术栈：FastAPI + 向量库 + 前端','功能：文档上传、切片、检索、引用','亮点：答案带出处 + 评测集','可投：人工智能赛项、实习项目'],src:'难度：★★★★☆'},
+{t:'等保自查小工具',d:'安全方向的落地项目，政企安全服务实习很吃这套。',list:['技术栈：Python 脚本 + 报告模板','功能：资产采集、基线检查、报告导出','亮点：等保 2.0 条款映射','可投：安全服务岗、作品集'],src:'难度：★★★★☆'},
+{t:'校园报修小程序',d:'宿舍/教室报修全流程，用户真实、需求稳定。',list:['技术栈：小程序 + 云开发','功能：报修、派单、进度、评价','亮点：按楼栋分配 + 超时提醒','可投：计算机设计大赛、互联网+'],src:'难度：★★☆☆☆'},
+{t:'图书馆座位预约系统',d:'座位地图 + 扫码签到，解决占座痛点。',list:['技术栈：Vue + Flask + MySQL','功能：座位地图、预约、签到、违约','亮点：候补队列 + 爽约惩罚','可投：蓝桥杯、软考案例'],src:'难度：★★★☆☆'},
+{t:'食堂菜品评价与推荐',d:'评价数据 + 简单推荐，适合做数据类作品。',list:['技术栈：Python + Flask + ECharts','功能：评分、口味标签、推荐','亮点：基于协同过滤的推荐','可投：大数据赛项、计算机设计大赛'],src:'难度：★★☆☆☆'},
+{t:'校园跑腿任务平台',d:'发布-接单-交付的完整交易闭环。',list:['技术栈：小程序 + 云函数','功能：发布任务、接单、支付模拟、信用分','亮点：防刷单 + 超时仲裁','可投：互联网+、软件类赛项'],src:'难度：★★★☆☆'},
+{t:'智能宿舍 IoT 系统',d:'温湿度、灯光、门禁联动，硬件软件都能讲。',list:['技术栈：ESP32 + MQTT + 小程序','功能：环境监测、远程控制、异常告警','亮点：低功耗 + 离线场景','可投：物联网赛项、职业技能大赛'],src:'难度：★★★★☆'},
+{t:'网络拓扑自动发现',d:'扫描网段自动生成拓扑，运维岗很实用。',list:['技术栈：Python + SNMP + NetworkX + ECharts','功能：设备发现、拓扑图、异常告警','亮点：增量扫描 + 变更记录','可投：华为 ICT 大赛、网络运维岗'],src:'难度：★★★★☆'},
+{t:'漏洞靶场练习平台',d:'Docker 起靶场，题库 + 积分，适合安全方向。',list:['技术栈：Python + Docker + Vue','功能：靶场启动、题目、积分、排行','亮点：一键起停 + 隔离','可投：CTF、安全服务岗'],src:'难度：★★★★☆'},
+{t:'学习打卡与自习计时',d:'番茄钟 + 统计 + 排行榜，轻量但完整。',list:['技术栈：小程序 / Flutter + 云开发','功能：计时、打卡、统计、排行榜','亮点：专注报告 + 好友监督','可投：计算机设计大赛、互联网+'],src:'难度：★★☆☆☆'},
+{t:'简历解析与岗位匹配',d:'解析 PDF 简历，抽技能并和岗位 JD 打分匹配。',list:['技术栈：Python + NLP + Vue','功能：简历解析、技能抽取、匹配评分','亮点：岗位画像 + 差距清单','可投：AI 赛项、实习项目'],src:'难度：★★★★☆'},
+{t:'校园数据可视化大屏',d:'把教务/图书馆/食堂数据做成一块大屏。',list:['技术栈：ECharts + Flask + MySQL','功能：多图表联动、实时刷新','亮点：数据清洗 + 指标体系','可投：大数据赛项、计算机设计大赛'],src:'难度：★★★☆☆'},
+{t:'智能客服工单分类',d:'文本分类 + 自动派单，企业里很常见的落地场景。',list:['技术栈：Python + 文本分类 / 大模型','功能：工单分类、优先级、派单','亮点：badcase 迭代 + 准确率报告','可投：AI 赛项、实习项目'],src:'难度：★★★☆☆'},
+{t:'工业设备预测性维护',d:'用振动/温度时序数据做异常检测，工业互联网进阶项目。',list:['技术栈：Python + 时序模型 + 看板','功能：异常检测、剩余寿命预估、告警','亮点：特征工程 + 模型对比','可投：工业互联网赛项、技能大赛'],src:'难度：★★★★★'}
+]}
+];var AGENTS=[
+{n:'代码搭子 · Java 后端助教',major:'软件技术',role:'开发',ic:'code',intro:'带过大专生做项目的后端学长，只讲能跑起来的方案。',tags:['需求拆解','Spring Boot 排错','数据库设计','项目包装'],prompt:'你是一名带过大专生做项目的 Java 后端工程师。回答时先用 3 句话讲清思路，再给可运行的代码（Spring Boot 3 + MySQL），并标注每个文件放在哪里；遇到报错先让我贴完整堆栈，再按可能性从高到低排查。不要堆术语，优先给最小可运行方案，最后告诉我怎么验证。',asks:['帮我把校园二手交易小程序拆成 3 个后端接口','这个 500 报错怎么定位？','数据库表怎么设计更合理？']},
+{n:'前端画板 · Web 前端助教',major:'软件技术',role:'前端',ic:'layout-template',intro:'把设计稿拆成组件、帮你调样式的前端搭档。',tags:['HTML/CSS','Vue','响应式','接口联调'],prompt:'你是一名前端工程师，擅长用 HTML/CSS/JS 和 Vue3 做校园项目。先确认页面结构和数据来源，再给组件拆分和关键代码；样式问题给出可直接粘贴的 CSS，并说明为什么这样写。回答控制在能落地的范围，不追求炫技。',asks:['帮我把这个页面拆成组件','移动端适配怎么做？','接口联调跨域怎么解决？']},
+{n:'测试侦探 · 软件测试助教',major:'软件技术',role:'测试',ic:'bug',intro:'帮你写用例、设计边界值、抓 bug 的测试搭档。',tags:['用例设计','接口测试','Postman','缺陷描述'],prompt:'你是一名软件测试工程师。拿到功能描述后，先列出测试点（正常/异常/边界/权限），再给结构化用例表（用例名、前置、步骤、预期），最后告诉我怎么用 Postman 验证接口。缺陷描述要包含复现步骤、实际结果、期望结果。',asks:['给登录功能写 20 条用例','这个 bug 怎么描述才专业？','接口测试怎么开始？']},
+{n:'网络排障官 · 网络运维助手',major:'计算机网络',role:'运维',ic:'network',intro:'按现象一步步定位断网、慢网和配置问题。',tags:['TCP/IP','VLAN','路由','排障'],prompt:'你是一名网络运维工程师。先让我描述现象（谁、哪里、什么时候、影响范围），然后按分层排查（物理→链路→IP→路由→DNS→应用）给出命令清单，并解释每条命令看什么。不要一次给十个方案，按优先级一次给 1-2 个。',asks:['整个机房都断网先查什么？','VLAN 间不通怎么排？','华为交换机怎么配 ACL？']},
+{n:'数据参谋 · 数据分析助手',major:'大数据',role:'分析',ic:'bar-chart',intro:'帮你把业务问题拆成指标和 SQL 的分析师。',tags:['SQL','指标拆解','可视化','结论'],prompt:'你是一名数据分析师。先确认业务问题和数据表结构，再拆指标口径，给 SQL（MySQL），最后用 3 句话给结论和下一步建议。数据不足时明确说缺什么，不要编造数字。',asks:['日活下降怎么拆原因？','帮我把这个需求写成 SQL','该用柱状图还是折线图？']},
+{n:'安全哨兵 · 信息安全顾问',major:'信息安全',role:'安全',ic:'shield',intro:'只做授权范围内的安全学习与防护建议。',tags:['Web 漏洞','等保','加固','CTF'],prompt:'你是一名信息安全工程师，只讨论授权范围内的学习和防护。回答漏洞问题时先讲原理和危害，再给防御/加固方案；涉及靶场练习时给出合法环境建议。不提供针对真实目标的攻击步骤。',asks:['SQL 注入的原理和防御？','等保 2.0 自查怎么做？','CTF Web 题怎么入门？']},
+{n:'AI 搭档 · AI 应用开发助手',major:'人工智能',role:'AI',ic:'sparkles',intro:'帮你把大模型能力接进项目里的搭档。',tags:['Prompt','RAG','API','评测'],prompt:'你是一名 AI 应用开发工程师。帮我把需求拆成「输入→检索→提示词→模型→输出」链路，给最小可运行的 Python 示例（FastAPI + 向量库 + 大模型 API），并设计一个 20 条左右的评测集。强调引用溯源和失败案例分析。',asks:['帮我设计一个课程知识库问答','RAG 的切片怎么定？','怎么评测回答质量？']},
+{n:'产线大脑 · 工业互联网助手',major:'工业互联网',role:'实施',ic:'factory',intro:'把设备、网关和平台连起来的工程搭档。',tags:['Modbus','OPC UA','MQTT','看板'],prompt:'你是一名工业互联网实施工程师。先确认设备类型、协议和网络条件，再给采集方案（Modbus/OPC UA→MQTT→时序库）和部署步骤；用模拟器也能跑通的方案优先。回答要包含现场常见问题和验证方法。',asks:['用模拟器怎么搭一条采集链路？','OPC UA 和 Modbus 怎么选？','设备断线重连怎么做？']},
+{n:'面试官 · 就业面试教练',major:'通用',role:'面试',ic:'briefcase',intro:'按岗位 JD 追问项目细节，帮你补短板。',tags:['项目追问','八股','简历','模拟面试'],prompt:'你是一名计算机岗位的技术面试官。先问我目标岗位和简历上的项目，然后按 STAR 追问细节（做了什么、难点、怎么验证、如果重做怎么改），一次问 1 个问题。回答后给简短点评和更好的表达方式。',asks:['模拟一场 Java 初级岗面试','我的项目该怎么讲？','简历哪里会被追问？']}
+];
+var AGENT_MAJORS=['全部','软件技术','计算机网络','大数据','信息安全','人工智能','工业互联网','通用'];var QUICK=[['全部','全部项目','layers','qi-blue'],['赛','比赛赛事','trophy','qi-orange'],['证','证书认证','award','qi-green'],['升','专升本','graduation-cap','qi-purple'],['研','考研升学','book-open','qi-purple'],['公','考公考编','landmark','qi-yellow'],['业','实习就业','briefcase','qi-cyan'],['硬','硬指标','star','qi-yellow'],['res','往届资源库','library','qi-purple']];
+var VIEWS=['term','job'];
+var VIEW_NAME={term:'学期路线',job:'就业冲刺'};
+var TERM_LIST=['大一上','大一下','大二上','大二下','大三上','大三下','大四上','大四下'];
+var PROV_LIST=['全国','北京','天津','河北','山西','内蒙古','辽宁','吉林','黑龙江','上海','江苏','浙江','安徽','福建','江西','山东','河南','湖北','湖南','广东','广西','海南','重庆','四川','贵州','云南','西藏','陕西','甘肃','青海','宁夏','新疆'];
+var ZSB_DEFAULT={s:[3],e:[4],r:[5]};
+var ZSB_PROV={'全国':{s:[11,12,1,2],e:[3,4,5],r:[6]},'广东':{s:[1],e:[3],r:[4]},'江苏':{s:[1],e:[3],r:[4]},'江西':{s:[1],e:[3],r:[4]},'河北':{s:[1,2],e:[4],r:[5]},'内蒙古':{s:[2],e:[4],r:[5]},'黑龙江':{s:[2],e:[3],r:[4]},'福建':{s:[12,1],e:[3],r:[4]},'山东':{s:[12,1],e:[3,4],r:[5]},'河南':{s:[11,12],e:[6],r:[7]},'湖北':{s:[4],e:[5],r:[6]}};
+var NCRE_PROV={'全国':{m3:[12,1],d3:'12 月—次年 1 月',m9:[6,7],d9:'6 月—7 月'},'北京':{m3:[1],d3:'1 月 5 日—1 月 9 日',m9:[7],d9:'7 月 2 日—7 月 6 日'},'天津':{m3:[1],d3:'1 月 9 日—1 月 16 日',m9:[6,7],d9:'6 月 25 日—7 月 3 日'},'河北':{m3:[1],d3:'1 月 5 日—1 月 15 日',m9:[7],d9:'7 月 6 日—7 月 14 日'},'山西':{m3:[12,1],d3:'12 月 26 日—1 月 4 日',m9:[6,7],d9:'6 月 25 日—7 月 5 日'},'内蒙古':{m3:[12,1],d3:'12 月 26 日—1 月 4 日',m9:[6,7],d9:'6 月 26 日—7 月 5 日'},'辽宁':{m3:[12,1,3],d3:'12 月 26 日—1 月 16 日、3 月 2 日—3 月 9 日',m9:[6,7,8,9],d9:'6 月 25 日—7 月 15 日、8 月 27 日—9 月 4 日'},'吉林':{m3:[12,1],d3:'12 月 26 日—1 月 16 日',m9:[6,7],d9:'6 月 25 日—7 月 15 日'},'黑龙江':{m3:[3],d3:'3 月 2 日—3 月 9 日',m9:[8,9],d9:'8 月 27 日—9 月 4 日'},'上海':{m3:[3],d3:'3 月 3 日—3 月 6 日',m9:[8,9],d9:'8 月 31 日—9 月 3 日'},'江苏':{m3:[12,1],d3:'12 月 30 日—1 月 16 日',m9:[6,7],d9:'6 月 25 日—7 月 15 日'},'浙江':{m3:[1],d3:'1 月 5 日—1 月 16 日',m9:[6,7],d9:'6 月 25 日—7 月 15 日'},'安徽':{m3:[12,1],d3:'12 月 26 日—1 月 12 日',m9:[6,7],d9:'6 月 26 日—7 月 9 日'},'福建':{m3:[12,1],d3:'12 月 26 日—1 月 16 日',m9:[6,7],d9:'6 月 25 日—7 月 15 日'},'江西':{m3:[12,1],d3:'12 月 30 日—1 月 7 日',m9:[6,7],d9:'6 月 25 日—7 月 2 日'},'山东':{m3:[1],d3:'1 月 7 日—1 月 13 日',m9:[6,7],d9:'6 月 25 日—7 月 1 日'},'河南':{m3:[12,1],d3:'12 月 29 日—1 月 6 日',m9:[6,7],d9:'6 月 25 日—7 月 10 日'},'湖北':{m3:[12,1],d3:'12 月 26 日—1 月 7 日',m9:[6,7],d9:'6 月 25 日—7 月 6 日'},'湖南':{m3:[1],d3:'1 月 5 日—1 月 9 日',m9:[6,7],d9:'6 月 27 日—7 月 6 日'},'广东':{m3:[12,1],d3:'12 月 26 日—1 月 5 日',m9:[6,7],d9:'6 月 25 日—7 月 3 日'},'广西':{m3:[12,1],d3:'12 月 26 日—1 月 11 日',m9:[6,7],d9:'6 月 25 日—7 月 8 日'},'海南':{m3:[12,1],d3:'12 月 29 日—1 月 7 日',m9:[6,7],d9:'6 月 25 日—7 月 14 日'},'重庆':{m3:[12,1,3],d3:'12 月 26 日—1 月 16 日、3 月 2 日—3 月 9 日',m9:[6,7,8,9],d9:'6 月 25 日—7 月 15 日、8 月 27 日—9 月 4 日'},'四川':{m3:[12,1],d3:'12 月 30 日—1 月 13 日',m9:[6,7],d9:'6 月 29 日—7 月 8 日'},'贵州':{m3:[12,1],d3:'12 月 29 日—1 月 9 日',m9:[6,7],d9:'6 月 30 日—7 月 10 日'},'云南':{m3:[1],d3:'1 月 6 日—1 月 15 日',m9:[6,7],d9:'6 月 25 日—7 月 5 日'},'西藏':{m3:[3],d3:'3 月 2 日—3 月 9 日',m9:[8,9],d9:'8 月 27 日—9 月 4 日'},'陕西':{m3:[1],d3:'1 月 6 日—1 月 12 日',m9:[6,7],d9:'6 月 26 日—7 月 2 日'},'甘肃':{m3:[12,1],d3:'12 月 26 日—1 月 16 日',m9:[6,7],d9:'6 月 25 日—7 月 15 日'},'青海':{m3:[1],d3:'1 月 4 日—1 月 7 日',m9:[6,7],d9:'6 月 29 日—7 月 2 日'},'宁夏':{m3:[1],d3:'1 月 5 日—1 月 9 日',m9:[8,9],d9:'8 月 27 日—9 月 4 日'},'新疆':{m3:[1],d3:'1 月 5 日—1 月 9 日',m9:[6,7],d9:'6 月 25 日—7 月 3 日'}};var SOFT_PROV={'北京':{m:[9],d:'9 月 11 日—9 月 17 日'},'天津':{m:[8,9],d:'8 月 27 日—9 月 16 日'},'河北':{m:[9],d:'9 月 10 日—9 月 16 日'},'山西':{m:[8,9],d:'8 月 17 日—9 月 14 日'},'内蒙古':{m:[8,9],d:'8 月 24 日—9 月 8 日'},'辽宁':{m:[8],d:'8 月 19 日—8 月 25 日'},'吉林':{m:[8],d:'8 月 14 日—8 月 27 日'},'黑龙江':{m:[8],d:'8 月 20 日—8 月 26 日'},'上海':{m:[8],d:'8 月 17 日—8 月 27 日'},'江苏':{m:[8,9],d:'8 月 17 日—9 月 17 日'},'浙江':{m:[8],d:'8 月 14 日—8 月 20 日'},'安徽':{m:[8],d:'8 月 14 日—8 月 25 日'},'福建':{m:[8,9],d:'8 月 24 日—9 月 3 日'},'江西':{m:[8,9],d:'8 月 17 日—9 月 17 日'},'山东':{m:[8,9],d:'8 月 21 日—9 月 3 日'},'河南':{m:[8,9],d:'8 月 17 日—9 月 15 日'},'湖北':{m:[8,9],d:'8 月 31 日—9 月 10 日'},'湖南':{m:[9],d:'9 月 1 日—9 月 16 日'},'广东':{m:[8],d:'8 月 17 日 09:00—8 月 25 日 17:00'},'广西':{m:[8],d:'8 月 19 日—8 月 28 日'},'海南':{m:[8],d:'8 月 17 日—8 月 26 日'},'重庆':{m:[8,9],d:'8 月 31 日—9 月 15 日'},'四川':{m:[8,9],d:'8 月 26 日—9 月 9 日'},'贵州':{m:[8,9],d:'8 月 14 日—9 月 18 日'},'云南':{m:[8,9],d:'8 月 17 日—9 月 11 日'},'西藏':{m:[8],d:'8 月 15 日—8 月 21 日'},'陕西':{m:[8,9],d:'8 月 25 日—9 月 16 日'},'甘肃':{m:[8],d:'8 月 14 日—8 月 21 日'},'青海':{m:[8,9],d:'8 月 28 日—9 月 7 日'},'宁夏':{m:[8,9],d:'8 月 21 日—9 月 10 日'},'新疆':{m:[8],d:'8 月（具体日期见官网）'}};
+var SOFT_UP='约 3 月中—4 月初（往年惯例）';var PROV_NOTES=[['职业院校技能大赛','省赛由各省教育厅组织，时间与名额逐年不同，一般通过学校集训队报名'],['软考','考试全国统一（5 月 / 11 月），报名窗口由各省软考办分别发布'],['计算机等级考试','考试全国统一（3 月 / 9 月），报名时间与是否增设 5 月 / 12 月考试由各省考试院确定'],['英语应用能力考试','由各省组织，部分省份一年只开考一次'],['挑战杯','省赛由各省组织，时间差异较大'],['中国国际大学生创新大赛','省赛由各省教育厅组织，时间差异较大'],['1+X','考核时间与考点由学校、培训评价组织安排']];
+var KEY='cs-wb-done-v2';
+var done={};
+try{var raw=window.localStorage.getItem(KEY);if(raw){var parsed=JSON.parse(raw);if(parsed&&typeof parsed==='object'){done=parsed;}}}catch(err){}
+function save(){try{window.localStorage.setItem(KEY,JSON.stringify(done));}catch(err){}}
+var state={type:'全部',dir:'全部',q:'',hideDone:false,view:'term',term:'大一上',prov:'广东',page:null,jobMajor:'全部专业',openItem:null,resCat:'全部',openRes:null,projOffset:0,agentCat:'全部',openAgent:null};
+function elm(tag,cls,text){var n=document.createElement(tag);if(cls){n.className=cls;}if(text!==undefined&&text!==null){n.textContent=String(text);}return n;}
+function slug(k){return KIND_SLUG[k]||'signup';}
+function isDone(i){return done[String(i)]===true;}
+function hard(it){return it.lv==='顶级'||it.lv==='硬通货';}
+function match(it,termOverride){
+var term=(termOverride===undefined)?state.term:termOverride;
+if(term!=='全部'&&termsOf(it).indexOf(term)<0){return false;}
+if(state.type==='硬'){if(!hard(it)){return false;}}
+else if(state.type!=='全部'&&it.c!==state.type){return false;}
+if(state.dir!=='全部'&&it.d!==state.dir){return false;}
+if(state.q){var hay=(it.n+' '+it.w+' '+it.d+' '+it.lv+' '+(it.ef||'')).toLowerCase();if(hay.indexOf(state.q)<0){return false;}}
+return true;
+}
+function zsbOf(prov){return ZSB_PROV[prov]||ZSB_DEFAULT;}
+function pvKey(it){
+if(it.n.indexOf('专升本 备考')===0){return 'prep';}
+if(it.n.indexOf('专升本 考试')===0){return 'exam';}
+return '';
+}
+function monthRange(list){
+var s=list.slice().sort(function(a,b){return ((a+3)%12)-((b+3)%12);});
+return s[0]+'月'+(s.length>1?'-'+s[s.length-1]+'月':'');
+}
+function ncreOf(prov){return NCRE_PROV[prov]||NCRE_PROV['全国'];}
+function isNcre(it){return it.n.indexOf('计算机等级考试')===0;}
+function ncreMo(prov){
+var n=ncreOf(prov),out=[];
+n.m3.forEach(function(m){out.push([m,'报名']);});
+out.push([3,'考试']);
+n.m9.forEach(function(m){out.push([m,'报名']);});
+out.push([9,'考试']);
+return out;
+}
+function softOf(prov){return SOFT_PROV[prov]||null;}
+function isSoft(it){return it.n.indexOf('软考')===0;}
+function softMo(prov){
+var s=softOf(prov);
+if(!s){return null;}
+var out=[[3,'报名'],[4,'报名'],[5,'考试']];
+s.m.forEach(function(m){out.push([m,'报名']);});
+out.push([11,'考试']);
+return out;
+}
+function effMo(it){
+if(isNcre(it)&&state.prov!=='全国'){return ncreMo(state.prov);}
+if(isSoft(it)&&state.prov!=='全国'){var sm=softMo(state.prov);if(sm){return sm;}}
+var k=pvKey(it);
+if(!k){return it.mo||[];}
+var z=zsbOf(state.prov),out=[],i;
+if(k==='prep'){
+var first=Math.min.apply(null,z.s);
+for(i=4;i>=1;i--){out.push([((first-1-i+12)%12)+1,'备赛','备考']);}
+z.s.forEach(function(m){out.push([m,'报名']);});
+return out;
+}
+z.e.forEach(function(m){out.push([m,'考试']);});
+(z.r||[]).forEach(function(m){out.push([m,'结果','录取']);});
+return out;
+}
+var CET4_NAME='英语四级 CET-4',CET6_NAME='英语六级 CET-6';
+var CET4_IDX=-1,CET6_IDX=-1;
+(function(){var i;for(i=0;i<CS_DATA.length;i++){if(CS_DATA[i].n===CET4_NAME){CET4_IDX=i;}if(CS_DATA[i].n===CET6_NAME){CET6_IDX=i;}}})();
+function cet4Done(){return CET4_IDX>=0&&isDone(CET4_IDX);}
+function termsOf(it){
+if(it.n===CET6_NAME&&cet4Done()&&CET4_IDX>=0){return ['大二下','大三上','大三下','大四上','大四下'];}
+return it.tm;
+}
+function isUnlockedCet6(it){return it.n===CET6_NAME&&cet4Done();}
+function provNote(it){
+if(state.prov==='全国'){return '';}
+if(isNcre(it)){
+var n=ncreOf(state.prov);
+return '本省报名窗口（教育部教育考试院 2026 年通知）：3 月场 '+n.d3+'；9 月场 '+n.d9;
+}
+if(isSoft(it)){
+var s=softOf(state.prov);
+if(s){return '本省报名窗口（中国计算机技术职业资格网报名平台）：上半年 '+SOFT_UP+'；下半年 2026 年 '+s.d;}
+}
+var hit='';
+PROV_NOTES.forEach(function(pair){if(!hit&&it.n.indexOf(pair[0])>=0){hit=pair[1];}});
+return hit;
+}
+function isProvItem(it){return !!pvKey(it)||isNcre(it)||isSoft(it)||!!provNote(it);}
+var DETAILS={
+'英语应用能力考试':{org:'各省教育考试院（学校统一组织）',majors:'所有专业',star:2,rounds:'每年 6 月 / 12 月各一次笔试（部分省份仅一次），无初复赛',work:'无作品提交'},
+'计算机等级考试 一级':{org:'教育部教育考试院',majors:'所有专业',star:1,rounds:'机考，每年 3 月 / 9 月（部分省份增设 5 月 / 12 月），无初复赛',work:'无作品提交'},
+'计算机等级考试 二级':{org:'教育部教育考试院',majors:'所有专业',star:2,rounds:'机考，每年 3 月 / 9 月（部分省份增设 5 月 / 12 月），无初复赛',work:'无作品提交'},
+'计算机等级考试 三级':{org:'教育部教育考试院',majors:'所有专业',star:3,rounds:'机考，每年 3 月 / 9 月（部分省份增设 5 月 / 12 月），无初复赛',work:'无作品提交'},
+'蓝桥杯大赛':{org:'工业和信息化部人才交流中心',majors:'软件技术、计算机应用技术、大数据技术、人工智能技术应用',star:3,rounds:'省赛 4 月（初赛）→ 国赛 6 月（决赛）',work:'软件类机考无作品；设计类需提交作品，往年 4 月截止'},
+'蓝桥杯 / 天梯赛':{org:'工信部人才交流中心 / 全国高等学校计算机教育研究会',majors:'软件技术、计算机应用技术',star:2,rounds:'省赛 4 月、天梯赛 4 月',work:'无作品提交'},
+'团队程序设计天梯赛':{org:'全国高等学校计算机教育研究会',majors:'软件技术、计算机应用技术、人工智能技术应用',star:4,rounds:'校内选拔 3 月 → 全国正赛 4 月（团队赛，无复赛）',work:'无作品提交（在线编程）'},
+'全国职业院校技能大赛':{org:'教育部等部委（省赛由省教育厅组织）',majors:'按赛项：软件技术、计算机网络、大数据、信息安全、工业互联网等',star:4,rounds:'校赛与集训 → 省赛 3-5 月 → 国赛 5-6 月',work:'部分赛项需提交作品与文档，以赛项规程为准'},
+'1+X 职业技能等级证书（初级）':{org:'培训评价组织 + 学校考点',majors:'按证书方向：Web 前端、云计算、大数据等',star:1,rounds:'学校统一安排，一般学期末考核',work:'部分等级含实操提交'},
+'1+X 高级':{org:'培训评价组织 + 学校考点',majors:'按证书方向：信创、云计算、大数据等',star:3,rounds:'学校统一安排考核',work:'部分等级含实操提交'},
+'1+X 证书':{org:'培训评价组织 + 学校考点',majors:'按证书方向',star:2,rounds:'学校统一安排考核',work:'部分等级含实操提交'},
+'英语四级':{org:'教育部教育考试院',majors:'所有专业',star:3,rounds:'笔试 6 月 / 12 月；口试 5 月 / 11 月（选考）',work:'无作品提交'},
+'英语六级':{org:'教育部教育考试院',majors:'所有专业',star:4,rounds:'笔试 6 月 / 12 月；口试 5 月 / 11 月（选考）',work:'无作品提交'},
+'中国大学生计算机设计大赛':{org:'教育部高等学校计算机类专业教学指导委员会等',majors:'软件技术、数字媒体技术、计算机应用技术',star:3,rounds:'校赛 5 月 → 国赛 7-8 月',work:'需提交作品，往年 4-5 月截止'},
+'大学生创新创业训练计划':{org:'教育部（国家级大创计划）/ 学校',majors:'所有专业',star:3,rounds:'校级申报 3-5 月 → 立项 5 月',work:'需提交申报书、中期与结题材料'},
+'中国国际大学生创新大赛':{org:'教育部（互联网+）；挑战杯由共青团中央等主办',majors:'所有专业',star:4,rounds:'校赛 5-6 月 → 省赛 7-9 月 → 国赛 10-11 月',work:'需提交商业计划书 / PPT，省赛截止一般 7 月'},
+'暑期集训':{org:'学校 / 省教育厅',majors:'计算机类',star:3,rounds:'7-8 月集中训练',work:'视赛项而定'},
+'软考 中级':{org:'工业和信息化部 + 人力资源社会保障部（工信部教育与考试中心）',majors:'所有计算机类专业',star:4,rounds:'上半年 5 月 / 下半年 11 月机考，无初复赛',work:'无作品提交'},
+'软考 高级':{org:'工业和信息化部 + 人力资源社会保障部（工信部教育与考试中心）',majors:'所有计算机类专业',star:5,rounds:'上半年 5 月 / 下半年 11 月机考，无初复赛',work:'无作品提交'},
+'华为认证 HCIA':{org:'华为技术有限公司',majors:'计算机网络、云计算、计算机应用技术',star:2,rounds:'机考，随报随考，无初复赛',work:'无作品提交'},
+'红帽 RHCSA':{org:'Red Hat',majors:'计算机网络、系统运维方向',star:4,rounds:'实操机考，随报随考，无初复赛',work:'无作品提交'},
+'全国大学生数学建模竞赛':{org:'中国工业与应用数学学会',majors:'所有专业（数据、数学方向更占优）',star:4,rounds:'9 月连续 3 天（72 小时），无初复赛',work:'需提交论文，截止为比赛结束当晚'},
+'华为 ICT 大赛':{org:'华为技术有限公司',majors:'计算机网络、云计算、大数据、人工智能',star:4,rounds:'省赛 12-3 月 → 国赛 4-5 月 → 全球赛 5-6 月',work:'实践赛需提交方案并答辩'},
+'NISP':{org:'中国信息安全测评中心',majors:'信息安全技术、计算机网络、计算机应用技术',star:2,rounds:'机考，随报随考，无初复赛',work:'无作品提交'},
+'阿里云 ACA':{org:'阿里云',majors:'云计算、大数据、计算机应用技术',star:2,rounds:'机考，随报随考，无初复赛',work:'无作品提交'},
+'天池':{org:'阿里云 / Kaggle',majors:'大数据、人工智能',star:4,rounds:'线上赛，按各赛事赛程',work:'需提交代码与方案'},
+'专升本 备考':{org:'各省教育考试院',majors:'所有专业',star:4,rounds:'报名（按省份）→ 考试 3-5 月，无初复赛',work:'无作品提交'},
+'专升本 考试':{org:'各省教育考试院',majors:'所有专业',star:4,rounds:'笔试（部分省份含专业课），无初复赛',work:'无作品提交'},
+'思科 CCNA':{org:'Cisco',majors:'计算机网络技术',star:3,rounds:'机考，随报随考，无初复赛',work:'无作品提交'},
+'强网杯':{org:'各赛事主办方（如中国互联网发展基金会等）',majors:'信息安全技术',star:4,rounds:'线上初赛 → 线下决赛',work:'CTF 解题；部分赛道需提交报告'},
+'Codeforces':{org:'Codeforces / 洛谷',majors:'软件技术、计算机应用技术',star:4,rounds:'线上周赛 / 月赛',work:'无作品提交'},
+'数据库认证':{org:'Oracle / 达梦 / 人大金仓等',majors:'大数据技术、软件技术',star:4,rounds:'机考，随报随考，无初复赛',work:'无作品提交'}
+};
+function detailOf(it){
+var best=null,bk='';
+for(var k in DETAILS){if(it.n.indexOf(k)===0&&k.length>bk.length){bk=k;best=DETAILS[k];}}
+return best;
+}
+function stars(n){var s='',i;if(!n){return '暂无评级';}for(i=1;i<=5;i++){s+=(i<=n?'★':'☆');}return s;}
+function signupRange(it){
+var mo=effMo(it),ms=[];
+mo.forEach(function(p){if(p[1]==='报名'&&ms.indexOf(p[0])<0){ms.push(p[0]);}});
+if(isNcre(it)&&state.prov!=='全国'){var n=ncreOf(state.prov);return '3 月场 '+n.d3+'；9 月场 '+n.d9;}
+if(isSoft(it)&&state.prov!=='全国'){var sf=softOf(state.prov);if(sf){return '上半年 '+SOFT_UP+'；下半年 2026 年 '+sf.d;}}
+if(pvKey(it)&&state.prov!=='全国'){var z=zsbOf(state.prov);return monthRange(z.s)+'报名、'+monthRange(z.e)+'考试（'+state.prov+'往年安排）';}
+if(ms.length){return monthRange(ms)+'（往年惯例，具体看当年通知）';}
+return '全年滚动 / 见官方通知';
+}
+function roundsFromMo(it){
+var out=[];
+effMo(it).forEach(function(p){if(p[1]==='比赛'||p[1]==='考试'){out.push(p[0]+'月'+(p[2]||p[1]));}});
+return out.length?out.join(' → '):'见官方通知';
+}
+function detailCard(it){
+var d=detailOf(it)||{};
+var box=elm('div','db-detail');
+var grid=elm('div','db-detail-grid');
+function kv(k,v,cls){var w=elm('div','db-detail-i');w.appendChild(elm('span','db-detail-k',k));w.appendChild(elm('span','db-detail-v'+(cls?' '+cls:''),v));grid.appendChild(w);}
+kv('报名起止',signupRange(it));
+kv('初赛 / 复赛',d.rounds||roundsFromMo(it));
+kv('作品提交截止',d.work||'见赛事规程');
+kv('主办单位',d.org||'见官方通知');
+kv('合适专业',d.majors||'计算机相关专业');
+kv('难度',stars(d.star),'db-stars');
+box.appendChild(grid);
+box.appendChild(elm('p','db-detail-note','报名时间按往年区间并结合所选省份整理，初复赛与作品截止以当年官方通知为准。'));
+return box;
+}
+function refreshIcons(){if(globalThis.lucide&&typeof globalThis.lucide.createIcons==='function'){globalThis.lucide.createIcons();}}
+function dot(kind){var d=elm('i','db-dot k-'+slug(kind));d.setAttribute('aria-hidden','true');return d;}
+function timesNode(it){
+var p=elm('p','db-times');
+if(it.all){var s=elm('span','db-t');s.appendChild(dot('报名'));s.appendChild(document.createTextNode('全年滚动'));p.appendChild(s);return p;}
+var list=effMo(it).slice().sort(function(a,b){return ((a[0]+3)%12)-((b[0]+3)%12);});
+list.forEach(function(m,idx){
+if(idx>0){p.appendChild(elm('span','db-arrow','→'));}
+var s=elm('span','db-t');
+s.appendChild(dot(m[1]));
+s.appendChild(document.createTextNode(m[0]+'月'+(m[2]||m[1])));
+p.appendChild(s);
+});
+return p;
+}
+function toggleDone(i,on){
+if(on){done[String(i)]=true;}else{delete done[String(i)];}
+save();renderAll();
+}
+function itemNode(it,i){
+var wrap=elm('div','db-item');
+var hd=elm('div','db-item-hd');
+var lab=elm('label','db-check');
+var cb=elm('input');
+cb.type='checkbox';cb.checked=isDone(i);cb.setAttribute('aria-label','标记已完成：'+it.n);
+cb.addEventListener('change',function(){toggleDone(i,cb.checked);});
+lab.appendChild(cb);
+hd.appendChild(lab);
+var btn=elm('button','db-item-btn');
+btn.type='button';
+btn.setAttribute('aria-expanded',String(state.openItem===i));
+btn.appendChild(elm('span','db-item-name',it.n));
+var ci=elm('i');ci.setAttribute('data-lucide','chevron-down');ci.setAttribute('aria-hidden','true');
+btn.appendChild(ci);
+btn.addEventListener('click',function(){state.openItem=(state.openItem===i?null:i);renderLanes();refreshIcons();});
+hd.appendChild(btn);
+wrap.appendChild(hd);
+wrap.appendChild(elm('p','db-meta',TYPE_LABEL[it.c]+' · '+it.d+' · '+it.lv+' · 投入 '+it.ef));
+wrap.appendChild(timesNode(it));
+wrap.appendChild(elm('p','db-why',it.w));
+if(it.n===CET4_NAME){wrap.appendChild(elm('p','db-hint','勾选「已完成」后，本表会自动接上并解锁「英语六级 CET-6」'));}
+if(isUnlockedCet6(it)){wrap.appendChild(elm('p','db-unlock','已通过英语四级 · 自动解锁（六级需四级 425 分以上，且学校开设六级考点）'));}
+var pn=provNote(it);
+if(pn){wrap.appendChild(elm('p','db-prov-note','省份差异：'+pn));}
+if(state.openItem===i){wrap.appendChild(detailCard(it));}
+return wrap;
+}
+function renderLanes(){
+var host=document.getElementById('db-lanes');
+if(!host){return;}
+host.textContent='';
+var shown=0;
+var laneTerms=(state.term==='全部')?TERMS:TERMS.filter(function(x){return x[0]===state.term;});
+laneTerms.forEach(function(t){
+var idx=[];
+CS_DATA.forEach(function(it,i){
+if(termsOf(it).indexOf(t[0])<0){return;}
+if(!match(it)){return;}
+if(state.hideDone&&isDone(i)){return;}
+idx.push(i);
+});
+if(!idx.length){return;}
+if(cet4Done()){
+var pa=idx.indexOf(CET4_IDX),pb=idx.indexOf(CET6_IDX);
+if(pa>=0&&pb>=0&&pb!==pa+1){idx.splice(pb,1);idx.splice(pa+1,0,CET6_IDX);}
+}
+shown+=idx.length;
+var lane=elm('section','db-lane');
+var hd=elm('div','db-lane-hd');
+hd.appendChild(elm('h4','db-lane-title',t[0]));
+hd.appendChild(elm('span','db-lane-count',idx.length+' 项'));
+lane.appendChild(hd);
+lane.appendChild(elm('p','db-lane-sub',t[1]));
+idx.forEach(function(i,n){
+if(n>0){lane.appendChild(document.createElement('hr'));}
+lane.appendChild(itemNode(CS_DATA[i],i));
+});
+host.appendChild(lane);
+});
+if(!shown){host.appendChild(elm('p','db-empty','当前筛选下没有条目，换个条件试试。'));}
+refreshIcons();
+}
+function renderMonths(){
+var host=document.getElementById('db-months');
+if(!host){return;}
+host.textContent='';
+var m;
+for(m=1;m<=12;m++){
+var cell=elm('div','db-month');
+cell.appendChild(elm('strong','db-month-n',m+' 月'));
+var any=false;
+CS_DATA.forEach(function(it,i){
+if(!match(it)){return;}
+if(state.hideDone&&isDone(i)){return;}
+effMo(it).forEach(function(p){
+if(p[0]!==m){return;}
+any=true;
+var row=elm('div','db-entry');
+row.appendChild(dot(p[1]));
+row.appendChild(elm('span','db-entry-t',it.n+' · '+(p[2]||p[1])));
+cell.appendChild(row);
+});
+});
+if(!any){cell.appendChild(elm('p','db-empty','本月无固定节点'));}
+host.appendChild(cell);
+}
+var rolling=[];
+CS_DATA.forEach(function(it){if(it.all&&match(it)){rolling.push(it.n);}});
+if(rolling.length){
+var rc=elm('div','db-month');
+rc.appendChild(elm('strong','db-month-n','全年滚动'));
+rolling.forEach(function(n){
+var row=elm('div','db-entry');
+row.appendChild(dot('报名'));
+row.appendChild(elm('span','db-entry-t',n));
+rc.appendChild(row);
+});
+host.appendChild(rc);
+}
+}
+function renderJob(){
+var host=document.getElementById('db-job');
+if(!host){return;}
+host.textContent='';
+var ol=elm('ol','db-steps');
+CS_JOB.forEach(function(s){
+var li=elm('li');
+var hd=elm('div','db-step-hd');
+hd.appendChild(dot('投递'));
+var txt=elm('span');
+txt.appendChild(elm('strong',null,s.t+' · '));
+txt.appendChild(document.createTextNode(s.h));
+hd.appendChild(txt);
+li.appendChild(hd);
+li.appendChild(elm('p','db-step-b',s.b));
+ol.appendChild(li);
+});
+host.appendChild(ol);
+host.appendChild(elm('h4','db-sub-h','简历上要凑齐的硬条件'));
+var ul=elm('ul','db-habits');
+CS_HABITS.forEach(function(x){ul.appendChild(elm('li',null,x));});
+host.appendChild(ul);
+}
+function shortName(n){var s=String(n).split('（')[0].trim();var parts=s.split('·');if(parts.length>1){s=parts[parts.length-1].trim();}return s;}
+function tileIcon(it){
+if(it.c==='赛'){return 'trophy';}
+if(it.c==='证'){return 'award';}
+if(it.c==='升'){return 'graduation-cap';}
+return 'briefcase';
+}
+function renderTiles(){
+var host=document.getElementById('db-tiles');
+if(!host){return;}
+host.textContent='';
+var n=0,extra=0,filled=0;
+CS_DATA.forEach(function(it,i){
+if(!hard(it)){return;}
+if(!match(it)){return;}
+if(isDone(i)){filled++;return;}
+if(n>=8){extra++;return;}
+n++;
+var btn=elm('button','db-tile db-tile-c'+(n%6)+(isDone(i)?' is-done':''),null);
+btn.type='button';
+btn.setAttribute('aria-pressed',String(isDone(i)));
+btn.setAttribute('data-tooltip',it.n+'｜'+effMo(it).slice().sort(function(a,b){return ((a[0]+3)%12)-((b[0]+3)%12);}).map(function(p){return p[0]+'月'+(p[2]||p[1]);}).join(' → '));
+var ic=elm('span','db-tile-icon');
+var gi=elm('i');gi.setAttribute('data-lucide',tileIcon(it));gi.setAttribute('aria-hidden','true');
+ic.appendChild(gi);
+btn.appendChild(ic);
+btn.appendChild(elm('span','db-tile-label',shortName(it.n)));
+btn.addEventListener('click',function(){toggleDone(i,!isDone(i));});
+host.appendChild(btn);
+});
+if(!n){host.appendChild(elm('p','db-empty',filled?'重点目标已全部完成，可在下方路线清单取消勾选恢复。':'本年级还没有重点目标。'));}else if(extra){host.appendChild(elm('p','db-note','另有 '+extra+' 个重点目标未显示，可用右侧快捷入口或搜索缩小范围。'));}
+if(filled){host.appendChild(elm('p','db-note','已完成 '+filled+' 项，已从重点目标收起；在下方路线清单取消勾选即可恢复。'));}
+refreshIcons();
+}
+function renderQuick(){
+var host=document.getElementById('db-quick');
+if(!host){return;}
+host.textContent='';
+QUICK.forEach(function(q){
+var isOn=(q[0]==='业')?(state.page==='jobs'):(q[0]==='res')?(state.page==='res'):(q[0]===state.type&&state.page!=='jobs'&&state.page!=='res');
+var b=elm('button','db-quick-item'+(isOn?' is-active':''),null);
+b.type='button';
+b.setAttribute('aria-pressed',String(q[0]===state.type));
+var ic=elm('span','db-quick-icon '+q[3]);
+var gi=elm('i');gi.setAttribute('data-lucide',q[2]);gi.setAttribute('aria-hidden','true');
+ic.appendChild(gi);
+b.appendChild(ic);
+b.appendChild(elm('span','db-quick-label',q[1]));
+b.addEventListener('click',function(){
+if(q[0]==='业'){state.page='jobs';state.jobMajor='全部专业';renderAll();window.scrollTo(0,0);return;}
+if(q[0]==='res'){state.page='res';state.resCat='全部';renderAll();window.scrollTo(0,0);return;}
+state.type=q[0];state.page=null;renderQuick();renderAll();
+});
+host.appendChild(b);
+});
+refreshIcons();
+}
+var KIND_LIST=[['报名','signup'],['备赛','prep'],['比赛','contest'],['考试','exam'],['投递','apply'],['结果','result'],['实习','intern']];
+var GROUPS=[['赛','比赛','g-c'],['证','证书','g-z'],['升','专升本','g-s'],['研','考研','g-b'],['公','考公','g-r'],['业','升学就业','g-y']];
+function firstMonth(it){var v=99;effMo(it).forEach(function(p){if(p[0]<v){v=p[0];}});return v;}
+function timelineWant(it){
+if(!match(it)){return false;}
+if(!effMo(it).length){return false;}
+if(state.type==='全部'&&it.c!=='赛'&&it.c!=='证'&&it.c!=='升'&&it.c!=='研'&&it.c!=='公'){return false;}
+return true;
+}
+function renderTimeline(){
+var host=document.getElementById('db-timeline');
+if(!host){return;}
+host.textContent='';
+var rows=[];
+CS_DATA.forEach(function(it,i){if(timelineWant(it)&&(!state.hideDone||!isDone(i))){rows.push({it:it,i:i});}});
+var used={};
+rows.forEach(function(r){effMo(r.it).forEach(function(p){used[p[1]]=true;});});
+var lg=document.getElementById('db-tl-legend');
+if(lg){
+lg.textContent='';
+KIND_LIST.forEach(function(k){
+if(!used[k[0]]){return;}
+var item=elm('span','db-legend-item');
+item.appendChild(elm('span','db-legend-swatch k-'+k[1]));
+item.appendChild(document.createTextNode(k[0]));
+lg.appendChild(item);
+});
+}
+if(!rows.length){host.appendChild(elm('p','db-empty','当前筛选下没有可排入时间轴的项目。'));return;}
+var tl=elm('div','db-tl');
+var head=elm('div','db-tl-head');
+head.appendChild(elm('span','db-tl-cap','赛事 / 证书 / 月份'));
+var months=elm('div','db-tl-months');
+for(var m=1;m<=12;m++){months.appendChild(elm('span',null,m+'月'));}
+head.appendChild(months);
+tl.appendChild(head);
+GROUPS.forEach(function(g){
+var list=rows.filter(function(r){return r.it.c===g[0];}).sort(function(a,b){return firstMonth(a.it)-firstMonth(b.it);});
+if(!list.length){return;}
+var gh=elm('div','db-tl-group');
+gh.appendChild(elm('span',null,g[1]));
+gh.appendChild(elm('span','db-tl-count',list.length+' 项'));
+tl.appendChild(gh);
+list.forEach(function(r){
+var row=elm('div','db-tl-row');
+var nm=elm('span','db-tl-name');
+nm.appendChild(elm('span','db-tl-mark '+g[2]));
+nm.appendChild(elm('span','db-tl-text',r.it.n));
+if(isProvItem(r.it)){nm.appendChild(elm('span','db-tl-tag',state.prov==='全国'?'省':'省·'+state.prov));}
+row.appendChild(nm);
+var cells=elm('div','db-tl-cells');
+for(var mm=1;mm<=12;mm++){
+var cell=elm('div','db-tl-cell');
+effMo(r.it).forEach(function(p){
+if(p[0]!==mm){return;}
+var seg=elm('span','db-seg k-'+slug(p[1]));
+seg.setAttribute('data-tooltip',r.it.n+'｜'+mm+'月 · '+(p[2]||p[1])+' · 投入 '+(r.it.ef||''));
+cell.appendChild(seg);
+});
+cells.appendChild(cell);
+}
+row.appendChild(cells);
+tl.appendChild(row);
+});
+});
+host.appendChild(tl);
+var skipped=[];
+CS_DATA.forEach(function(it){if(match(it)&&!effMo(it).length){skipped.push(it.n);}});
+if(skipped.length){
+var names=skipped.slice(0,3).join('、')+(skipped.length>3?' 等':'');
+host.appendChild(elm('p','db-tl-note','另有 '+skipped.length+' 个全年滚动、不绑定月份的项目：'+names+'，在「学期路线」里可以看到。'));
+}
+if(state.prov!=='全国'){
+host.appendChild(elm('p','db-tl-note','省份时间来源：NCRE 用教育部教育考试院 2026 年报名通知（各省承办机构），软考下半年用中国计算机技术职业资格网 2026 年各省报名窗口、上半年为往年惯例，专升本按各省往年安排推算；每年均会调整，请以当年官方通知为准。'));
+}
+}function renderStats(){
+var total=0,dc=0,hTotal=0,hDone=0,yNodes=0,monthNodes=0;
+var nowM=new Date().getMonth()+1;
+var firstMonthName='';
+CS_DATA.forEach(function(it,i){
+if(!match(it)){return;}
+total++;
+if(isDone(i)){dc++;}
+if(hard(it)){hTotal++;if(isDone(i)){hDone++;}}
+yNodes+=effMo(it).length;
+if(effMo(it).length&&!firstMonthName){firstMonthName=it.n;}
+effMo(it).forEach(function(p){if(p[0]===nowM){monthNodes++;}});
+});
+var pct=total?Math.round(dc/total*100):0;
+var e1=document.getElementById('db-kpi-done');
+if(e1){e1.textContent=dc+'/'+total;}
+var bar=document.getElementById('db-kpi-bar');
+if(bar){bar.style.width=pct+'%';}
+var e2=document.getElementById('db-kpi-hard');
+if(e2){e2.textContent=hDone+'/'+hTotal;}
+var e3=document.getElementById('db-kpi-year');
+if(e3){e3.textContent=String(yNodes);}
+var e4=document.getElementById('db-kpi-month');
+if(e4){e4.textContent=String(monthNodes);}
+var e5=document.getElementById('db-kpi-month-sub');
+if(e5){e5.textContent=nowM+'月 · '+(monthNodes?'报名 / 考试 / 比赛节点':'暂无固定节点');e5.setAttribute('title',e5.textContent);}
+var e6=document.getElementById('db-note');
+if(e6){e6.textContent=(state.term==='全部'?'全部年级':state.term)+' · 共 '+total+' 项';}
+}
+function renderTerms(){
+var host=document.getElementById('db-terms');
+if(!host){return;}
+host.textContent='';
+var opts=TERM_LIST.concat(['全部']);
+opts.forEach(function(term){
+var b=elm('button','db-chip'+(state.term===term?' is-active':''),null);
+b.type='button';
+b.setAttribute('aria-pressed',String(state.term===term));
+b.appendChild(document.createTextNode(term));
+var n=0;
+CS_DATA.forEach(function(it){if(match(it,term)){n++;}});
+b.appendChild(elm('span','db-chip-n',String(n)));
+b.addEventListener('click',function(){state.term=term;renderAll();});
+host.appendChild(b);
+});
+var info=document.getElementById('db-scope-info');
+if(info){
+var z=zsbOf(state.prov);
+var head=(state.term==='全部'?'全部年级':state.term);
+var sf=softOf(state.prov);
+var softTxt=sf?(' · 软考 '+monthRange(sf.m)+'报名'):'';
+var txt=(state.prov==='全国')
+?head+' · 专升本 '+monthRange(z.s)+'报名、'+monthRange(z.e)+'考试（全国基准）'
+:head+' · '+state.prov+' 专升本 '+monthRange(z.s)+'报名、'+monthRange(z.e)+'考试'+softTxt;
+info.textContent='当前：'+txt;
+}
+}
+function renderProvince(){
+var sel=document.getElementById('db-prov');
+if(!sel){return;}
+if(!sel.options.length){
+PROV_LIST.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+sel.value=state.prov;
+sel.addEventListener('change',function(){state.prov=sel.value;renderAll();});
+}else{sel.value=state.prov;}
+}
+function jobCard(r){
+var card=elm('article','db-job-card');
+var hd=elm('div','db-job-hd');
+var ic=elm('span','db-job-ic c'+((r.c||0)%6));
+var gi=elm('i');gi.setAttribute('data-lucide',r.ic||'briefcase');gi.setAttribute('aria-hidden','true');
+ic.appendChild(gi);hd.appendChild(ic);
+var box=elm('div');
+box.appendChild(elm('h5','db-job-name',r.n));
+box.appendChild(elm('p','db-job-sub',r.tag));
+hd.appendChild(box);card.appendChild(hd);
+card.appendChild(elm('p','db-job-intro',r.intro));
+var blk=elm('div','db-job-block');
+blk.appendChild(elm('span','db-job-k','核心技能'));
+var tags=elm('div','db-tags');
+r.sk.forEach(function(s){tags.appendChild(elm('span','db-tag',s));});
+blk.appendChild(tags);card.appendChild(blk);
+card.appendChild(elm('p','db-job-line','加分项：'+r.bonus));
+card.appendChild(elm('p','db-job-line','常见去向：'+r.to));
+return card;
+}
+function renderJobs(){
+var chips=document.getElementById('db-jobs-chips');
+var host=document.getElementById('db-jobs-body');
+if(!host){return;}
+host.textContent='';
+if(chips){
+chips.textContent='';
+var majors=['全部专业'].concat(JOBS.map(function(g){return g.m;}));
+majors.forEach(function(m){
+var b=elm('button','db-chip'+(state.jobMajor===m?' is-active':''),null);
+b.type='button';b.setAttribute('aria-pressed',String(state.jobMajor===m));
+b.appendChild(document.createTextNode(m));
+var n=0;JOBS.forEach(function(g){if(m==='全部专业'||g.m===m){n+=g.roles.length;}});
+b.appendChild(elm('span','db-chip-n',String(n)));
+b.addEventListener('click',function(){state.jobMajor=m;renderJobs();});
+chips.appendChild(b);
+});
+}
+JOBS.forEach(function(g){
+if(state.jobMajor!=='全部专业'&&g.m!==state.jobMajor){return;}
+var sec=elm('section','db-job-sec');
+var shd=elm('div','db-job-sechd');
+shd.appendChild(elm('h4','db-job-secname',g.full));
+shd.appendChild(elm('span','db-job-secsub',g.roles.length+' 个岗位'));
+sec.appendChild(shd);
+if(g.desc){sec.appendChild(elm('p','db-job-secdesc',g.desc));}
+var grid=elm('div','db-job-grid');
+g.roles.forEach(function(r){grid.appendChild(jobCard(r));});
+sec.appendChild(grid);
+host.appendChild(sec);
+});
+refreshIcons();
+}
+function examCard(r,key){
+var card=elm('article','db-res-card');
+var btn=elm('button','db-res-toggle');
+btn.type='button';
+btn.setAttribute('aria-expanded',String(state.openRes===key));
+var hd=elm('span','db-res-hd');
+hd.appendChild(elm('span','db-res-type t-exam','真题'));
+hd.appendChild(elm('span','db-res-title',r.t));
+btn.appendChild(hd);
+var ci=elm('i');ci.setAttribute('data-lucide','chevron-down');ci.setAttribute('aria-hidden','true');
+btn.appendChild(ci);
+btn.addEventListener('click',function(){state.openRes=(state.openRes===key?null:key);renderRes();refreshIcons();});
+card.appendChild(btn);
+if(state.openRes===key){
+card.appendChild(elm('p','db-res-desc',r.d));
+if(r.info){card.appendChild(elm('p','db-res-info',r.info));}
+var ql=elm('ul','db-res-q');
+(r.qs||[]).forEach(function(q){
+var li=elm('li');
+li.appendChild(elm('span','db-res-q-text',q.q));
+li.appendChild(elm('span','db-res-q-ans','参考答案：'+q.a));
+ql.appendChild(li);
+});
+card.appendChild(ql);
+var src=elm('p','db-res-src');
+src.appendChild(document.createTextNode(r.src));
+if(r.url){
+var a=document.createElement('a');
+a.href=r.url;a.target='_blank';a.rel='noopener noreferrer';
+a.textContent=' ↗';
+src.appendChild(a);
+}
+card.appendChild(src);
+}
+return card;
+}
+function awardCard(r,key){
+var card=elm('article','db-res-card');
+var btn=elm('button','db-res-toggle');
+btn.type='button';
+btn.setAttribute('aria-expanded',String(state.openRes===key));
+var hd=elm('span','db-res-hd');
+hd.appendChild(elm('span','db-res-type t-award','作品示例'));
+hd.appendChild(elm('span','db-res-title',r.t));
+btn.appendChild(hd);
+var ci=elm('i');ci.setAttribute('data-lucide','chevron-down');ci.setAttribute('aria-hidden','true');
+btn.appendChild(ci);
+btn.addEventListener('click',function(){state.openRes=(state.openRes===key?null:key);renderRes();refreshIcons();});
+card.appendChild(btn);
+if(state.openRes===key){
+card.appendChild(elm('p','db-res-desc',r.d));
+var ul=elm('ul','db-res-list');
+r.list.forEach(function(x){ul.appendChild(elm('li',null,x));});
+card.appendChild(ul);
+var src=elm('p','db-res-src');
+src.appendChild(document.createTextNode(r.src));
+if(r.url){
+var a=document.createElement('a');
+a.href=r.url;a.target='_blank';a.rel='noopener noreferrer';
+a.textContent=' ↗';
+src.appendChild(a);
+}
+card.appendChild(src);
+}
+return card;
+}
+function copyText(txt,btn){
+function done(){var old=btn.textContent;btn.textContent='已复制';setTimeout(function(){btn.textContent=old;},1500);}
+function fallback(){
+var ta=document.createElement('textarea');
+ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+document.body.appendChild(ta);ta.select();
+try{document.execCommand('copy');done();}catch(e){btn.textContent='复制失败';}
+document.body.removeChild(ta);
+}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback);}else{fallback();}
+}
+function renderAgents(){
+var host=document.getElementById('db-agents');
+if(!host){return;}
+host.textContent='';
+var chips=elm('div','db-agent-chips');
+AGENT_MAJORS.forEach(function(m){
+var b=elm('button','db-chip'+(state.agentCat===m?' is-active':''),null);
+b.type='button';b.setAttribute('aria-pressed',String(state.agentCat===m));
+b.appendChild(document.createTextNode(m));
+var n=0;AGENTS.forEach(function(a){if(m==='全部'||a.major===m){n++;}});
+b.appendChild(elm('span','db-chip-n',String(n)));
+b.addEventListener('click',function(){state.agentCat=m;renderAgents();});
+chips.appendChild(b);
+});
+host.appendChild(chips);
+var grid=elm('div','db-agent-grid');
+AGENTS.forEach(function(a,ai){
+if(state.agentCat!=='全部'&&a.major!==state.agentCat){return;}
+var key='a'+ai;
+var card=elm('article','db-agent-card');card.setAttribute('data-agent',String(ai));
+var btn=elm('button','db-agent-toggle');
+btn.type='button';
+btn.setAttribute('aria-expanded',String(state.openAgent===key));
+var av=elm('span','db-agent-avatar c'+(ai%6));
+var ic=elm('i');ic.setAttribute('data-lucide',a.ic||'bot');ic.setAttribute('aria-hidden','true');
+av.appendChild(ic);btn.appendChild(av);
+var main=elm('span','db-agent-main');
+main.appendChild(elm('span','db-agent-name',a.n));
+main.appendChild(elm('span','db-agent-major',a.major+' · '+a.role));
+btn.appendChild(main);
+var ch=elm('i');ch.setAttribute('data-lucide','chevron-down');ch.setAttribute('aria-hidden','true');
+btn.appendChild(ch);
+btn.addEventListener('click',function(){state.openAgent=(state.openAgent===key?null:key);renderAgents();refreshIcons();});
+card.appendChild(btn);
+card.appendChild(elm('p','db-agent-intro',a.intro));
+var tags=elm('div','db-tags');
+a.tags.forEach(function(x){tags.appendChild(elm('span','db-tag',x));});
+card.appendChild(tags);
+if(state.openAgent===key){
+var p=elm('div','db-agent-prompt');
+p.appendChild(elm('p','db-agent-k','角色设定 · 复制到你的 AI 工具'));
+p.appendChild(elm('p','db-agent-text',a.prompt));
+p.appendChild(elm('p','db-agent-k','示例提问'));
+var ul=elm('ul','db-agent-asks');
+a.asks.forEach(function(q){ul.appendChild(elm('li',null,q));});
+p.appendChild(ul);
+var cp=elm('button','db-res-refresh db-agent-copy','复制角色设定');
+cp.type='button';
+cp.addEventListener('click',function(){copyText(a.prompt,cp);});
+p.appendChild(cp);
+card.appendChild(p);
+}
+grid.appendChild(card);
+});
+host.appendChild(grid);
+refreshIcons();
+}
+function renderRes(){
+var chips=document.getElementById('db-res-chips');
+var host=document.getElementById('db-res-body');
+if(!host){return;}
+host.textContent='';
+var RES_ORDER={award:0,tmpl:1,exam:2,proj:3};
+var groups=RES.slice().sort(function(a,b){return RES_ORDER[a.slug]-RES_ORDER[b.slug];});
+if(chips){
+chips.textContent='';
+['全部'].concat(groups.map(function(g){return g.m;})).forEach(function(m){
+var b=elm('button','db-chip'+(state.resCat===m?' is-active':''),null);
+b.type='button';b.setAttribute('aria-pressed',String(state.resCat===m));
+b.appendChild(document.createTextNode(m));
+var n=0;groups.forEach(function(g){if(m==='全部'||g.m===m){n+=g.items.length;}});
+b.appendChild(elm('span','db-chip-n',String(n)));
+b.addEventListener('click',function(){state.resCat=m;renderRes();});
+chips.appendChild(b);
+});
+}
+groups.forEach(function(g,gi){
+if(state.resCat!=='全部'&&g.m!==state.resCat){return;}
+var sec=elm('section','db-res-sec');
+var shd=elm('div','db-res-sechd');
+shd.appendChild(elm('h4','db-res-secname',g.m));
+if(g.slug==='proj'){
+shd.appendChild(elm('span','db-res-secsub','第 '+(Math.floor((state.projOffset||0)/6)+1)+' / '+Math.ceil(g.items.length/6)+' 批 · 共 '+g.items.length+' 个项目'));
+var rb=elm('button','db-res-refresh');
+rb.type='button';
+rb.setAttribute('data-tooltip','换一批项目');
+var rif=elm('i');rif.setAttribute('data-lucide','refresh-cw');rif.setAttribute('aria-hidden','true');
+rb.appendChild(rif);
+rb.appendChild(document.createTextNode('换一批'));
+rb.addEventListener('click',function(){state.projOffset=((state.projOffset||0)+6)%g.items.length;renderRes();refreshIcons();});
+shd.appendChild(rb);
+}else{
+shd.appendChild(elm('span','db-res-secsub',(g.slug==='award'?(g.items.length+' 个作品 · 按比赛分组，点项目名看作品例子'):(g.slug==='exam'?(g.items.length+' 条 · 点比赛名看真题样题'):(g.items.length+' 条')))));
+}
+sec.appendChild(shd);
+if(g.slug==='award'){
+var comps=[];
+g.items.forEach(function(r){if(comps.indexOf(r.comp)<0){comps.push(r.comp);}});
+comps.forEach(function(comp){
+var chd=elm('div','db-res-comp');
+chd.appendChild(elm('span','db-res-compname',comp));
+var cnt=0;g.items.forEach(function(r){if(r.comp===comp){cnt++;}});
+chd.appendChild(elm('span','db-res-secsub',cnt+' 个作品'));
+sec.appendChild(chd);
+var cgrid=elm('div','db-res-grid');
+g.items.forEach(function(r,ri){
+if(r.comp!==comp){return;}
+cgrid.appendChild(awardCard(r,gi+'-'+ri));
+});
+sec.appendChild(cgrid);
+});
+}else if(g.slug==='exam'){
+var egrid=elm('div','db-res-grid');
+g.items.forEach(function(r,ri){egrid.appendChild(examCard(r,gi+'-'+ri));});
+sec.appendChild(egrid);
+}else{
+var grid=elm('div','db-res-grid');
+var list=g.items;
+if(g.slug==='proj'){
+list=[];
+for(var pk=0;pk<6;pk++){list.push(g.items[((state.projOffset||0)+pk)%g.items.length]);}
+}
+list.forEach(function(r){
+var card=elm('article','db-res-card');
+var hd=elm('div','db-res-hd');
+hd.appendChild(elm('span','db-res-type t-'+g.slug,g.m));
+hd.appendChild(elm('h5','db-res-title',r.t));
+card.appendChild(hd);
+card.appendChild(elm('p','db-res-desc',r.d));
+var ul=elm('ul','db-res-list');
+r.list.forEach(function(x){ul.appendChild(elm('li',null,x));});
+card.appendChild(ul);
+var src=elm('p','db-res-src');
+src.appendChild(document.createTextNode(r.src));
+if(r.url){
+var a=document.createElement('a');
+a.href=r.url;a.target='_blank';a.rel='noopener noreferrer';
+a.textContent=' ↗';
+src.appendChild(a);
+}
+card.appendChild(src);
+grid.appendChild(card);
+});
+sec.appendChild(grid);
+}
+host.appendChild(sec);
+});
+refreshIcons();
+}function syncNavActive(){
+var isAgents=(state.page==='agents');
+var ab=document.getElementById('db-open-agents');
+if(ab){ab.classList.toggle('is-active',isAgents);}
+VIEWS.forEach(function(k){
+var tab=document.getElementById('db-tab-'+k);
+if(!tab){return;}
+var on=(!isAgents&&k===state.view);
+tab.classList.toggle('is-active',on);
+tab.setAttribute('aria-selected',String(on));
+});
+}
+function renderPages(){
+var body=document.querySelector('.db-body');
+var done=document.getElementById('db-done-page');
+var jobs=document.getElementById('db-jobs-page');
+var res=document.getElementById('db-res-page');
+var ag=document.getElementById('db-agents-page');
+var scope=document.querySelector('.db-scope');
+if(!body||!done||!jobs||!res||!ag){return;}
+body.style.display=state.page?'none':'';
+if(scope){scope.style.display=state.page?'none':'';}
+done.hidden=!(state.page==='all'||state.page==='hard');
+jobs.hidden=state.page!=='jobs';
+res.hidden=state.page!=='res';
+ag.hidden=state.page!=='agents';
+if(!done.hidden){renderDonePage();}
+if(!jobs.hidden){renderJobs();}
+if(!res.hidden){renderRes();}
+if(!ag.hidden){renderAgents();}
+syncNavActive();
+}
+function renderDonePage(){
+var host=document.getElementById('db-done-list');
+if(!host){return;}
+host.textContent='';
+var scope=document.getElementById('db-done-scope');
+if(scope){scope.textContent=(state.page==='hard')?'硬指标（顶级 + 硬通货）':'全部项目';}
+var ids=[];
+CS_DATA.forEach(function(it,i){
+if(!isDone(i)){return;}
+if(state.page==='hard'&&!hard(it)){return;}
+ids.push(i);
+});
+if(!ids.length){host.appendChild(elm('p','db-empty','还没有完成的项目。回到工作台，在路线清单里勾选，或在重点目标里点一下瓷砖，完成的项目就会归档到这里。'));refreshIcons();return;}
+[['赛','比赛'],['证','证书'],['升','专升本'],['研','考研'],['公','考公'],['业','实习就业']].forEach(function(g){
+var sub=ids.filter(function(i){return CS_DATA[i].c===g[0];});
+if(!sub.length){return;}
+host.appendChild(elm('h4','db-done-grp',g[1]+' · '+sub.length+' 项'));
+sub.forEach(function(i){
+var it=CS_DATA[i];
+var row=elm('div','db-done-row');
+var main=elm('div','db-done-main');
+main.appendChild(elm('p','db-done-name',it.n));
+main.appendChild(elm('p','db-meta',TYPE_LABEL[it.c]+' · '+it.d+' · '+it.lv+' · 投入 '+it.ef+' · '+termsOf(it).join(' / ')));
+row.appendChild(main);
+var btn=elm('button','db-back small','取消完成');
+btn.type='button';
+btn.addEventListener('click',function(){toggleDone(i,false);});
+row.appendChild(btn);
+host.appendChild(row);
+});
+});
+refreshIcons();
+}
+function renderAll(){
+renderQuick();
+renderProvince();
+renderPages();
+renderTerms();
+renderStats();renderTiles();renderTimeline();renderLanes();renderJob();
+}
+function selectView(v){
+var wasPage=!!state.page;
+state.view=v;
+state.page=null;
+VIEWS.forEach(function(k){
+var tab=document.getElementById('db-tab-'+k);
+var panel=document.getElementById('db-panel-'+k);
+var on=(k===v);
+if(tab){tab.classList.toggle('is-active',on);tab.setAttribute('aria-selected',String(on));}
+if(panel){panel.hidden=!on;}
+});
+var nm=document.getElementById('db-view-name');
+if(nm){nm.textContent=VIEW_NAME[v]||'';}
+
+if(wasPage){renderAll();}
+}
+var nav=ROOT.querySelector('.db-nav');
+if(nav){
+Array.prototype.forEach.call(nav.querySelectorAll('[role="tab"]'),function(tab){
+tab.addEventListener('click',function(){selectView(tab.id.replace('db-tab-',''));});
+tab.addEventListener('keydown',function(ev){
+var tabs=Array.prototype.slice.call(nav.querySelectorAll('[role="tab"]'));
+var cur=tabs.indexOf(tab),next=-1;
+if(ev.key==='ArrowRight'||ev.key==='ArrowDown'){next=(cur+1)%tabs.length;}
+else if(ev.key==='ArrowLeft'||ev.key==='ArrowUp'){next=(cur+tabs.length-1)%tabs.length;}
+else if(ev.key==='Home'){next=0;}
+else if(ev.key==='End'){next=tabs.length-1;}
+if(next<0){return;}
+ev.preventDefault();
+tabs[next].focus();
+selectView(tabs[next].id.replace('db-tab-',''));
+});
+});
+}
+var q=document.getElementById('db-q');
+if(q){q.addEventListener('input',function(){state.q=(q.value||'').trim().toLowerCase();renderAll();});}
+var dir=document.getElementById('db-dir');
+if(dir){dir.addEventListener('change',function(){state.dir=dir.value;renderAll();});}
+
+var agBack=document.getElementById('db-agents-back');
+if(agBack){agBack.addEventListener('click',function(){state.page=null;renderAll();});}
+var agOpen=document.getElementById('db-open-agents');
+if(agOpen){agOpen.addEventListener('click',function(){state.page='agents';renderAll();window.scrollTo(0,0);});}
+var resBack=document.getElementById('db-res-back');
+if(resBack){resBack.addEventListener('click',function(){state.page=null;renderAll();});}
+var jobsBack=document.getElementById('db-jobs-back');
+if(jobsBack){jobsBack.addEventListener('click',function(){state.page=null;renderAll();});}
+var hideBtn=document.getElementById('db-hide');
+if(hideBtn){hideBtn.addEventListener('click',function(){
+state.hideDone=!state.hideDone;
+hideBtn.setAttribute('aria-pressed',String(state.hideDone));
+hideBtn.setAttribute('data-tooltip',state.hideDone?'显示全部节点':'只显示未完成节点');
+renderAll();
+});}
+var openAll=document.getElementById('db-open-all');
+if(openAll){openAll.addEventListener('click',function(){state.page='all';renderAll();window.scrollTo(0,0);});}
+var openHard=document.getElementById('db-open-hard');
+if(openHard){openHard.addEventListener('click',function(){state.page='hard';renderAll();window.scrollTo(0,0);});}
+var back=document.getElementById('db-done-back');
+if(back){back.addEventListener('click',function(){state.page=null;renderAll();});}
+var avatarBtn=document.getElementById('db-avatar');
+var qrMask=document.getElementById('db-qr-mask');
+var qrClose=document.getElementById('db-qr-close');
+function closeQr(){if(qrMask){qrMask.hidden=true;}}
+if(avatarBtn){avatarBtn.addEventListener('click',function(){if(qrMask){qrMask.hidden=false;}});}
+if(qrClose){qrClose.addEventListener('click',closeQr);}
+if(qrMask){qrMask.addEventListener('click',function(e){if(e.target===qrMask){closeQr();}});}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeQr();}});
+window.CS_AGENTS=AGENTS;window.CS_AGENT_MAJORS=AGENT_MAJORS;
+renderQuick();
+selectView('term');
+renderAll();
+})();
+</script>
+
+<script src="https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js"></script>
+<script src="https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js"></script>
+<script>
+(() => {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set(["top", "right", "bottom", "left"]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+  let lastPointerWasTouch = false;
+  let pinnedByTouch = false;
+
+  const getTrigger = (event) => {
+    for (const target of event.composedPath()) {
+      if (target?.nodeType === Node.ELEMENT_NODE) {
+        const trigger = target.closest("[data-tooltip]");
+        if (trigger) return trigger;
+      }
+    }
+    return null;
+  };
+  const containsTarget = (trigger, target) =>
+    target?.nodeType != null && trigger.contains(target);
+  const getContent = (trigger) =>
+    trigger.getAttribute("data-tooltip")?.trim() ?? "";
+  const getPlacement = (trigger) => {
+    const placement = trigger.getAttribute("data-tooltip-placement");
+    return tooltipPlacements.has(placement) ? placement : "top";
+  };
+  const getTooltip = () => {
+    if (tooltip == null) {
+      tooltip = document.createElement("div");
+      tooltip.id = tooltipId;
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) => {
+    const ids = new Set(
+      (trigger.getAttribute("aria-describedby") ?? "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute("aria-describedby");
+    } else {
+      trigger.setAttribute("aria-describedby", [...ids].join(" "));
+    }
+  };
+  const clearOpenTimeout = () => {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) => {
+    clearOpenTimeout();
+    pinnedByTouch = false;
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) => {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              "--tooltip-available-width",
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              "--tooltip-available-height",
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: "fixed",
+    })
+      .then(({ x, y }) => {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = "visible";
+      })
+      .catch(() => {
+        if (activeTrigger === trigger && request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) => {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = "hidden";
+    floating.style.transform = "translate(0, 0)";
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () => {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) => {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() < skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() => {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) => {
+    if (event.pointerType === "touch") {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handlePointer = (event) => {
+    lastPointerWasTouch =
+      event.type === "pointerdown" && event.pointerType === "touch";
+  };
+  const handleTouchClick = (event) => {
+    const isTouch = event.pointerType === "touch" || lastPointerWasTouch;
+    lastPointerWasTouch = false;
+    if (!isTouch || event.detail === 0) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (
+      trigger == null ||
+      !trigger.isConnected ||
+      getContent(trigger).length === 0 ||
+      (pinnedByTouch && activeTrigger === trigger)
+    ) {
+      if (pinnedByTouch) {
+        closeTooltip();
+      }
+      return;
+    }
+    openTooltip(trigger);
+    pinnedByTouch = activeTrigger === trigger;
+    window.setTimeout(() => {
+      if (activeTrigger === trigger && !trigger.isConnected) {
+        closeTooltip(false);
+      }
+    }, 0);
+  };
+  const handleLeave = (event) => {
+    if (pinnedByTouch) {
+      return;
+    }
+    const trigger = getTrigger(event);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) => {
+    const trigger = getTrigger(event);
+    if (trigger?.matches(":focus-visible")) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === "Escape") {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) => {
+    lastPointerWasTouch = false;
+    const trigger = getTrigger(event);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handlers = {
+    pointerover: handlePointerOpen,
+    pointerdown: handlePointer,
+    pointercancel: handlePointer,
+    click: handleTouchClick,
+    pointerout: handleLeave,
+    focusin: handleFocusIn,
+    focusout: handleLeave,
+    keydown: handleKeyDown,
+    contextmenu: handleContextMenu,
+  };
+  const roots = new Map();
+  const handledEvents = new WeakSet();
+  const handleEvent = (event) => {
+    if (handledEvents.has(event)) return;
+    handledEvents.add(event);
+    handlers[event.type](event);
+  };
+  const discoverRoots = (node) => {
+    if (node.shadowRoot) listen(node.shadowRoot);
+    for (const element of node.querySelectorAll("*")) {
+      if (element.shadowRoot) listen(element.shadowRoot);
+    }
+  };
+  const listen = (root) => {
+    if (roots.has(root)) return;
+    for (const type of Object.keys(handlers)) root.addEventListener(type, handleEvent);
+    const observer = new window.MutationObserver((records) => {
+      for (const { addedNodes } of records) {
+        for (const node of addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) discoverRoots(node);
+        }
+      }
+      for (const [root, cleanup] of roots) {
+        if (root.host && !root.host.isConnected) {
+          cleanup();
+          roots.delete(root);
+        }
+      }
+      if (activeTrigger && !activeTrigger.isConnected) closeTooltip(false);
+    });
+    observer.observe(root, { childList: true, subtree: true });
+    roots.set(root, () => {
+      observer.disconnect();
+      for (const type of Object.keys(handlers)) root.removeEventListener(type, handleEvent);
+    });
+    discoverRoots(root);
+  };
+  const destroy = () => {
+    closeTooltip(false);
+    lastPointerWasTouch = false;
+    for (const cleanup of roots.values()) cleanup();
+    roots.clear();
+    tooltip = null;
+  };
+
+  // Events between children of one shadow root never reach the document.
+  listen(document);
+  window.addEventListener("pagehide", destroy, { once: true });
+})();
+</script>
+<script id="codex-visualization-tabs">
+(() => {
+  const selector = '.nav[role="tablist"] [role="tab"]';
+  const disabled = ':disabled,[aria-disabled="true"]';
+  const selectTab = (selected) => {
+    const panelId = selected.getAttribute("aria-controls");
+    for (const tab of selected.closest('[role="tablist"]').querySelectorAll('[role="tab"]')) {
+      const active = tab === selected;
+      tab.classList.toggle("active", active);
+      tab.setAttribute("aria-selected", String(active));
+      const id = tab.getAttribute("aria-controls");
+      const panel = id && document.getElementById(id);
+      if (panel != null) {
+        panel.hidden = id !== panelId;
+        if (!panel.hidden && selected.id) {
+          panel.setAttribute("aria-labelledby", selected.id);
+        }
+      }
+    }
+  };
+  const interact = (event) => {
+    const tab = event.target?.closest?.(selector);
+    if (event.defaultPrevented || tab == null || tab.matches(disabled)) {
+      return;
+    }
+    if (event.type === "click") {
+      selectTab(tab);
+      return;
+    }
+    const tabs = Array.from(
+      tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]'),
+    ).filter((candidate) => !candidate.matches(disabled));
+    const current = tabs.indexOf(tab);
+    let next;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      next = (current + 1) % tabs.length;
+    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      next = (current + tabs.length - 1) % tabs.length;
+    } else if (event.key === "Home") {
+      next = 0;
+    } else if (event.key === "End") {
+      next = tabs.length - 1;
+    } else {
+      return;
+    }
+    event.preventDefault();
+    tabs[next].focus();
+    selectTab(tabs[next]);
+  };
+
+  for (const list of document.querySelectorAll('.nav[role="tablist"]')) {
+    const selected =
+      list.querySelector('[role="tab"][aria-selected="true"]') ??
+      list.querySelector('[role="tab"].active') ??
+      list.querySelector('[role="tab"]');
+    if (selected != null) {
+      selectTab(selected);
+    }
+  }
+  document.addEventListener("click", interact);
+  document.addEventListener("keydown", interact);
+  window.addEventListener("pagehide", () => {
+    document.removeEventListener("click", interact);
+    document.removeEventListener("keydown", interact);
+  }, { once: true });
+})();
+</script>
+<script id="codex-visualization-carousel">
+  (() => {
+    for (const root of document.querySelectorAll(".viz-carousel")) {
+      const panels = Array.from(
+        root.querySelectorAll(":scope > [data-variant]"),
+      );
+      if (panels.length === 0) {
+        continue;
+      }
+      root.setAttribute("role", "group");
+      panels.forEach((panel, index) => {
+        panel.hidden = index !== 0;
+        panel.setAttribute("role", "group");
+        if (!panel.hasAttribute("aria-label")) {
+          panel.setAttribute("aria-label", panel.dataset.variant);
+        }
+      });
+      root.dataset.activeVariant = panels[0].dataset.variant;
+      if (panels.length === 1) {
+        continue;
+      }
+
+      const controls = document.createElement("div");
+      controls.className = "viz-carousel-controls";
+      // Portable copy of the settings dropdown's legacy glyph; no 14px icon-package preset matches it.
+      // https://github.com/openai/openai/blob/master/codex/codex-apps/webview/src/icons/chevron.svg
+      controls.innerHTML = `
+      <button type="button" class="viz-carousel-previous cursor-interaction"><i data-lucide="chevron-left" aria-hidden="true"></i></button>
+      <details class="viz-carousel-picker">
+        <summary class="cursor-interaction">
+          <span class="viz-carousel-count tabular-nums"></span>
+          <span class="viz-carousel-name"></span>
+          <svg class="viz-carousel-caret" width="14" height="14" viewBox="0 0 20 21" fill="none" aria-hidden="true" focusable="false">
+            <path d="M15.2793 7.71101C15.539 7.45131 15.961 7.45131 16.2207 7.71101C16.4804 7.97071 16.4804 8.39272 16.2207 8.65242L10.4707 14.4024C10.211 14.6621 9.78902 14.6621 9.52932 14.4024L3.77932 8.65242L3.69436 8.54792C3.52385 8.28979 3.55205 7.93828 3.77932 7.71101C4.00659 7.48374 4.3581 7.45554 4.61623 7.62605L4.72073 7.71101L10 12.9903L15.2793 7.71101Z" fill="currentColor" stroke="currentColor" stroke-width="0.6" />
+          </svg>
+        </summary>
+        <div class="viz-carousel-options"></div>
+      </details>
+      <button type="button" class="viz-carousel-next cursor-interaction"><i data-lucide="chevron-right" aria-hidden="true"></i></button>`;
+      const previous = controls.querySelector(".viz-carousel-previous");
+      const next = controls.querySelector(".viz-carousel-next");
+      const picker = controls.querySelector(".viz-carousel-picker");
+      const summary = picker.querySelector("summary");
+      const count = controls.querySelector(".viz-carousel-count");
+      const name = controls.querySelector(".viz-carousel-name");
+      const options = controls.querySelector(".viz-carousel-options");
+      const status = document.createElement("span");
+      status.className = "sr-only";
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+      status.setAttribute("aria-atomic", "true");
+      previous.setAttribute(
+        "aria-label",
+        root.dataset.previousLabel ?? "Previous variant",
+      );
+      next.setAttribute("aria-label", root.dataset.nextLabel ?? "Next variant");
+
+      let active = 0;
+      let mousePointerId = null;
+      let summaryPointerHandled = false;
+      summary.addEventListener("pointerdown", (event) => {
+        summaryPointerHandled =
+          event.pointerType === "mouse" && event.button === 0 && !event.ctrlKey;
+        if (!summaryPointerHandled) {
+          return;
+        }
+        event.preventDefault();
+        summary.focus({ preventScroll: true });
+        picker.open = !picker.open;
+        mousePointerId = picker.open ? event.pointerId : null;
+      });
+      summary.addEventListener("click", (event) => {
+        if (summaryPointerHandled && event.detail > 0) {
+          event.preventDefault();
+        }
+      });
+      const choices = panels.map((panel, index) => {
+        const choice = document.createElement("button");
+        choice.type = "button";
+        choice.className = "cursor-interaction";
+        choice.textContent = panel.dataset.variant;
+        choice.addEventListener("click", () => {
+          select(index);
+          summary.focus();
+        });
+        choice.addEventListener("pointerup", (event) => {
+          if (
+            picker.open &&
+            event.pointerType === "mouse" &&
+            event.button === 0 &&
+            event.pointerId === mousePointerId
+          ) {
+            choice.click();
+          }
+        });
+        options.appendChild(choice);
+        return choice;
+      });
+      const select = (index) => {
+        const changed = active !== index;
+        active = index;
+        panels.forEach((panel, position) => {
+          panel.hidden = position !== active;
+          choices[position].setAttribute(
+            "aria-current",
+            String(position === active),
+          );
+        });
+        root.dataset.activeVariant = panels[active].dataset.variant;
+        count.textContent = `${active + 1} / ${panels.length}`;
+        name.textContent = panels[active].dataset.variant;
+        picker.open = false;
+        mousePointerId = null;
+        if (changed) {
+          status.textContent = `${count.textContent}: ${name.textContent}`;
+        }
+      };
+      previous.addEventListener("click", () =>
+        select((active + panels.length - 1) % panels.length),
+      );
+      next.addEventListener("click", () =>
+        select((active + 1) % panels.length),
+      );
+      picker.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && picker.open) {
+          event.preventDefault();
+          picker.open = false;
+          mousePointerId = null;
+          summary.focus();
+          return;
+        }
+        if (event.altKey || event.ctrlKey || event.metaKey) {
+          return;
+        }
+        const index = choices.indexOf(document.activeElement);
+        let nextIndex;
+        if (event.key === "ArrowDown") {
+          nextIndex = index < 0 ? active : (index + 1) % choices.length;
+        } else if (event.key === "ArrowUp") {
+          nextIndex = index < 0 ? active : (index + choices.length - 1) % choices.length;
+        } else if (picker.open && event.key === "Home") {
+          nextIndex = 0;
+        } else if (picker.open && event.key === "End") {
+          nextIndex = choices.length - 1;
+        } else {
+          return;
+        }
+        event.preventDefault();
+        picker.open = true;
+        choices[nextIndex].focus();
+      });
+      picker.addEventListener("focusout", (event) => {
+        if (!picker.contains(event.relatedTarget)) {
+          picker.open = false;
+          mousePointerId = null;
+        }
+      });
+      const dismiss = (event) => {
+        if (!summary.contains(event.target)) {
+          mousePointerId = null;
+        }
+        if (!picker.contains(event.target)) {
+          picker.open = false;
+        }
+      };
+      const endPointerSelection = () => {
+        mousePointerId = null;
+      };
+      const sizePicker = () => {
+        root.style.setProperty(
+          "--viz-carousel-picker-height",
+          `${picker.open ? options.offsetHeight : 0}px`,
+        );
+      };
+      picker.addEventListener("toggle", sizePicker);
+      window.addEventListener("resize", sizePicker);
+      document.addEventListener("pointerdown", dismiss);
+      document.addEventListener("pointerup", endPointerSelection);
+      document.addEventListener("pointercancel", endPointerSelection);
+      window.addEventListener("blur", endPointerSelection);
+      window.addEventListener(
+        "pagehide",
+        () => {
+          document.removeEventListener("pointerdown", dismiss);
+          document.removeEventListener("pointerup", endPointerSelection);
+          document.removeEventListener("pointercancel", endPointerSelection);
+          window.removeEventListener("blur", endPointerSelection);
+          window.removeEventListener("resize", sizePicker);
+        },
+        { once: true },
+      );
+      root.append(controls, status);
+      select(0);
+    }
+  })();
+</script>
+<script id="codex-visualization-lucide" async src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js"></script>
+<script>
+(() => {
+  const initialize = () => {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById("codex-visualization-lucide")
+    ?.addEventListener("load", initialize, { once: true });
+})();
+</script>
+
+</div>
+<script>
+
+(function(){
+if(window.__csChatLoaded){return;}
+window.__csChatLoaded=true;
+var AGENTS=window.CS_AGENTS||[];
+var page=document.getElementById('db-agents-page');
+var plaza=document.getElementById('db-agents');
+if(!AGENTS.length||!page||!plaza){return;}
+var CFG_KEY='cs-llm-config-v2';
+var MODEL_DEFAULT='Qwen2.5-0.5B-Instruct-q4f16_1-MLC';
+var MODEL_BIG='Qwen2.5-1.5B-Instruct-q4f16_1-MLC';
+var cfg={mode:'webllm',localModel:MODEL_DEFAULT,baseUrl:'https://api.deepseek.com/v1',apiKey:'',apiModel:'deepseek-chat'};
+try{
+var raw=localStorage.getItem(CFG_KEY);
+if(raw){
+var o=JSON.parse(raw);
+if(o&&typeof o==='object'){
+cfg.mode=o.mode||cfg.mode;cfg.localModel=o.localModel||cfg.localModel;
+cfg.baseUrl=o.baseUrl||cfg.baseUrl;cfg.apiKey=o.apiKey||'';cfg.apiModel=o.apiModel||cfg.apiModel;
+}
+}else{
+var oldModel=JSON.parse(localStorage.getItem('cs-local-model-v1')||'null');
+if(oldModel&&oldModel.model){cfg.localModel=oldModel.model;}
+var oldApi=JSON.parse(localStorage.getItem('cs-llm-config-v1')||'null');
+if(oldApi){
+cfg.baseUrl=oldApi.baseUrl||cfg.baseUrl;cfg.apiKey=oldApi.apiKey||'';cfg.apiModel=oldApi.model||cfg.apiModel;
+}
+}
+}catch(e){}
+if(cfg.localModel!==MODEL_DEFAULT&&cfg.localModel!==MODEL_BIG){cfg.localModel=MODEL_DEFAULT;}
+if(cfg.mode!=='api'&&cfg.mode!=='webllm'){cfg.mode='webllm';}
+function saveCfg(){try{localStorage.setItem(CFG_KEY,JSON.stringify(cfg));}catch(e){}}
+function el(tag,cls,text){var n=document.createElement(tag);if(cls){n.className=cls;}if(text!=null){n.textContent=String(text);}return n;}
+function copyText(txt,btn){
+var old=btn.textContent;
+function done(){btn.textContent='已复制';setTimeout(function(){btn.textContent=old;},1500);}
+function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){btn.textContent='复制失败';}document.body.removeChild(ta);}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,fallback);}else{fallback();}
+}
+var style=document.createElement('style');
+style.textContent='.db-chat-note{margin:0 0 12px;font-size:11px;color:var(--s-muted)}'+
+'.db-llm-set{margin:0 0 12px;padding:0;border-radius:10px;background:var(--s-surface-2);overflow:hidden}'+
+'.db-llm-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border:0;background:transparent;color:inherit;font:inherit;font-size:12px;font-weight:600;text-align:left;cursor:pointer}'+
+'.db-llm-toggle svg{width:14px;height:14px;color:var(--s-muted);transition:transform .15s ease}'+
+'.db-llm-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}'+
+'.db-llm-note{margin:0;padding:0 12px 10px;font-size:10px;color:var(--s-muted)}'+
+'.db-llm-body{display:flex;flex-direction:column;gap:8px;padding:10px 12px 12px;border-top:1px solid var(--s-line)}'+
+'.db-mode-row{display:flex;gap:6px;flex-wrap:wrap}'+
+'.db-mode-btn.is-active{background:var(--s-primary-soft);border-color:var(--s-primary);color:var(--s-primary);font-weight:600}'+
+'.db-mode-box{display:flex;flex-direction:column;gap:8px}'+
+'.db-llm-row{display:flex;flex-wrap:wrap;gap:6px}'+
+'.db-llm-field{display:flex;flex-direction:column;gap:3px;flex:1 1 220px;min-width:0}'+
+'.db-llm-label{font-size:10px;color:var(--s-muted)}'+
+'.db-llm-input{padding:6px 8px;border:1px solid var(--s-line);border-radius:7px;background:var(--s-surface);color:var(--s-text);font:inherit;font-size:12px;min-width:0}'+
+'.db-llm-status{margin:0;font-size:10px;color:var(--s-green)}'+
+'.db-llm-hint{margin:0;font-size:10px;color:var(--s-muted)}'+
+'.db-chat[hidden],.db-llm-body[hidden],.db-llm-set[hidden],.db-mode-box[hidden]{display:none!important}'+
+'.db-chat{display:flex;flex-direction:column;gap:10px}'+
+'.db-chat-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}'+
+'.db-chat-who{font-size:13px;font-weight:600;flex:1 1 auto;min-width:0}'+
+'.db-chat-msgs{display:flex;flex-direction:column;gap:10px;max-height:440px;overflow-y:auto;padding:4px 2px}'+
+'.db-bubble{max-width:84%;padding:9px 11px;border-radius:10px;background:var(--s-surface-2);font-size:12px;line-height:1.6;align-self:flex-start}'+
+'.db-bubble.u{align-self:flex-end;background:var(--s-primary-soft)}'+
+'.db-bubble-role{font-size:10px;color:var(--s-muted);margin-bottom:2px}'+
+'.db-bubble-text{white-space:pre-wrap;overflow-wrap:anywhere}'+
+'.db-chat-input{display:flex;gap:8px;align-items:flex-end}'+
+'.db-chat-ta{flex:1 1 auto;min-height:44px;max-height:140px;resize:vertical;padding:8px 10px;border:1px solid var(--s-line);border-radius:8px;background:var(--s-surface-2);color:var(--s-text);font:inherit;font-size:13px;line-height:1.5}'+
+'.db-chat-send{padding:9px 14px;border:0;border-radius:8px;background:var(--s-primary);color:#fff;font:inherit;font-size:12px;cursor:pointer;flex:0 0 auto}'+
+'.db-chat-hint{margin:0;font-size:10px;color:var(--s-muted)}'+
+"@media (pointer:coarse){.db-chat-ta,.db-llm-input{font-size:16px}}";
+document.head.appendChild(style);
+var robotStyle=document.createElement('style');
+robotStyle.textContent=`#cs-home-bot{width:78px;height:78px;box-shadow:0 12px 30px rgba(79,140,247,.42)}
+#cs-home-bot::before{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(79,140,247,.35);animation:cs-bot-ring 2.6s ease-out infinite;pointer-events:none}
+#cs-home-bot .robot{width:60px;height:60px;display:block;overflow:visible;animation:cs-bot-float 3s ease-in-out infinite}
+#cs-home-bot .eye{transform-box:fill-box;transform-origin:center;animation:cs-bot-blink 4.6s infinite}
+#cs-home-bot .antenna{animation:cs-bot-glow 1.8s ease-in-out infinite}
+#cs-home-bot .arm-r{transform-box:fill-box;transform-origin:top center;animation:cs-bot-wave 3.2s ease-in-out infinite}
+#cs-home-bot:hover .robot{animation-duration:1.6s}
+#cs-home-bot:hover .arm-r{animation-duration:1s}
+@keyframes cs-bot-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes cs-bot-blink{0%,88%,94%,100%{transform:scaleY(1)}91%{transform:scaleY(.12)}}
+@keyframes cs-bot-glow{0%,100%{opacity:1;filter:drop-shadow(0 0 3px #7dd3fc)}50%{opacity:.45;filter:none}}
+@keyframes cs-bot-wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-20deg)}}
+@keyframes cs-bot-ring{0%{transform:scale(.92);opacity:.65}75%{transform:scale(1.18);opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){#cs-home-bot .robot,#cs-home-bot .eye,#cs-home-bot .antenna,#cs-home-bot .arm-r,#cs-home-bot::before{animation:none}}`;
+document.head.appendChild(robotStyle);
+var note=el('p','db-chat-note','');
+var head=page.querySelector('.db-panel-head');
+if(head&&head.parentNode){head.parentNode.insertBefore(note,head.nextSibling);}
+var setBtn=el('button','db-back','模型设置');
+setBtn.type='button';
+if(head){head.appendChild(setBtn);}
+var setPanel=el('div','db-llm-set');
+var setHead=el('button','db-llm-toggle');
+setHead.type='button';
+setHead.setAttribute('aria-expanded','false');
+setHead.appendChild(el('span','db-llm-toggle-title','模型设置'));
+var chev=el('i');chev.setAttribute('data-lucide','chevron-down');chev.setAttribute('aria-hidden','true');
+setHead.appendChild(chev);
+var setNote=el('p','db-llm-note','');
+var setBody=el('div','db-llm-body');
+setBody.hidden=true;
+var modeRow=el('div','db-mode-row');
+var modeLocal=el('button','db-back db-mode-btn','免 API 内置模型');
+var modeApi=el('button','db-back db-mode-btn','API 模型');
+modeLocal.type='button';modeApi.type='button';
+modeRow.appendChild(modeLocal);modeRow.appendChild(modeApi);
+setBody.appendChild(modeRow);
+var localBox=el('div','db-mode-box');
+var selRow=el('div','db-llm-row');
+var modelSel=document.createElement('select');
+modelSel.className='db-llm-input';
+[['Qwen2.5-0.5B（约 400MB · 最快）',MODEL_DEFAULT],['Qwen2.5-1.5B（约 1GB · 更聪明）',MODEL_BIG]].forEach(function(m){
+var op=document.createElement('option');op.value=m[1];op.textContent=m[0];modelSel.appendChild(op);
+});
+modelSel.value=cfg.localModel;
+var startBtn=el('button','db-back','下载并启动模型');
+startBtn.type='button';
+selRow.appendChild(modelSel);selRow.appendChild(startBtn);
+localBox.appendChild(selRow);
+var localStatus=el('p','db-llm-status','');
+localBox.appendChild(localStatus);
+localBox.appendChild(el('p','db-llm-hint','首次使用需下载模型权重，之后从浏览器缓存加载；需要支持 WebGPU 的 Chrome / Edge。'));
+setBody.appendChild(localBox);
+var apiBox=el('div','db-mode-box');
+apiBox.hidden=true;
+var presetRow=el('div','db-llm-row');
+function presetBtn(label,base,model){
+var b=el('button','db-back',label);
+b.type='button';
+b.addEventListener('click',function(){baseInp.value=base;modelInp.value=model;});
+return b;
+}
+var baseInp,keyInp,modelInp;
+function field(label,type,value,ph){
+var w=el('label','db-llm-field');
+w.appendChild(el('span','db-llm-label',label));
+var i=document.createElement('input');
+i.className='db-llm-input';i.type=type;i.value=value||'';i.placeholder=ph||'';
+w.appendChild(i);
+return {w:w,i:i};
+}
+var fBase=field('接口地址（Base URL）','text',cfg.baseUrl,'https://api.deepseek.com/v1');
+var fKey=field('API Key（只保存在本机）','password',cfg.apiKey,'sk-...');
+var fModel=field('模型名','text',cfg.apiModel,'deepseek-chat');
+baseInp=fBase.i;keyInp=fKey.i;modelInp=fModel.i;
+presetRow.appendChild(presetBtn('DeepSeek','https://api.deepseek.com/v1','deepseek-chat'));
+presetRow.appendChild(presetBtn('OpenAI','https://api.openai.com/v1','gpt-4o-mini'));
+presetRow.appendChild(presetBtn('本地 Ollama','http://localhost:11434/v1','qwen2.5:7b'));
+apiBox.appendChild(presetRow);
+var apiRow1=el('div','db-llm-row');apiRow1.appendChild(fBase.w);
+var apiRow2=el('div','db-llm-row');apiRow2.appendChild(fKey.w);apiRow2.appendChild(fModel.w);
+apiBox.appendChild(apiRow1);apiBox.appendChild(apiRow2);
+var saveApi=el('button','db-back','保存 API 设置');
+saveApi.type='button';
+var apiStatus=el('p','db-llm-status',cfg.apiKey?'已保存 API 设置：'+cfg.apiModel+'（Key 已记住）':'');
+saveApi.addEventListener('click',function(){
+cfg.baseUrl=(baseInp.value||'').trim()||cfg.baseUrl;
+cfg.apiKey=(keyInp.value||'').trim();
+cfg.apiModel=(modelInp.value||'').trim()||cfg.apiModel;
+cfg.mode='api';
+saveCfg();
+apiStatus.textContent='已保存：'+cfg.apiModel+' · '+cfg.baseUrl;
+applyMode();
+});
+apiBox.appendChild(saveApi);apiBox.appendChild(apiStatus);
+setBody.appendChild(apiBox);
+setPanel.appendChild(setHead);setPanel.appendChild(setNote);setPanel.appendChild(setBody);
+page.insertBefore(setPanel,plaza);
+function setOpen(open){
+setBody.hidden=!open;
+setBody.style.display=open?'':'none';
+setHead.setAttribute('aria-expanded',String(open));
+if(open){setPanel.scrollIntoView({block:'nearest'});}
+}
+setHead.addEventListener('click',function(){setOpen(setBody.hidden);});
+setBtn.addEventListener('click',function(){setPanel.hidden=false;setOpen(setBody.hidden);});
+var chat=el('div','db-chat');
+chat.hidden=true;
+var bar=el('div','db-chat-bar');
+var backBtn=el('button','db-back','← 返回广场');backBtn.type='button';
+var who=el('span','db-chat-who','');
+var copyBtn=el('button','db-back','复制角色设定');copyBtn.type='button';
+var clearBtn=el('button','db-back','清空');clearBtn.type='button';
+bar.appendChild(backBtn);bar.appendChild(who);bar.appendChild(copyBtn);bar.appendChild(clearBtn);
+var msgs=el('div','db-chat-msgs');
+var inputWrap=el('div','db-chat-input');
+var ta=document.createElement('textarea');
+ta.className='db-chat-ta';ta.rows=2;ta.placeholder='输入问题，Enter 发送，Shift + Enter 换行';
+var sendBtn=el('button','db-chat-send','发送');sendBtn.type='button';
+inputWrap.appendChild(ta);inputWrap.appendChild(sendBtn);
+var hint=el('p','db-chat-hint','');
+chat.appendChild(bar);chat.appendChild(msgs);chat.appendChild(inputWrap);chat.appendChild(hint);
+page.appendChild(chat);
+var cur={bot:-1,history:[]};
+var localEngine=null,localLoading=false;
+function modelLabel(id){return id===MODEL_BIG?'Qwen2.5-1.5B':'Qwen2.5-0.5B';}
+function applyMode(){
+modeLocal.classList.toggle('is-active',cfg.mode==='webllm');
+modeApi.classList.toggle('is-active',cfg.mode==='api');
+localBox.hidden=cfg.mode!=='webllm';
+apiBox.hidden=cfg.mode!=='api';
+setNote.textContent=cfg.mode==='webllm'
+?'当前使用免 API 的浏览器内置模型（WebGPU），不需要 API Key，回答只在本机生成。'
+:('当前使用 API 模型：'+(cfg.apiModel||'未设置')+'，回答由对应服务商生成（Key 只保存在本机）。');
+updateHint();updateNote();
+}
+function updateHint(){
+if(cfg.mode==='webllm'){hint.textContent=localEngine?'本机内置模型已就绪 · 免 API':'内置模型加载中，请稍候…';}
+else{hint.textContent='API 模型：'+(cfg.apiModel||'未设置')+' · '+(cfg.baseUrl||'');}
+}
+function updateNote(){
+if(cfg.mode==='webllm'){note.textContent=localEngine?('当前：本机内置模型 '+modelLabel(cfg.localModel)+' · 免 API · 点智能体开始对话'):'点任意智能体开始对话 · 首次进入会自动下载免 API 内置模型';}
+else{note.textContent='当前：API 模型 '+(cfg.apiModel||'未设置')+' · 点智能体开始对话';}
+}
+function initLocal(modelId,statusEl,btn,auto){
+if(localLoading){return;}
+if(!navigator.gpu){statusEl.textContent='当前浏览器不支持 WebGPU，请改用 Chrome / Edge 最新版，或切换到 API 模型';return;}
+localLoading=true;btn.disabled=true;
+statusEl.textContent=auto?'正在从浏览器缓存加载模型…':'正在加载 WebLLM 运行时…';
+if(localEngine&&localEngine.unload){try{localEngine.unload();}catch(e){}}
+localEngine=null;
+import('https://esm.run/@mlc-ai/web-llm').then(function(mod){
+return mod.CreateMLCEngine(modelId,{initProgressCallback:function(p){
+statusEl.textContent='模型准备中：'+String((p&&p.text)||'').slice(0,120);
+}});
+}).then(function(engine){
+localEngine=engine;cfg.localModel=modelId;cfg.mode='webllm';saveCfg();try{localStorage.setItem('cs_ai_warmed','1');}catch(e){}
+statusEl.textContent='已就绪：'+modelLabel(modelId)+'（下次进入走缓存，不会重复下载）';
+btn.textContent='重新加载模型';btn.disabled=false;
+applyMode();
+}).catch(function(err){
+statusEl.textContent='启动失败：'+((err&&err.message)?err.message:err)+'（可切换到 API 模型）';
+btn.disabled=false;
+}).then(function(){localLoading=false;});
+}
+startBtn.addEventListener('click',function(){initLocal(modelSel.value,localStatus,startBtn,false);});
+modeLocal.addEventListener('click',function(){cfg.mode='webllm';saveCfg();applyMode();ensureModel();});
+modeApi.addEventListener('click',function(){cfg.mode='api';saveCfg();applyMode();});
+function stripMd(s){
+if(!s){return s;}
+var o=String(s);
+o=o.replace(/```[a-zA-Z0-9_+-]*\n?/g,'');
+o=o.replace(/```/g,'');
+o=o.replace(/^#{1,6}\s*/gm,'');
+o=o.replace(/\*\*([^*\n]+)\*\*/g,'$1');
+o=o.replace(/__([^_\n]+)__/g,'$1');
+o=o.replace(/`([^`\n]+)`/g,'$1');
+o=o.replace(/^\s*>\s?/gm,'');
+o=o.replace(/^\s*[-*+]\s+/gm,'· ');
+o=o.replace(/^\s*---+\s*$/gm,'');
+o=o.replace(/\[([^\]\n]+)\]\(([^)\n]+)\)/g,'$1（$2）');
+o=o.replace(/\*\*/g,'');
+return o;
+}
+function bubble(role,text){
+var b=el('div','db-bubble'+(role==='user'?' u':''));
+b.appendChild(el('div','db-bubble-role',role==='user'?'我':(AGENTS[cur.bot]?AGENTS[cur.bot].n:'助手')));
+var tx=el('div','db-bubble-text',text);
+b.appendChild(tx);
+msgs.appendChild(b);
+msgs.scrollTop=msgs.scrollHeight;
+return tx;
+}
+function welcome(){
+bubble('assistant',AGENTS[cur.bot].intro+'\n\n你可以先问我：'+AGENTS[cur.bot].asks.join('；'));
+}
+function openChat(ai){
+var a=AGENTS[ai];
+if(!a){return;}
+cur.bot=ai;cur.history=[];
+who.textContent=a.n;
+msgs.textContent='';
+plaza.hidden=true;
+setPanel.hidden=true;
+chat.hidden=false;
+welcome();
+updateHint();
+ta.focus();
+}
+backBtn.addEventListener('click',function(){chat.hidden=true;plaza.hidden=false;setPanel.hidden=false;});
+clearBtn.addEventListener('click',function(){if(cur.bot<0){return;}cur.history=[];msgs.textContent='';welcome();});
+copyBtn.addEventListener('click',function(){if(cur.bot>=0){copyText(AGENTS[cur.bot].prompt,copyBtn);}});
+plaza.addEventListener('click',function(e){
+var t=e.target;
+if(t&&t.closest&&t.closest('.db-res-refresh')){return;}
+var card=t&&t.closest?t.closest('.db-agent-card'):null;
+if(!card){return;}
+var ai=parseInt(card.getAttribute('data-agent'),10);
+if(isNaN(ai)){return;}
+e.preventDefault();e.stopPropagation();
+openChat(ai);
+},true);
+function sendMsg(){
+var text=(ta.value||'').trim();
+if(!text||cur.bot<0){return;}
+var sys={role:'system',content:AGENTS[cur.bot].prompt+'\n\n回答要求：用中文，控制在 300 字以内；先给结论和可执行步骤；代码只给关键片段，不要重复我的问题。不要使用 Markdown 格式（不要出现 **、#、代码围栏、表格、- 列表等标记），用纯文本自然分段，需要列举时写 1. 2. 3.。'};
+if(cfg.mode==='webllm'){
+if(!localEngine){setPanel.hidden=false;setOpen(true);applyMode();hint.textContent='内置模型还在加载，请稍候再发';return;}
+ta.value='';
+cur.history.push({role:'user',content:text});
+bubble('user',text);
+var lp=bubble('assistant','正在思考…');
+sendBtn.disabled=true;
+hint.textContent='本机生成中（流式输出）…';
+localEngine.chat.completions.create({
+messages:[sys].concat(cur.history.slice(-8)),
+temperature:0.6,
+stream:true,
+max_tokens:2048
+}).then(function(chunks){
+var acc='',it=chunks[Symbol.asyncIterator](),fr='';
+function pump(){
+return it.next().then(function(res){
+if(res.done){
+var plain=stripMd(acc);
+if(fr==='length'){plain+='\n\n（回答达到输出上限，输入「继续」可接着写）';}
+lp.textContent=plain||'(模型没有返回内容)';
+if(acc){cur.history.push({role:'assistant',content:stripMd(acc)});}
+updateHint();msgs.scrollTop=msgs.scrollHeight;
+return;
+}
+var c=res.value;
+var ch=c&&c.choices&&c.choices[0];
+if(ch&&ch.finish_reason){fr=ch.finish_reason;}
+var d=ch&&ch.delta&&ch.delta.content;
+if(d){acc+=d;lp.textContent=stripMd(acc);msgs.scrollTop=msgs.scrollHeight;}
+return pump();
+});
+}
+return pump();
+}).catch(function(err){
+lp.textContent='本地模型出错：'+((err&&err.message)?err.message:err);
+hint.textContent='生成失败，可换 0.5B 模型或切到 API 模型';
+}).then(function(){sendBtn.disabled=false;});
+return;
+}
+if(!cfg.baseUrl||!cfg.apiModel||(!cfg.apiKey&&!/localhost|127\.0\.0\.1/.test(cfg.baseUrl))){
+setPanel.hidden=false;setOpen(true);applyMode();
+hint.textContent='请先在 API 模型里填写 Key 并保存';
+keyInp.focus();
+return;
+}
+ta.value='';
+cur.history.push({role:'user',content:text});
+bubble('user',text);
+var pending=bubble('assistant','正在思考…');
+hint.textContent='请求中（流式输出）…';
+sendBtn.disabled=true;
+var acc2='';
+fetch(cfg.baseUrl.replace(/\/+$/,'')+'/chat/completions',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+(cfg.apiKey||'ollama')},
+body:JSON.stringify({model:cfg.apiModel,messages:[sys].concat(cur.history.slice(-8)),temperature:0.6,stream:true,max_tokens:2048})
+}).then(function(r){
+if(!r.ok){return r.text().then(function(txt){throw new Error('HTTP '+r.status+' · '+txt.slice(0,300));});}
+if(!r.body||!r.body.getReader){
+return r.text().then(function(txt){
+var data=JSON.parse(txt);
+var out=(data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content)||'(模型没有返回内容)';
+var fr3=data.choices&&data.choices[0]&&data.choices[0].finish_reason;acc2=out;pending.textContent=stripMd(out)+(fr3==='length'?'\n\n（回答达到输出上限，输入「继续」可接着写）':'');cur.history.push({role:'assistant',content:stripMd(out)});
+});
+}
+var reader=r.body.getReader(),dec=new TextDecoder(),buf='',fr2='';
+function pump(){
+return reader.read().then(function(res){
+if(res.done){
+if(acc2){
+var plain2=stripMd(acc2);
+if(fr2==='length'){plain2+='\n\n（回答达到输出上限，输入「继续」可接着写）';}
+pending.textContent=plain2;
+cur.history.push({role:'assistant',content:stripMd(acc2)});
+}else{pending.textContent='(模型没有返回内容)';}
+updateHint();msgs.scrollTop=msgs.scrollHeight;
+return;
+}
+buf+=dec.decode(res.value,{stream:true});
+var lines=buf.split('\n');
+buf=lines.pop();
+lines.forEach(function(line){
+line=line.replace(/\r$/,'').trim();
+if(!line||line.indexOf('data:')!==0){return;}
+var data=line.slice(5).trim();
+if(data==='[DONE]'){return;}
+try{
+var j=JSON.parse(data);
+var ch=j.choices&&j.choices[0];
+if(ch&&ch.finish_reason){fr2=ch.finish_reason;}
+var d=ch&&ch.delta&&ch.delta.content;
+if(d){acc2+=d;pending.textContent=stripMd(acc2);msgs.scrollTop=msgs.scrollHeight;}
+}catch(e){}
+});
+return pump();
+});
+}
+return pump();
+}).catch(function(err){
+pending.textContent=(acc2?(acc2+'\n\n'):'')+'连接失败：'+err.message;
+hint.textContent='请求失败，检查接口地址、Key 与 CORS';
+}).then(function(){sendBtn.disabled=false;});
+}
+sendBtn.addEventListener('click',sendMsg);
+ta.addEventListener('keydown',function(e){
+if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}
+});
+function ensureModel(){
+if(cfg.mode!=='webllm'){return;}
+if(localEngine||localLoading){return;}
+if(!navigator.gpu){localStatus.textContent='当前浏览器不支持 WebGPU，可切换到 API 模型';return;}
+initLocal(cfg.localModel,localStatus,startBtn,true);
+}
+applyMode();
+if(!page.hidden){ensureModel();}
+try{
+new MutationObserver(function(){
+if(!page.hidden){ensureModel();}
+}).observe(page,{attributes:true,attributeFilter:['hidden']});
+}catch(e){}
+
+// ===== 首页右下角 AI 助手（可拖动） =====
+(function(){
+var bot=document.createElement('button');
+bot.id='cs-home-bot';
+bot.type='button';
+bot.setAttribute('aria-label','打开 AI 成才顾问');
+bot.innerHTML='<svg class="robot" viewBox="0 0 64 64" role="img" aria-label="机器人"><line x1="32" y1="8" x2="32" y2="15" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/><circle class="antenna" cx="32" cy="7" r="3" fill="#7dd3fc"/><rect x="12" y="26" width="5" height="9" rx="2.5" fill="#dbeafe"/><rect x="47" y="26" width="5" height="9" rx="2.5" fill="#dbeafe"/><rect x="14" y="14" width="36" height="27" rx="10" fill="#ffffff"/><ellipse class="eye" cx="25" cy="26" rx="2.6" ry="3.2" fill="#1e3a8a"/><ellipse class="eye" cx="39" cy="26" rx="2.6" ry="3.2" fill="#1e3a8a"/><path d="M26 33 Q32 37 38 33" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round"/><rect x="21" y="44" width="22" height="13" rx="6" fill="#ffffff"/><circle cx="32" cy="50.5" r="2.4" fill="#38bdf8"/><rect class="arm-l" x="15" y="45" width="4" height="10" rx="2" fill="#dbeafe"/><rect class="arm-r" x="45" y="45" width="4" height="10" rx="2" fill="#dbeafe"/></svg>';
+document.body.appendChild(bot);
+var panel=document.createElement('div');
+panel.id='cs-bot-panel';
+panel.hidden=true;
+panel.innerHTML='<div id="cs-bot-head"><span>AI 成才顾问</span><button type="button" id="cs-bot-close" aria-label="关闭">×</button></div><div id="cs-bot-msgs"></div><div class="cs-bot-input"><input id="cs-bot-text" placeholder="聊专业、证书、就业，也可以随便聊聊…"><button type="button" class="cs-bot-send" id="cs-bot-send">发送</button></div><div class="cs-bot-hint">本地模型 · 免 API</div>';
+document.body.appendChild(panel);
+var style=document.createElement('style');
+style.textContent='#cs-home-bot{position:fixed;right:24px;bottom:24px;width:58px;height:58px;border-radius:50%;border:0;background:linear-gradient(135deg,#4f8cf7,#7c5cf6);color:#fff;box-shadow:0 10px 24px rgba(79,140,247,.4);cursor:grab;z-index:70;display:flex;align-items:center;justify-content:center;touch-action:none;padding:0}'+
+'#cs-home-bot:active{cursor:grabbing}#cs-home-bot svg{width:28px;height:28px}#cs-home-bot::after{content:"AI";position:absolute;top:-4px;right:-4px;background:#ff6b9a;color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;line-height:1.4}'+
+'#cs-bot-panel{position:fixed;z-index:71;width:min(360px,calc(100vw - 24px));height:min(500px,calc(100vh - 120px));background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(15,23,42,.28);display:flex;flex-direction:column;overflow:hidden;border:1px solid #e9edf4}'+
+'#cs-bot-panel[hidden]{display:none!important}#cs-bot-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(135deg,#4f8cf7,#7c5cf6);color:#fff;font-size:14px;font-weight:600}'+
+'#cs-bot-close{border:0;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer;padding:0 2px}#cs-bot-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px;background:#f7f9fc}'+
+'.cs-bot-bubble{max-width:86%;padding:9px 11px;border-radius:10px;background:#fff;font-size:12.5px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 2px 8px rgba(31,39,51,.05);align-self:flex-start;color:#1f2733}'+
+'.cs-bot-bubble.u{align-self:flex-end;background:#eaf2ff}.cs-bot-input{display:flex;gap:6px;padding:10px;border-top:1px solid #eef1f6;background:#fff}'+
+'.cs-bot-input input{flex:1;min-width:0;height:38px;border:1px solid #e6ebf2;border-radius:8px;padding:0 10px;font-size:13px;font-family:inherit;outline:none;color:#1f2733;background:#fff}'+
+'.cs-bot-send{width:58px;border:0;border-radius:8px;background:#3b82f6;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}'+
+'.cs-bot-hint{padding:0 12px 8px;font-size:10px;color:#9aa4b1;background:#fff}';
+document.head.appendChild(style);
+var robotStyle=document.createElement('style');
+robotStyle.textContent=`#cs-home-bot{width:78px;height:78px;box-shadow:0 12px 30px rgba(79,140,247,.42)}
+#cs-home-bot::before{content:"";position:absolute;inset:-7px;border-radius:50%;border:2px solid rgba(79,140,247,.35);animation:cs-bot-ring 2.6s ease-out infinite;pointer-events:none}
+#cs-home-bot .robot{width:60px;height:60px;display:block;overflow:visible;animation:cs-bot-float 3s ease-in-out infinite}
+#cs-home-bot .eye{transform-box:fill-box;transform-origin:center;animation:cs-bot-blink 4.6s infinite}
+#cs-home-bot .antenna{animation:cs-bot-glow 1.8s ease-in-out infinite}
+#cs-home-bot .arm-r{transform-box:fill-box;transform-origin:top center;animation:cs-bot-wave 3.2s ease-in-out infinite}
+#cs-home-bot:hover .robot{animation-duration:1.6s}
+#cs-home-bot:hover .arm-r{animation-duration:1s}
+@keyframes cs-bot-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes cs-bot-blink{0%,88%,94%,100%{transform:scaleY(1)}91%{transform:scaleY(.12)}}
+@keyframes cs-bot-glow{0%,100%{opacity:1;filter:drop-shadow(0 0 3px #7dd3fc)}50%{opacity:.45;filter:none}}
+@keyframes cs-bot-wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-20deg)}}
+@keyframes cs-bot-ring{0%{transform:scale(.92);opacity:.65}75%{transform:scale(1.18);opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){#cs-home-bot .robot,#cs-home-bot .eye,#cs-home-bot .antenna,#cs-home-bot .arm-r,#cs-home-bot::before{animation:none}}`;
+document.head.appendChild(robotStyle);
+if(globalThis.lucide&&globalThis.lucide.createIcons){globalThis.lucide.createIcons();}
+setTimeout(function(){if(globalThis.lucide&&globalThis.lucide.createIcons){globalThis.lucide.createIcons();}},800);
+var msgs=document.getElementById('cs-bot-msgs');
+var input=document.getElementById('cs-bot-text');
+var send=document.getElementById('cs-bot-send');
+var closeBtn=document.getElementById('cs-bot-close');
+var homeHistory=[];
+var botBusy=false;
+function bubble(role,text){
+var b=document.createElement('div');
+b.className='cs-bot-bubble'+(role==='user'?' u':'');
+b.textContent=text;
+msgs.appendChild(b);
+msgs.scrollTop=msgs.scrollHeight;
+return b;
+}
+function ensureHomeEngine(onProgress){
+return new Promise(function(resolve,reject){
+if(localEngine){resolve(localEngine);return;}
+if(!navigator.gpu){reject(new Error('当前浏览器不支持 WebGPU，请用 Chrome / Edge 打开；或到「智能体广场」使用 API 模式对话'));return;}
+if(!localLoading){initLocal(cfg.localModel,localStatus,startBtn,true);}
+var n=0;
+var timer=setInterval(function(){
+n++;
+if(onProgress&&localStatus&&localStatus.textContent){onProgress(localStatus.textContent);}
+if(localEngine){clearInterval(timer);resolve(localEngine);return;}
+if(!localLoading&&!localEngine){clearInterval(timer);reject(new Error('模型加载失败，请到「智能体广场 → 模型设置」查看原因'));return;}
+if(n>300){clearInterval(timer);reject(new Error('模型加载超时'));}
+},500);
+});
+}
+function askHome(){
+var text=(input.value||'').trim();
+if(!text||botBusy){return;}
+botBusy=true;
+input.value='';
+homeHistory.push({role:'user',content:text});
+bubble('user',text);
+var pending=bubble('assistant','正在准备本地模型（首次需下载，之后会快很多）…');
+var sys={role:'system',content:'你是「AI赋能计算机学子成才领航系统」的 AI 伙伴，面向大专计算机学生。你既能做专业规划，也能陪用户闲聊。当用户问专业、证书、竞赛、专升本、就业时，给出清晰、可执行的建议；当用户只是打招呼、聊天、吐槽、分享心情时，像朋友一样自然回应，先共情再交流，不要硬转成职业规划。用中文，控制在 200 字以内；纯文本，不要使用 Markdown；不确定的信息不要编造。'};
+var payload=[sys].concat(homeHistory.slice(-8));
+ensureHomeEngine(function(msg){pending.textContent=msg;}).then(function(engine){
+pending.textContent='正在思考…';
+return engine.chat.completions.create({messages:payload,temperature:0.6,stream:true,max_tokens:512}).then(function(chunks){
+var acc='',it=chunks[Symbol.asyncIterator]();
+function pump(){
+return it.next().then(function(res){
+if(res.done){
+var out=stripMd(acc);
+pending.textContent=out||'(模型没有返回内容)';
+if(acc){homeHistory.push({role:'assistant',content:out});}
+msgs.scrollTop=msgs.scrollHeight;
+return;
+}
+var c=res.value;
+var ch=c&&c.choices&&c.choices[0];
+var d=ch&&ch.delta&&ch.delta.content;
+if(d){acc+=d;pending.textContent=stripMd(acc);msgs.scrollTop=msgs.scrollHeight;}
+return pump();
+});
+}
+return pump();
+});
+}).catch(function(err){
+pending.textContent='暂时无法回答：'+((err&&err.message)?err.message:err);
+}).then(function(){botBusy=false;});
+}
+function openBot(){
+if(!panel.hidden){panel.hidden=true;return;}
+panel.hidden=false;
+positionPanel();
+if(!msgs.children.length){
+bubble('assistant','你好，我是你的 AI 伙伴。可以问我专业、证书、竞赛、就业，也可以随便聊聊今天的心情或最近的烦恼。');
+}
+if(!localEngine&&cfg.mode==='webllm'&&!localLoading){
+hint.textContent='本地模型加载中（首次需要下载，之后会快很多）…';
+initLocal(cfg.localModel,localStatus,startBtn,true);
+}else{
+hint.textContent=localEngine?'本地模型已就绪 · 免 API':'本地模型加载中…';
+}
+input.focus();
+}
+function positionPanel(){
+if(panel.hidden){return;}
+var r=bot.getBoundingClientRect();
+var w=panel.offsetWidth,h=panel.offsetHeight;
+var left=Math.min(Math.max(12,r.right-w),window.innerWidth-w-12);
+var top=r.top-h-12;
+if(top<12){top=Math.min(window.innerHeight-h-12,r.bottom+12);}
+if(top<12){top=12;}
+panel.style.left=left+'px';
+panel.style.top=top+'px';
+}
+closeBtn.addEventListener('click',function(){panel.hidden=true;});
+send.addEventListener('click',askHome);
+input.addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();askHome();}});
+var POS='cs_home_bot_pos';
+try{var saved=localStorage.getItem(POS);if(saved){var p=JSON.parse(saved);if(p&&typeof p.left==='number'){bot.style.right='auto';bot.style.bottom='auto';bot.style.left=p.left+'px';bot.style.top=p.top+'px';}}}catch(e){}
+var drag=false,moved=false,sx=0,sy=0,ox=0,oy=0;
+bot.addEventListener('pointerdown',function(e){
+drag=true;moved=false;sx=e.clientX;sy=e.clientY;
+var r=bot.getBoundingClientRect();ox=r.left;oy=r.top;
+try{bot.setPointerCapture(e.pointerId);}catch(err){}
+e.preventDefault();
+});
+bot.addEventListener('pointermove',function(e){
+if(!drag){return;}
+var dx=e.clientX-sx,dy=e.clientY-sy;
+if(!moved&&Math.abs(dx)+Math.abs(dy)>6){moved=true;}
+if(!moved){return;}
+var w=bot.offsetWidth,h=bot.offsetHeight;
+var x=Math.min(Math.max(8,ox+dx),window.innerWidth-w-8);
+var y=Math.min(Math.max(8,oy+dy),window.innerHeight-h-8);
+bot.style.left=x+'px';bot.style.top=y+'px';bot.style.right='auto';bot.style.bottom='auto';
+});
+bot.addEventListener('pointerup',function(e){
+if(!drag){return;}
+drag=false;
+try{bot.releasePointerCapture(e.pointerId);}catch(err){}
+if(moved){
+try{var r=bot.getBoundingClientRect();localStorage.setItem(POS,JSON.stringify({left:r.left,top:r.top}));}catch(err){}
+positionPanel();
+}else{
+openBot();
+}
+});
+window.addEventListener('resize',function(){
+var r=bot.getBoundingClientRect();
+var w=bot.offsetWidth,h=bot.offsetHeight;
+if(r.left<8||r.top<8||r.right>window.innerWidth-8||r.bottom>window.innerHeight-8){
+var x=Math.min(Math.max(8,r.left),window.innerWidth-w-8);
+var y=Math.min(Math.max(8,r.top),window.innerHeight-h-8);
+bot.style.left=x+'px';bot.style.top=y+'px';bot.style.right='auto';bot.style.bottom='auto';
+}
+positionPanel();
+});
+var shell=document.querySelector('.db-shell');
+function syncBot(){
+var hide=false;
+['db-done-page','db-jobs-page','db-res-page','db-agents-page'].forEach(function(id){
+var el=document.getElementById(id);
+if(el&&!el.hidden){hide=true;}
+});
+bot.style.display=hide?'none':'flex';
+if(hide){panel.hidden=true;}
+}
+if(shell){
+try{new MutationObserver(syncBot).observe(shell,{attributes:true,subtree:true,attributeFilter:['hidden']});}catch(e){}
+}
+syncBot();
+try{window.dispatchEvent(new Event('resize'));}catch(e){}
+try{
+if(localStorage.getItem('cs_ai_warmed')==='1'&&cfg.mode==='webllm'&&!localEngine&&!localLoading){
+setTimeout(function(){if(!localEngine&&!localLoading){initLocal(cfg.localModel,localStatus,startBtn,true);}},1200);
+}
+}catch(e){}
+})();})();
+
+</script>
+</body>
+</html>

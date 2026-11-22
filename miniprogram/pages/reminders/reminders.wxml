@@ -1,0 +1,31 @@
+<view class="container">
+  <view class="head">
+    <text class="head-title">定时提醒</text>
+    <text class="head-sub">{{count}} 条任务 · 到点通过手机日历或微信通知提醒</text>
+  </view>
+
+  <view wx:for="{{list}}" wx:key="id" class="rem-card">
+    <view class="row between">
+      <view class="rem-main">
+        <text class="rem-name">{{item.itemName}}</text>
+        <text class="rem-kind">{{item.label}} · {{item.kind}}</text>
+        <text class="rem-time">{{item.dateText}} {{item.timeText}}</text>
+      </view>
+      <view class="rem-right">
+        <text class="rem-status {{item.overdue ? 'overdue' : ''}}">{{item.status}}</text>
+        <switch checked="{{item.enabled}}" color="#3b82f6" data-id="{{item.id}}" bindchange="onToggle" />
+      </view>
+    </view>
+    <view class="rem-actions">
+      <text class="rem-act" data-id="{{item.id}}" bindtap="onCalendar">写入日历</text>
+      <text class="rem-act danger" data-id="{{item.id}}" bindtap="onRemove">删除</text>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!count}}">
+    <text>还没有定时任务</text>
+    <view class="btn empty-btn" bindtap="goCatalog">去选择证书 / 竞赛</view>
+  </view>
+
+  <view class="tip">关闭开关后，这条提醒不会触发；手机日历提醒由系统日历负责，微信通知需要云函数定时任务。</view>
+</view>

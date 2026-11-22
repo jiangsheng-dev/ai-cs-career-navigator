@@ -1,0 +1,59 @@
+<view class="container" wx:if="{{item}}">
+  <view class="card">
+    <text class="detail-name">{{item.name}}</text>
+    <view class="detail-tags">
+      <text class="tag {{item.type === '比赛' ? 'tag-match' : 'tag-cert'}}">{{item.type}}</text>
+      <text class="tag tag-level">{{item.level}}</text>
+      <text class="tag tag-gray">{{item.dir}}</text>
+      <text class="detail-stars">{{item.starsText}}</text>
+    </view>
+    <text class="detail-why">{{item.why}}</text>
+  </view>
+
+  <view class="card info-card">
+    <view class="info-row"><text class="info-k">主办单位</text><text class="info-v">{{item.organizer}}</text></view>
+    <view class="info-row"><text class="info-k">合适专业</text><text class="info-v">{{item.majors}}</text></view>
+    <view class="info-row" wx:if="{{item.rounds}}"><text class="info-k">初赛 / 复赛</text><text class="info-v">{{item.rounds}}</text></view>
+    <view class="info-row" wx:if="{{item.work}}"><text class="info-k">作品提交</text><text class="info-v">{{item.work}}</text></view>
+    <view class="info-row"><text class="info-k">建议投入</text><text class="info-v">{{item.effort}}</text></view>
+  </view>
+
+  <view class="section-title">下一个节点</view>
+  <view wx:if="{{hasNodes}}">
+    <view wx:for="{{nodes}}" wx:key="index" class="node {{selected === index ? 'node-on' : ''}}" data-index="{{index}}" bindtap="onSelectNode">
+      <view class="row between">
+        <text class="node-kind">{{item.label}} · {{item.kind}}</text>
+        <text class="node-days">{{item.days}} 天后</text>
+      </view>
+      <text class="node-date">{{item.dateText}}</text>
+    </view>
+  </view>
+  <view wx:else class="card muted">该项为全年滚动，无固定月份节点，可在下方手动选择提醒日期。</view>
+
+  <view class="section-title">设置提醒</view>
+  <view class="card">
+    <view class="row between pick-row">
+      <text class="pick-k">提醒日期</text>
+      <picker mode="date" value="{{remindDate}}" bindchange="onDateChange">
+        <view class="pick-v">{{remindDate}} ›</view>
+      </picker>
+    </view>
+    <view class="row between pick-row">
+      <text class="pick-k">提醒时间</text>
+      <picker mode="time" value="{{remindTime}}" bindchange="onTimeChange">
+        <view class="pick-v">{{remindTime}} ›</view>
+      </picker>
+    </view>
+    <view class="row between pick-row">
+      <text class="pick-k">提前</text>
+      <view class="adv-row">
+        <view wx:for="{{advanceList}}" wx:key="*this" class="adv {{advance === item ? 'adv-on' : ''}}" data-n="{{item}}" bindtap="onAdvance">{{item}} 天</view>
+      </view>
+    </view>
+    <view class="btn" bindtap="setReminder">保存提醒</view>
+    <view class="btn ghost btn-gap" bindtap="addCalendar">写入手机日历（本地提醒）</view>
+  </view>
+
+  <view class="btn {{isGoal ? 'gray' : ''}} big-gap" bindtap="toggleGoal">{{isGoal ? '移出我的目标' : '加入我的目标'}}</view>
+  <view class="tip">首次写入日历微信会请求日历权限；被拒绝后可到「设置 → 授权管理 → 添加到日历」重新开启。到点由手机系统日历提醒，无需网络。具体日期以官方通知为准。</view>
+</view>

@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/catalog/catalog",
+    "pages/detail/detail",
+    "pages/reminders/reminders"
+  ],
+  "window": {
+    "navigationBarTitleText": "证书竞赛工作台",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f4f6fb",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#8b95a5",
+    "selectedColor": "#3b82f6",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "倒计时" },
+      { "pagePath": "pages/catalog/catalog", "text": "选择" },
+      { "pagePath": "pages/reminders/reminders", "text": "提醒" }
+    ]
+  },
+
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

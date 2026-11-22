@@ -1,0 +1,20 @@
+page{background:#f4f6fb;color:#1f2733;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;font-size:28rpx;line-height:1.55}
+.container{padding:24rpx 24rpx 48rpx;box-sizing:border-box}
+.card{background:#fff;border-radius:20rpx;padding:26rpx;box-shadow:0 4rpx 20rpx rgba(31,39,51,.05)}
+.muted{color:#7c8899}
+.small{font-size:22rpx}
+.row{display:flex;align-items:center}
+.between{justify-content:space-between}
+.tag{display:inline-flex;align-items:center;padding:4rpx 14rpx;border-radius:999rpx;font-size:20rpx;margin-right:10rpx}
+.tag-match{background:#fff1e8;color:#e07a35}
+.tag-cert{background:#e9f8ef;color:#1d9b58}
+.tag-level{background:#eaf2ff;color:#3b82f6}
+.tag-gray{background:#f1f3f7;color:#7c8899}
+.btn{display:flex;align-items:center;justify-content:center;height:84rpx;border-radius:16rpx;background:#3b82f6;color:#fff;font-size:28rpx;font-weight:600}
+.btn.ghost{background:#fff;color:#3b82f6;border:2rpx solid #dbe7ff}
+.btn.gray{background:#f1f3f7;color:#5b6675}
+.btn.danger{background:#fff;color:#e55555;border:2rpx solid #ffdada}
+.input{height:76rpx;border-radius:14rpx;background:#f4f6fb;padding:0 22rpx;font-size:26rpx}
+.divider{height:2rpx;background:#eef1f6;margin:20rpx 0}
+.empty{padding:80rpx 30rpx;text-align:center;color:#8b95a5;font-size:26rpx}
+.section-title{font-size:30rpx;font-weight:600;margin:28rpx 0 16rpx}

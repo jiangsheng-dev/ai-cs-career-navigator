@@ -1,0 +1,35 @@
+<view class="container">
+  <view class="head">
+    <view class="row between">
+      <text class="head-title">证书 / 竞赛库</text>
+      <text class="sync">已关联工作台 {{version}}</text>
+    </view>
+    <text class="head-sub">按 {{province}} 口径，共 {{count}} 项可选</text>
+  </view>
+
+  <input class="input search" placeholder="搜索名称 / 专业 / 主办单位" value="{{keyword}}" bindinput="onSearch" />
+
+  <view class="chips">
+    <view wx:for="{{types}}" wx:key="*this" class="chip {{type === item ? 'chip-on' : ''}}" data-t="{{item}}" bindtap="onType">{{item}}</view>
+  </view>
+
+  <view wx:for="{{list}}" wx:key="id" class="item" data-id="{{item.id}}" bindtap="goDetail">
+    <view class="row between">
+      <text class="item-name">{{item.name}}</text>
+      <text class="item-days">{{item.daysText}}</text>
+    </view>
+    <view class="item-tags">
+      <text class="tag {{item.type === '比赛' ? 'tag-match' : 'tag-cert'}}">{{item.type}}</text>
+      <text class="tag tag-level">{{item.level}}</text>
+      <text class="tag tag-gray">{{item.dir}}</text>
+      <text class="item-stars">{{item.stars}}</text>
+    </view>
+    <text class="item-org">{{item.organizer}}</text>
+    <view class="row between item-foot">
+      <text class="item-next">下一节点：{{item.nextText}}</text>
+      <text class="item-arrow">详情 ›</text>
+    </view>
+  </view>
+
+  <view class="empty" wx:if="{{!list.length}}">没有找到匹配项，换个关键词试试</view>
+</view>

@@ -1,0 +1,33 @@
+.hero{background:linear-gradient(135deg,#4f8cf7,#7c5cf6);border-radius:24rpx;padding:30rpx;color:#fff;box-shadow:0 10rpx 30rpx rgba(79,140,247,.25)}
+.hero-title{font-size:32rpx;font-weight:600}
+.hero-badge{font-size:20rpx;background:rgba(255,255,255,.2);padding:4rpx 14rpx;border-radius:999rpx}
+.hero-row{display:flex;gap:60rpx;margin-top:26rpx}
+.hero-stat{display:flex;align-items:baseline}
+.hero-num{font-size:56rpx;font-weight:700;line-height:1.1}
+.hero-label{font-size:22rpx;opacity:.85;margin-left:8rpx}
+.hero-next{font-size:24rpx;opacity:.9;margin-top:10rpx}
+.goal-card{background:#fff;border-radius:20rpx;padding:26rpx;margin-bottom:18rpx;box-shadow:0 4rpx 20rpx rgba(31,39,51,.05)}
+.goal-main{flex:1;min-width:0;padding-right:20rpx}
+.goal-name{font-size:28rpx;font-weight:600;line-height:1.45}
+.goal-tags{display:flex;align-items:center;margin-top:10rpx}
+.goal-stars{color:#f2a03d;font-size:22rpx;letter-spacing:2rpx}
+.goal-sub{display:block;font-size:22rpx;color:#7c8899;margin-top:8rpx}
+.countdown{width:130rpx;text-align:right;flex-shrink:0}
+.cd-num{display:block;font-size:52rpx;font-weight:700;color:#3b82f6;line-height:1.1}
+.cd-label{font-size:20rpx;color:#8b95a5}
+.empty{text-align:center;padding:70rpx 0 30rpx;color:#8b95a5}
+.empty-btn{width:360rpx;margin:26rpx auto 0}
+.tip{font-size:20rpx;color:#9aa4b1;line-height:1.6;margin-top:26rpx;padding:0 6rpx}
+.todo-card{margin-top:0}
+.todo-add{display:flex;gap:10rpx}
+.todo-input{flex:1;height:72rpx;background:#f4f6fb;border-radius:12rpx;padding:0 20rpx;font-size:26rpx}
+.todo-add-btn{width:112rpx;display:flex;align-items:center;justify-content:center;background:#3b82f6;color:#fff;border-radius:12rpx;font-size:26rpx;font-weight:600}
+.todo-list{margin-top:14rpx}
+.todo-item{display:flex;align-items:center;gap:16rpx;padding:18rpx 4rpx;border-bottom:2rpx solid #f4f6fb}
+.todo-item:last-child{border-bottom:0}
+.todo-check{width:36rpx;height:36rpx;border-radius:50%;border:2rpx solid #cfd6e2;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22rpx;flex-shrink:0;transition:all .15s}
+.todo-item.todo-done .todo-check{background:#3b82f6;border-color:#3b82f6}
+.todo-text{font-size:26rpx;line-height:1.5;flex:1;word-break:break-all}
+.todo-item.todo-done .todo-text{color:#9aa4b1;text-decoration:line-through}
+.todo-empty{font-size:24rpx;color:#9aa4b1;padding:18rpx 4rpx}
+.todo-foot{font-size:20rpx;color:#9aa4b1;margin-top:12rpx}
