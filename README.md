@@ -1,6 +1,12 @@
 # AI赋能计算机学子成才领航系统
 
 面向计算机专业学生的成长路线工作台：把「大一到大四该做什么」串成一条可执行的路线，覆盖比赛、证书、专升本、考研、考公与就业。
+## 在线使用
+
+点开即用，无需安装：
+
+- **工作台**：https://jiangsheng-dev.github.io/ai-cs-career-navigator/
+- **小程序网页预览**：https://jiangsheng-dev.github.io/ai-cs-career-navigator/wechat-miniprogram-preview.html
 
 ## 功能
 
@@ -19,7 +25,8 @@
 ├── index.html                      # 主工作台（单文件，含样式与交互）
 ├── wechat-miniprogram-preview.html # 小程序网页预览
 ├── assets/
-│   └── miniprogram-qr.png          # 小程序体验版二维码
+│   ├── miniprogram-qr.png          # 小程序体验版二维码
+│   └── web-llm/                    # 随站点发布的 WebLLM 0.2.89 运行库与模型运行文件
 └── miniprogram/                    # 微信小程序源码
     ├── pages/                      # 倒计时 / 选择 / 详情 / 提醒
     ├── utils/                      # 数据、日期、存储、日历
@@ -30,14 +37,22 @@
 
 ## 本地运行
 
-直接双击 `index.html` 即可打开；也可以在当前目录启动一个静态服务器：
+直接双击 `index.html` 可以浏览基础界面；本地 AI 建议通过静态服务器打开：
 
 ```bash
 python -m http.server 8000
 # 访问 http://127.0.0.1:8000/
 ```
 
-首页 AI 使用浏览器本地模型（Qwen2.5-0.5B，WebGPU），首次需要下载约 400MB；也可以在「智能体广场 → 模型设置」切换 API 模式。
+首页 AI 默认使用浏览器本地模型（Qwen2.5-0.5B，WebGPU）。WebLLM 运行库和两个模型运行文件已随站点发布，不再依赖单一 CDN；首次仍需从国内镜像下载约 400MB 模型权重，后续使用浏览器缓存。
+
+### AI 本地模型加载失败？
+
+- 需要最新版 Chrome / Edge，并且设备和浏览器支持 **WebGPU**（部分老显卡、虚拟机、远程桌面不支持）
+- 页面会优先加载本地运行库；若失败，会自动尝试 esm.sh、jsDelivr、esm.run 三条线路
+- 模型权重优先从 `hf-mirror.com` 获取；国内网络或校园网仍可能限制大文件下载
+- 可打开「智能体广场 → 模型设置」切换 **API 模式**（需要自己的 API Key）
+- 网页版预览和小程序不依赖这个模型，可以正常使用
 
 ## 部署到 GitHub Pages
 
@@ -76,4 +91,4 @@ python -m http.server 8000
 
 本项目采用 [MIT License](LICENSE)。
 
-第三方依赖：Lucide 图标、WebLLM（通过 CDN 加载），本地模型权重来自 MLC。
+第三方依赖：Lucide 图标、WebLLM 0.2.89（随站点发布，Apache-2.0），本地模型运行文件与权重来自 MLC。WebLLM 许可证见 `assets/web-llm/LICENSE`。

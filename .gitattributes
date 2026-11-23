@@ -1,2 +1,5 @@
 * text=auto eol=lf
 *.png binary
+*.jpg binary
+*.wasm binary
+assets/web-llm/web-llm-0.2.89.js -text

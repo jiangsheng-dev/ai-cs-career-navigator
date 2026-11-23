@@ -2289,7 +2289,7 @@ var hint=el('p','db-chat-hint','');
 chat.appendChild(bar);chat.appendChild(msgs);chat.appendChild(inputWrap);chat.appendChild(hint);
 page.appendChild(chat);
 var cur={bot:-1,history:[]};
-var localEngine=null,localLoading=false;
+var localEngine=null,localLoading=false,lastLocalError='';
 function modelLabel(id){return id===MODEL_BIG?'Qwen2.5-1.5B':'Qwen2.5-0.5B';}
 function applyMode(){
 modeLocal.classList.toggle('is-active',cfg.mode==='webllm');
@@ -2309,24 +2309,80 @@ function updateNote(){
 if(cfg.mode==='webllm'){note.textContent=localEngine?('当前：本机内置模型 '+modelLabel(cfg.localModel)+' · 免 API · 点智能体开始对话'):'点任意智能体开始对话 · 首次进入会自动下载免 API 内置模型';}
 else{note.textContent='当前：API 模型 '+(cfg.apiModel||'未设置')+' · 点智能体开始对话';}
 }
+var WEBLLM_VERSION='0.2.89';
+var MODEL_LIBS={
+'Qwen2.5-0.5B-Instruct-q4f16_1-MLC':'assets/web-llm/Qwen2-0.5B-Instruct-q4f16_1_cs1k-webgpu.wasm',
+'Qwen2.5-1.5B-Instruct-q4f16_1-MLC':'assets/web-llm/Qwen2-1.5B-Instruct-q4f16_1_cs1k-webgpu.wasm'
+};
+var WEBLLM_SOURCES=[
+{name:'本地运行库',url:new URL('assets/web-llm/web-llm-'+WEBLLM_VERSION+'.js',document.baseURI).href},
+{name:'esm.sh',url:'https://esm.sh/@mlc-ai/web-llm@'+WEBLLM_VERSION},
+{name:'jsDelivr',url:'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@'+WEBLLM_VERSION+'/+esm'},
+{name:'esm.run',url:'https://esm.run/@mlc-ai/web-llm@'+WEBLLM_VERSION}
+];
+var webllmModule=null;
+function loadWebLLM(index){
+index=index||0;
+if(webllmModule){return Promise.resolve(webllmModule);}
+if(index>=WEBLLM_SOURCES.length){return Promise.reject(new Error('模型运行库加载失败，请刷新页面或切换到 API 模型'));}
+return import(WEBLLM_SOURCES[index].url).then(function(mod){
+if(!mod||typeof mod.CreateMLCEngine!=='function'){throw new Error('模型运行库格式不正确');}
+webllmModule=mod;
+try{window.__csWebLLMLoadedFrom=WEBLLM_SOURCES[index].url;}catch(e){}
+return mod;
+}).catch(function(err){
+if(index+1<WEBLLM_SOURCES.length){return loadWebLLM(index+1);}
+var detail=(err&&err.message)?err.message:String(err);
+throw new Error('模型运行库加载失败：'+detail);
+});
+}
+function localModelLib(modelId){
+var rel=MODEL_LIBS[modelId];
+return rel?new URL(rel,document.baseURI).href:'';
+}
+function localErrorText(err){
+var msg=(err&&err.message)?String(err.message):String(err);
+if(/compatible GPU|requestAdapter|WebGPU adapter|GPUAdapter/i.test(msg)){return '未检测到可用的 WebGPU 显卡。请开启浏览器硬件加速、更新显卡驱动后重试，或切换到 API 模型。';}
+if(/out of memory|OOM|VRAM|device lost/i.test(msg)){return '显卡显存不足或设备连接中断。请改用 Qwen2.5-0.5B，或切换到 API 模型。';}
+if(/Failed to fetch|fetch|network|Load failed|下载/i.test(msg)){return '模型文件下载失败。请检查网络后重试；页面已自动使用国内镜像。';}
+return msg.length>180?msg.slice(0,180)+'…':msg;
+}
 function initLocal(modelId,statusEl,btn,auto){
 if(localLoading){return;}
 if(!navigator.gpu){statusEl.textContent='当前浏览器不支持 WebGPU，请改用 Chrome / Edge 最新版，或切换到 API 模型';return;}
 localLoading=true;btn.disabled=true;
-statusEl.textContent=auto?'正在从浏览器缓存加载模型…':'正在加载 WebLLM 运行时…';
+statusEl.textContent=auto?'正在启动本机模型（已缓存时无需重新下载）…':'正在加载模型运行库…';
 if(localEngine&&localEngine.unload){try{localEngine.unload();}catch(e){}}
 localEngine=null;
-import('https://esm.run/@mlc-ai/web-llm').then(function(mod){
-return mod.CreateMLCEngine(modelId,{initProgressCallback:function(p){
-statusEl.textContent='模型准备中：'+String((p&&p.text)||'').slice(0,120);
-}});
+loadWebLLM().then(function(mod){
+var appConfig=mod.prebuiltAppConfig;
+try{
+var clone=JSON.parse(JSON.stringify(appConfig));
+if(clone&&clone.model_list){
+for(var k=0;k<clone.model_list.length;k++){
+var entry=clone.model_list[k];
+if(entry&&entry.model_id===modelId){
+if(entry.model){entry.model=entry.model.replace('https://huggingface.co/','https://hf-mirror.com/');}
+var libURL=localModelLib(modelId);
+if(libURL&&entry.model_lib){entry.model_lib=libURL;}
+}
+}
+appConfig=clone;
+}
+}catch(e){}
+var opts={initProgressCallback:function(p){
+var msg=String((p&&p.text)||'').slice(0,140);
+if(msg){statusEl.textContent='模型准备中：'+msg;}
+}};
+if(appConfig){opts.appConfig=appConfig;}
+return mod.CreateMLCEngine(modelId,opts);
 }).then(function(engine){
-localEngine=engine;cfg.localModel=modelId;cfg.mode='webllm';saveCfg();try{localStorage.setItem('cs_ai_warmed','1');}catch(e){}
-statusEl.textContent='已就绪：'+modelLabel(modelId)+'（下次进入走缓存，不会重复下载）';
+localEngine=engine;lastLocalError='';cfg.localModel=modelId;cfg.mode='webllm';saveCfg();try{localStorage.setItem('cs_ai_warmed','1');}catch(e){}
+statusEl.textContent='已就绪：'+modelLabel(modelId)+'（下次进入走浏览器缓存，不会重复下载）';
 btn.textContent='重新加载模型';btn.disabled=false;
 applyMode();
 }).catch(function(err){
-statusEl.textContent='启动失败：'+((err&&err.message)?err.message:err)+'（可切换到 API 模型）';
+lastLocalError=localErrorText(err);statusEl.textContent='启动失败：'+lastLocalError;
 btn.disabled=false;
 }).then(function(){localLoading=false;});
 }
@@ -2580,7 +2636,7 @@ var timer=setInterval(function(){
 n++;
 if(onProgress&&localStatus&&localStatus.textContent){onProgress(localStatus.textContent);}
 if(localEngine){clearInterval(timer);resolve(localEngine);return;}
-if(!localLoading&&!localEngine){clearInterval(timer);reject(new Error('模型加载失败，请到「智能体广场 → 模型设置」查看原因'));return;}
+if(!localLoading&&!localEngine){clearInterval(timer);reject(new Error(lastLocalError||'模型加载失败'));return;}
 if(n>300){clearInterval(timer);reject(new Error('模型加载超时'));}
 },500);
 });
@@ -2618,7 +2674,7 @@ return pump();
 return pump();
 });
 }).catch(function(err){
-pending.textContent='暂时无法回答：'+((err&&err.message)?err.message:err);
+pending.textContent='本地模型加载失败：'+((err&&err.message)?err.message:err)+'\n\n常见原因：1) 浏览器不支持 WebGPU；2) 网络无法下载模型（国内访问 HuggingFace 可能受限）；3) 显存不足。\n建议：换 Chrome / Edge、检查网络后重试；或在顶部「智能体广场 → 模型设置」改用 API 模式。';
 }).then(function(){botBusy=false;});
 }
 function openBot(){
